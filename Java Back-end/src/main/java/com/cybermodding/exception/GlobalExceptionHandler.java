@@ -30,8 +30,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(MyAPIException.class)
-    public ResponseEntity<ErrorDetails> handleBlogAPIException(MyAPIException exception, WebRequest webRequest) {
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorDetails> handleBlogAPIException(CustomException exception, WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);

@@ -46,9 +46,14 @@ public class UserController {
     }
 
     @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<User>> getUsersPage(Pageable pageable) {
         Page<User> p = u_svc.getUsersPagination(pageable);
         return new ResponseEntity<Page<User>>(p, HttpStatus.OK);
+    }
+
+    @GetMapping("/ban/{id}")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
+    public ResponseEntity<CustomResponse> banUser(@PathVariable Long id) {
+        return ResponseEntity.ok(u_svc.banUser(id));
     }
 }

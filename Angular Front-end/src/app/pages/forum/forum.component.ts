@@ -14,9 +14,10 @@ import { ForumService } from 'src/app/services/forum.service';
 export class ForumComponent {
   isLoadingPage: boolean = true;
   username: string | undefined;
+  user_id: number | undefined;
   userlevel: UserLevel | undefined;
   logSub!: Subscription;
-  nameSub!: Subscription;
+  userDataSub!: Subscription;
   privSub!: Subscription;
   sidesSub!: Subscription;
   forumSub!: Subscription;
@@ -31,8 +32,9 @@ export class ForumComponent {
       this.isUserLogged = res;
     });
 
-    this.nameSub = this.authSvc.user$.subscribe((res) => {
+    this.userDataSub = this.authSvc.user$.subscribe((res) => {
       this.username = res?.username;
+      this.user_id = res?.user_id;
     });
 
     this.privSub = this.authSvc.privileges$.subscribe((res) => {
@@ -72,7 +74,7 @@ export class ForumComponent {
 
   ngOnDestroy() {
     if (this.logSub) this.logSub.unsubscribe();
-    if (this.nameSub) this.nameSub.unsubscribe();
+    if (this.userDataSub) this.userDataSub.unsubscribe();
     if (this.privSub) this.privSub.unsubscribe();
     if (this.sidesSub) this.sidesSub.unsubscribe();
     if (this.forumSub) this.forumSub.unsubscribe();

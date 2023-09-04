@@ -69,19 +69,13 @@ export class AuthService {
           }
           this.checkValSub.unsubscribe();
         });
-    } else {
-      console.log('NOT LOGGED IN');
-      // login again
-      //this.login({ username: 'lizzo', password: 'qwerty' }).subscribe();
     }
   }
 
   ping(username: string, tk: string): Observable<IPingData> {
-    return this.http.get<IPingData>(this.apiUrl + '/ping?u=' + username, {
-      headers: {
-        Authorization: 'Bearer ' + tk,
-      },
-    });
+    return this.http.get<IPingData>(
+      this.apiUrl + '/ping?u=' + username + '&t=' + tk
+    );
   }
 
   login(data: ILoginData): Observable<ILoginResponse> {
@@ -91,8 +85,8 @@ export class AuthService {
         console.log(res);
         this.subj.next(res);
         const obj: privObj = {
-          isMod: res.isMod,
-          isAdmin: res.isAdmin,
+          isMod: res.accessToken.endsWith('2b'),
+          isAdmin: res.accessToken.endsWith('9s'),
         };
         this.privilegeSubj.next(obj);
         localStorage.setItem(

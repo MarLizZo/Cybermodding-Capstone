@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,16 +44,19 @@ public class SideBlockController {
     }
 
     @PostMapping("/new")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SideBlock> createBlock(@RequestBody SideBlock body) {
         return svc.saveBlock(body);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomResponse> deleteBlock(@PathVariable Long id) {
         return svc.deleteById(id);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateBlock(@PathVariable Long id, @RequestBody SideBlock body) {
         return svc.updateBlock(id, body);
     }

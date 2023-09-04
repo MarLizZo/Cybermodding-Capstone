@@ -22,8 +22,10 @@ export class ChatboxComponent {
   @Input() userLogged!: boolean;
   @Input() userName!: string | undefined;
   @Input() userLevel!: UserLevel | undefined | string;
+  @Input() userId!: number | undefined;
   messageData: IChatMessage = {
     username: this.userName,
+    user_id: this.userId,
     content: '',
     date: undefined,
     level: this.userLevel,

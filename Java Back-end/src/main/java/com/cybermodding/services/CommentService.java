@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Comment;
-import com.cybermodding.exception.MyAPIException;
+import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.UserRepo;
@@ -25,7 +25,7 @@ public class CommentService {
         if (repo.existsById(id)) {
             return repo.findById(id).get();
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
         }
     }
 
@@ -37,7 +37,7 @@ public class CommentService {
         if (u_repo.existsById(id)) {
             return repo.findByUserID(id);
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** User not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** User not found **");
         }
     }
 
@@ -45,7 +45,7 @@ public class CommentService {
         if (u_repo.existsByUsername(username)) {
             return repo.findByUsername(username);
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
         }
     }
 
@@ -68,7 +68,7 @@ public class CommentService {
                         HttpStatus.BAD_REQUEST);
             }
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
         }
     }
 
@@ -77,7 +77,7 @@ public class CommentService {
             repo.deleteById(id);
             return new CustomResponse(new Date(), "** Comment deleted succesfully **", HttpStatus.OK);
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
         }
     }
 }

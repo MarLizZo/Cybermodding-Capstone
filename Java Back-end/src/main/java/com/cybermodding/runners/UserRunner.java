@@ -1,6 +1,7 @@
 package com.cybermodding.runners;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import com.cybermodding.entities.Role;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.payload.RegisterDto;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.services.AuthService;
@@ -43,17 +45,30 @@ public class UserRunner implements CommandLineRunner {
         // create roles columns
         setRoleDefault();
 
-        // add or edit user/s
-        // User me = svc.getById(1l);
+        // clear older chat messages - da mettere dopo il faker in caso
+        // chatSvc.cleanDB();
+
+        // edit user/s
+        // User me = svc.getById(51l);
         // me.setRoles(Set.of(roleRepository.findById(3l).get()));
-        // svc.updateUser(1l, me);
+        // svc.updateUser(51l, me);
+
+        // faker users
+        // for (int i = 0; i < 50; i++) {
+        // Faker fk = Faker.instance();
+        // authService.register(new RegisterDto(fk.name().username(),
+        // fk.internet().emailAddress(), "qwertyqwerty",
+        // "No descr please", null,
+        // fk.date().birthday().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
+        // }
 
         // faker chat test
         // for (int i = 0; i < 50; i++) {
         // chatSvc.saveMessage(ChatMessage.builder().content(Faker.instance().lorem().paragraph())
-        // .username(Faker.instance().funnyName().name()).date(LocalDate.now()).level(EUserLevel.BASE)
+        // .user(userRepository.getRandomUser()).date(LocalDate.now()).level(EUserLevel.BASE)
         // .build());
         // }
+
     }
 
     private void setRoleDefault() {
@@ -71,5 +86,10 @@ public class UserRunner implements CommandLineRunner {
         admin.setRoleName(ERole.ROLE_ADMIN);
         if (!roleRepository.existsById(3l))
             roleRepository.save(admin);
+
+        Role banned = new Role();
+        banned.setRoleName(ERole.ROLE_BANNED);
+        if (!roleRepository.existsById(4l))
+            roleRepository.save(banned);
     }
 }

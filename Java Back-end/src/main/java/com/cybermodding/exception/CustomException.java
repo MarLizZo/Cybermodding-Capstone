@@ -2,17 +2,17 @@ package com.cybermodding.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class MyAPIException extends RuntimeException {
+public class CustomException extends RuntimeException {
 
     private HttpStatus status;
     private String message;
 
-    public MyAPIException(HttpStatus status, String message) {
+    public CustomException(HttpStatus status, String message) {
         this.status = status;
         this.message = message;
     }
 
-    public MyAPIException(String message, HttpStatus status, String message1) {
+    public CustomException(String message, HttpStatus status, String message1) {
         super(message);
         this.status = status;
         this.message = message1;

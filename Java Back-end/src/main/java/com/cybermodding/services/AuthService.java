@@ -12,4 +12,10 @@ public interface AuthService {
     public boolean isMod(String username);
 
     public boolean isAdmin(String username);
+
+    public Long getIdFromName(String username);
+
+    public boolean getIsTokenValid(String tk);
+
+    public boolean userExists(String username);
 }

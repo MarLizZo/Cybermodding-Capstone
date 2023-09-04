@@ -3,6 +3,7 @@ package com.cybermodding.repositories;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.cybermodding.entities.User;
 
@@ -16,4 +17,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
+    @Query("SELECT u FROM User u ORDER BY RANDOM() LIMIT 1")
+    User getRandomUser();
 }

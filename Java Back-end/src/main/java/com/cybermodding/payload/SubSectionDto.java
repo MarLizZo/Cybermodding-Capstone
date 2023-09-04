@@ -1,7 +1,5 @@
 package com.cybermodding.payload;
 
-import com.cybermodding.entities.Section;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,5 +12,5 @@ public class SubSectionDto {
     private String description;
     private Boolean active;
     private Integer order_number;
-    private Section parent_section;
+    private Long parent_section_id;
 }

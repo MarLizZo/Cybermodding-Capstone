@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
-import com.cybermodding.exception.MyAPIException;
+import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.SideBlockRepo;
 
@@ -23,7 +23,7 @@ public class SideBlockService {
         if (repo.existsById(id)) {
             return repo.findById(id).get();
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Side Block not found **");
+            throw new CustomException(HttpStatus.NOT_FOUND, "** Side Block not found **");
         }
     }
 
@@ -33,7 +33,7 @@ public class SideBlockService {
             CustomResponse cr = new CustomResponse(new Date(), "** Side Block deleted succesfully **", HttpStatus.OK);
             return new ResponseEntity<CustomResponse>(cr, HttpStatus.OK);
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Side Block not found **");
+            throw new CustomException(HttpStatus.NOT_FOUND, "** Side Block not found **");
         }
     }
 
@@ -54,7 +54,9 @@ public class SideBlockService {
                 return new ResponseEntity<CustomResponse>(cr, HttpStatus.BAD_REQUEST);
             }
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Side Block not found **");
+            CustomResponse cr = new CustomResponse(new Date(), "** Block not found **",
+                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<CustomResponse>(cr, HttpStatus.NOT_FOUND);
         }
     }
 

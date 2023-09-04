@@ -39,6 +39,7 @@ public class AuthController {
                 : authService.isMod(loginDto.getUsername()) ? "2b" : "1a";
         jwtAuthResponse.setUsername(loginDto.getUsername());
         jwtAuthResponse.setAccessToken(token + priv);
+        jwtAuthResponse.setUser_id(authService.getIdFromName(loginDto.getUsername()));
 
         return ResponseEntity.ok(jwtAuthResponse);
     }
@@ -50,9 +51,11 @@ public class AuthController {
     }
 
     @GetMapping("/ping")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<PingDto> simplePing(@RequestParam String u) {
-        PingDto ping = new PingDto(true);
+    public ResponseEntity<PingDto> tokenPing(@RequestParam String u, @RequestParam String t) {
+        boolean tkValid = authService.getIsTokenValid(t) ? true : false;
+        boolean exists = authService.userExists(u) ? true : false;
+        boolean result = tkValid && exists ? true : false;
+        PingDto ping = new PingDto(result);
         return ResponseEntity.ok(ping);
     }
 }

@@ -5,7 +5,8 @@
     <app-hero></app-hero>
     <div class="chat-container container-fluid d-flex justify-content-center mt-4">
         <app-chatbox class="w-100" [userLogged]="isUserLogged"
-            [userLevel]="userlevel == 0 ? 'BASE' : userlevel == 1 ? 'MID' : 'BOSS'" [userName]="username"></app-chatbox>
+            [userLevel]="userlevel == 0 ? 'BASE' : userlevel == 1 ? 'MID' : 'BOSS'" [userName]="username"
+            [userId]="user_id"></app-chatbox>
     </div>
     <div class="mt-5 mb-3">
         <app-topbar [path]="'FORUM'"></app-topbar>

@@ -2,6 +2,7 @@ package com.cybermodding.services;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
-import com.cybermodding.exception.MyAPIException;
+import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.LoginDto;
 import com.cybermodding.payload.RegisterDto;
 import com.cybermodding.repositories.RoleRepo;
@@ -60,12 +61,12 @@ public class AuthServiceImpl implements AuthService {
 
         // check if username exists in database
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Username already exists **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Username already exists **");
         }
 
         // check if email exists in database
         if (userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** Email already exists **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Email already exists **");
         }
 
         User user = new User();
@@ -93,6 +94,19 @@ public class AuthServiceImpl implements AuthService {
     public boolean isAdmin(String username) {
         User u = userRepository.findByUsername(username).get();
         return u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_ADMIN));
+    }
+
+    public Long getIdFromName(String username) {
+        Optional<User> u = userRepository.findByUsername(username);
+        return u.isPresent() ? u.get().getId() : null;
+    }
+
+    public boolean getIsTokenValid(String tk) {
+        return this.jwtTokenProvider.validateToken(tk);
+    }
+
+    public boolean userExists(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     public ERole getRole(String role) {

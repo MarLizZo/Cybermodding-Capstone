@@ -91,9 +91,7 @@ export class RegisterComponent {
       }
     }
     const birth = new Date(this.regData.birthdate.toString());
-    console.log(birth);
     if (birth.getFullYear() != undefined || !isNaN(birth.getFullYear())) {
-      console.log('check passed');
       const year = new Date().getFullYear() - birth.getFullYear();
       if (year < 10) {
         checksResult = false;

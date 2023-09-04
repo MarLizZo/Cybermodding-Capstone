@@ -1,6 +1,7 @@
 package com.cybermodding.services;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.User;
-import com.cybermodding.exception.MyAPIException;
+import com.cybermodding.enumerators.ERole;
+import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.UserOperations;
+import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserPageRepo;
 import com.cybermodding.repositories.UserRepo;
 
@@ -23,12 +26,14 @@ public class UserService {
     UserRepo u_repo;
     @Autowired
     UserPageRepo u_page_repo;
+    @Autowired
+    RoleRepo roleRepository;
 
     public User getById(Long id) {
         if (u_repo.existsById(id))
             return u_repo.findById(id).get();
         else
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** User not found **");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** User not found **");
     }
 
     public Page<User> getUsersPagination(Pageable pageable) {
@@ -42,14 +47,20 @@ public class UserService {
                     HttpStatus.OK);
             return new ResponseEntity<CustomResponse>(cr, HttpStatus.OK);
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** User not found **");
+            CustomResponse cr = new CustomResponse(new Date(), "** User not found **",
+                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<CustomResponse>(cr, HttpStatus.NOT_FOUND);
         }
     }
 
     public ResponseEntity<?> updateUser(Long id, User u) {
+        boolean hasPriviliges = u_repo.findById(id).get().getRoles().stream()
+                .anyMatch(
+                        r -> r.getRoleName().equals(ERole.ROLE_ADMIN) || r.getRoleName().equals(ERole.ROLE_MODERATOR));
+
         if (u_repo.existsById(id)) {
-            if (id.equals(u.getId())) {
-                u.setPassword(u_repo.findById(id).get().getPassword());
+            if (hasPriviliges || id.equals(u.getId())) {
+                // u.setPassword(u_repo.findById(id).get().getPassword());
                 User updatedUser = u_repo.save(u);
                 UserOperations output = new UserOperations(updatedUser, new Date(), "** User updated succesfully **");
                 return new ResponseEntity<UserOperations>(output, HttpStatus.OK);
@@ -59,7 +70,22 @@ public class UserService {
                 return new ResponseEntity<CustomResponse>(cr, HttpStatus.BAD_REQUEST);
             }
         } else {
-            throw new MyAPIException(HttpStatus.BAD_REQUEST, "** User not found **");
+            CustomResponse cr = new CustomResponse(new Date(), "** User not found **",
+                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<CustomResponse>(cr, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public CustomResponse banUser(Long id) {
+        if (u_repo.existsById(id)) {
+            User u = u_repo.findById(id).get();
+            u.setRoles(Set.of(roleRepository.findById(4l).get()));
+            u_repo.save(u);
+            return new CustomResponse(new Date(), "** User Banned succesfully **",
+                    HttpStatus.OK);
+        } else {
+            return new CustomResponse(new Date(), "** User not found **",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 }
