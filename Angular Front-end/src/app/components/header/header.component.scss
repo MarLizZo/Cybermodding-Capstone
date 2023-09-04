@@ -1,0 +1,44 @@
+//@import "../../../mixins.scss";
+nav {
+  background: var(--bg-lighter);
+  border-bottom: 2px solid var(--near-black);
+
+  .link-container {
+    background-color: rgb(7, 7, 7);
+    border-top-left-radius: 15%;
+    border-top-right-radius: 15%;
+    width: max-content;
+
+    @media screen and (max-width: 768px) {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      align-self: center;
+    }
+
+    .text-green {
+      color: var(--mod-color);
+    }
+  }
+
+  div.dropdown-menu {
+    background-color: var(--bg) !important;
+    border: 2px solid var(--bg-lighter);
+
+    a {
+      background-color: var(--bg) !important;
+      color: var(--txt) !important;
+
+      &:hover {
+        background-color: var(--bg-lighter) !important;
+      }
+    }
+  }
+}
+
+.active-link {
+  color: var(--orange);
+
+  &:hover {
+    color: var(--orange-hover);
+  }
+}

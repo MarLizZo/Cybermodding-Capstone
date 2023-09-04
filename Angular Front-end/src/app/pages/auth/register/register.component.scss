@@ -1,0 +1,45 @@
+.form-container {
+  width: 90%;
+  background-color: var(--bg-lighter);
+  border: 1px solid var(--orange);
+
+  @media screen and (min-width: 678px) {
+    width: 75%;
+  }
+
+  @media screen and (min-width: 1200px) {
+    width: 50%;
+  }
+
+  p.reg {
+    color: var(--orange);
+  }
+
+  input {
+    background-color: var(--bg);
+    color: var(--txt);
+
+    &:focus,
+    &:active {
+      -webkit-box-shadow: 0px 0px 6px 0px rgba(255, 140, 0, 0.6) !important;
+      box-shadow: 0px 0px 6px 0px rgba(255, 140, 0, 0.6) !important;
+    }
+  }
+
+  ::placeholder {
+    color: var(--txt-muted);
+  }
+
+  button {
+    background-color: rgb(7, 7, 7) !important;
+  }
+}
+
+.txt-orange {
+  color: var(--orange) !important;
+  transition: color 0.2s;
+
+  &:hover:not(p) {
+    color: var(--orange-hover) !important;
+  }
+}

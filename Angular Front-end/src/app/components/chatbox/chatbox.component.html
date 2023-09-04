@@ -1,0 +1,32 @@
+<div class="outer-container rounded-2">
+    <div class="heading d-flex justify-content-between align-items-center p-2">
+        <p class="m-0 fw-medium">Cybermodding Live Chat</p>
+        <i #iconColl class="bi bi-chevron-bar-up" (click)="toggleCollapse()"></i>
+    </div>
+    <div #collapse="ngbCollapse" [(ngbCollapse)]="isChatCollapsed">
+        <div class="chat-container d-flex flex-column flex-grow-1 py-3">
+            <div #msgContainer class="messages-container d-flex flex-column flex-grow-1 mb-2">
+                <div *ngIf="!userLogged"
+                    class="my-2 py-1 border-top border-bottom border-1 border-black d-flex justify-content-center align-items-center">
+                    <p class="m-0">Devi essere loggato per poter inviare messaggi!</p>
+                </div>
+                <div *ngFor="let msg of messages" class="mb-2">
+                    <div class="d-flex flex-wrap px-2">
+                        <p class="m-0">{{ msg.date | date: 'dd/MM' }} ⋅<span class="m-0 me-1"
+                                [ngClass]="{'text-danger' : msg.level?.toString() == 'BOSS', 'txt-mod' : msg.level?.toString() == 'MID', 'txt-orange': msg.level?.toString() == 'BASE'}">
+                                {{ msg.username }}:</span> {{ msg.content }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="input-container d-flex justify-content-center mt-2">
+                <div class="input-group">
+                    <input [disabled]="!userLogged" #messageInput [(ngModel)]="messageData.content" name="msg"
+                        type="text" class="form-control form-control-sm border-0" placeholder="Invia messaggio.."
+                        (keyup.enter)="sendMessage()">
+                    <button [disabled]="!userLogged" class="btn border-0" type="button"
+                        (click)="sendMessage()">Invia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

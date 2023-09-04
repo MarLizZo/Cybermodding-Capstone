@@ -1,0 +1,7 @@
+<div *ngIf="isLoadingPage" class="h-100 d-flex justify-content-center align-items-center">
+    <app-loader></app-loader>
+</div>
+<div *ngIf="!isLoadingPage" class="h-100">
+    <app-hero></app-hero>
+
+</div>

@@ -1,0 +1,78 @@
+<div *ngIf="isLoadingPage" class="h-100 d-flex justify-content-center align-items-center">
+    <app-loader></app-loader>
+</div>
+
+<div *ngIf="!isLoadingPage" class="py-5 h-100">
+    <div class="h-100 d-flex justify-content-center align-items-center">
+        <div class="form-container p-5 pt-4 rounded-2">
+            <p class="mb-2 text-center fw-medium fs-4 reg">Registrati su Cybermodding</p>
+            <p class="mb-4 text-center">Hai già un account registrato? Effettua il <a [routerLink]="'/auth/login'"
+                    class="text-decoration-none txt-orange">Login</a> allora!</p>
+            <form #f="ngForm">
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="username">Username</label>
+                    <p class="m-0 text-danger d-none" #usernameP>Min 3 chars</p>
+                </div>
+                <input #usernameInput="ngModel" [(ngModel)]="regData.username" id="username" type="text" name="username"
+                    class="mb-3 form-control form-control-sm border-0 shadow-none" placeholder="Il tuo username"
+                    [minlength]="3" required>
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="email">Email</label>
+                    <p class="m-0 text-danger d-none" #emailP>Invalida</p>
+                </div>
+                <input #emailInput="ngModel" [(ngModel)]="regData.email" id="email" type="email" name="email"
+                    class="mb-3 form-control form-control-sm border-0 shadow-none" placeholder="yourmail@example.com"
+                    required>
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="password">Password - Min 8 char</label>
+                    <p class="m-0 text-danger d-none" #passwordP>Min 8 chars</p>
+                </div>
+                <input #passwordInput="ngModel" [(ngModel)]="regData.password" id="password" type="password"
+                    name="password" class="mb-3 form-control form-control-sm border-0 shadow-none" [minlength]="8"
+                    required>
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="repeat-password">Ripeti Password</label>
+                    <p class="m-0 text-danger d-none" #repeatPasswordP>Inesatta</p>
+                </div>
+                <input #repeatPasswordInput id="repeat-password" type="password" name="repeat-password"
+                    class="mb-3 form-control form-control-sm border-0 shadow-none" required>
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="description">Descrizione - Max 20 char</label>
+                    <p class="m-0 text-danger d-none" #descriptionP>Max 20 chars</p>
+                </div>
+                <input #descriptionInput="ngModel" [(ngModel)]="regData.description" id="description" type="text"
+                    name="description" class="mb-3 form-control form-control-sm border-0 shadow-none" [maxLength]="20">
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="avatar">Avatar - Link diretto</label>
+                    <p class="m-0 text-danger d-none" #avatarP>Invalid link</p>
+                </div>
+                <input #avatarInput="ngModel" [(ngModel)]="regData.avatar" id="avatar" type="text" name="avatar"
+                    class="mb-3 form-control form-control-sm border-0 shadow-none">
+
+                <div class="d-flex justify-content-between mb-1">
+                    <label for="birthdate">Data di nascita</label>
+                    <p class="m-0 text-danger d-none" #birthdateP>Invalid date</p>
+                </div>
+                <input #birthdateInput="ngModel" [(ngModel)]="regData.birthdate" id="birthdate" type="date"
+                    name="birthdate" class="mb-3 form-control form-control-sm border-0 shadow-none" required>
+
+                <div class="d-flex flex-column align-items-center">
+                    <button [disabled]="f.invalid" type="button" [ngClass]="{'txt-orange' : true}"
+                        class="btn btn-dark w-50 mt-3 fw-medium py-2" (click)="doRegister()">Registrati</button>
+                    <div class="mt-2">
+                        <app-inline-loader *ngIf="isRegistering"></app-inline-loader>
+                        <p *ngIf="!isRegistering && isRegisterOperationSuccess" class="m-0 fw-medium">Registrato con
+                            successo! Attendi 2 secondi..</p>
+                        <p *ngIf="!isRegistering && isRegisterOperationError" class="m-0 fw-medium"><span
+                                class="text-danger">Errore: </span>{{ errorMessage }}</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

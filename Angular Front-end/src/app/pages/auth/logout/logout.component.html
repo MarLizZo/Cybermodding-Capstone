@@ -1,0 +1,12 @@
+<div *ngIf="isLoadingPage" class="h-100 d-flex justify-content-center align-items-center">
+    <app-loader></app-loader>
+</div>
+<div *ngIf="!isLoadingPage" class="py-5 h-100">
+    <div class="h-100 d-flex flex-column justify-content-center align-items-center">
+        <p class="m-0 fs-4"><span *ngIf="username != undefined" [class]="usernameColor">{{ username }}
+                <span *ngIf="username != undefined">,</span></span>Grazie per aver passato del
+            tempo
+            su Cybermodding.</p>
+        <p class="m-0 mt-3 fs-5">Verrai portato alla Home in 3 secondi...</p>
+    </div>
+</div>

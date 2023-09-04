@@ -1,0 +1,20 @@
+.main-container {
+  background-color: var(--bg);
+  border: 3px solid var(--bg-lighter);
+
+  .selectable {
+    h6,
+    p {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    &:hover > h6 {
+      color: var(--orange-hover);
+    }
+
+    &:hover > p {
+      color: #b1b0b0;
+    }
+  }
+}
