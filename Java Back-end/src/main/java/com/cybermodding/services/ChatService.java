@@ -34,7 +34,7 @@ public class ChatService {
     }
 
     public List<ChatMsgDTO> getInitMsg() {
-        List<ChatMessage> chatMsg = repo.findAll();
+        List<ChatMessage> chatMsg = repo.findAllInitOrder();
         List<ChatMsgDTO> ls = new ArrayList<>();
         chatMsg.stream().forEach(m -> ls.add(convertToDTO(m)));
         return ls;

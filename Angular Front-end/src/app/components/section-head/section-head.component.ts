@@ -18,7 +18,6 @@ export class SectionHeadComponent {
 
   @Input() sectionName!: string;
   @Input() sectionDescr!: string;
-  @Input() sectionCat!: string;
   @Input() sectionId!: number;
   subs!: Subscription;
   subsArr: ISubSectionData[] = [];

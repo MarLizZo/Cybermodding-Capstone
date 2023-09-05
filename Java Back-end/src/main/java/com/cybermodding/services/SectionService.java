@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Section;
-import com.cybermodding.enumerators.ESectionCategory;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.SectionDto;
@@ -38,8 +37,7 @@ public class SectionService {
 
     public Section saveSection(SectionDto s) {
         try {
-            Section sec = new Section(s.getTitle(), s.getDescription(), s.getActive(), s.getCategory(),
-                    s.getOrder_number());
+            Section sec = new Section(s.getTitle(), s.getDescription(), s.getActive(), s.getOrder_number());
             return repo.save(sec);
         } catch (IllegalArgumentException ex) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Campi obbligatori mancanti **");
@@ -61,10 +59,6 @@ public class SectionService {
             return new CustomResponse(new Date(), "** Section not found **",
                     HttpStatus.NOT_FOUND);
         }
-    }
-
-    public List<Section> getByCategory(ESectionCategory cat) {
-        return repo.findByCategory(cat);
     }
 
     public List<Section> getAll() {

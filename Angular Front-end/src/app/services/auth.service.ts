@@ -94,6 +94,7 @@ export class AuthService {
           JSON.stringify({
             username: res.username,
             accessToken: res.accessToken,
+            user_id: res.user_id,
           })
         );
       })

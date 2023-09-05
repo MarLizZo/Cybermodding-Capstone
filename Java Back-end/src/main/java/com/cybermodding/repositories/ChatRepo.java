@@ -1,5 +1,6 @@
 package com.cybermodding.repositories;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,7 @@ public interface ChatRepo extends JpaRepository<ChatMessage, Long> {
 
     @Query("SELECT c FROM ChatMessage c ORDER BY id DESC LIMIT 50")
     public Set<ChatMessage> findAllOrdered();
+
+    @Query("SELECT c FROM ChatMessage c ORDER BY id ASC")
+    public List<ChatMessage> findAllInitOrder();
 }

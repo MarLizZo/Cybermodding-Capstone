@@ -2,7 +2,6 @@ package com.cybermodding.configurations;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -46,23 +45,6 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        // http.cors().and().csrf().disable()
-        // .authorizeHttpRequests((authorize) -> authorize
-        // .requestMatchers("/api/auth/**").permitAll()
-        // .requestMatchers("/ws/**").permitAll()
-        // .requestMatchers(HttpMethod.GET, "/api/chatbox/**").permitAll()
-        // .anyRequest().authenticated())
-        // .exceptionHandling(exception -> exception
-        // .authenticationEntryPoint(authenticationEntryPoint))
-        // .sessionManagement(session -> session
-        // .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        // http.addFilterBefore(authenticationFilter,
-        // UsernamePasswordAuthenticationFilter.class);
-
-        // return http.build();
-
         http.cors(cors -> cors.disable()).csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/ws/**").permitAll()

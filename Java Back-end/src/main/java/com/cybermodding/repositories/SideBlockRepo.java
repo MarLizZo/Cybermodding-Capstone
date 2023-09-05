@@ -10,7 +10,7 @@ import com.cybermodding.enumerators.ESideBlock;
 
 public interface SideBlockRepo extends JpaRepository<SideBlock, Long> {
 
-    @Query("SELECT b FROM SideBlock b WHERE b.e_block_type = :eType ORDER BY b.order_number")
+    @Query("SELECT b FROM SideBlock b WHERE b.e_block_type = :eType OR b.e_block_type = 'BLOCK_ALL' ORDER BY b.order_number")
     List<SideBlock> findByESideBlockType(ESideBlock eType);
 
     List<SideBlock> findByActive(Boolean value);

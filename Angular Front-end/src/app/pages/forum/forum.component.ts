@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subscription, catchError, map } from 'rxjs';
+import { Subscription, catchError } from 'rxjs';
 import { UserLevel } from 'src/app/enums/user-level';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';

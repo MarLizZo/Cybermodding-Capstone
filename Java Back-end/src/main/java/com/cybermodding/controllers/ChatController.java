@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.payload.ChatMsgDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.services.ChatService;

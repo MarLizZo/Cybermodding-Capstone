@@ -1,13 +1,15 @@
 package com.cybermodding.entities;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
+import com.cybermodding.enumerators.EPostType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,16 +45,22 @@ public class Post {
     @Column(nullable = false)
     private LocalDate publishedDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EPostType type;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private User author;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private SubSection sub_section;
 
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    private List<Reaction> reactions;
+
     @OneToMany(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @Builder.Default
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments;
 
     @Override
     public String toString() {

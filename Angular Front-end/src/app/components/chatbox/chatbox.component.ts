@@ -47,7 +47,16 @@ export class ChatboxComponent {
       )
       .subscribe((res) => {
         this.messages = res;
+        this.chatContainer.nativeElement.style.opacity = '0';
+        setTimeout(() => {
+          this.chatContainer.nativeElement.scrollTop =
+            this.chatContainer.nativeElement.scrollHeight;
+          setTimeout(() => {
+            this.chatContainer.nativeElement.style.opacity = '1';
+          }, 800);
+        }, 300);
       });
+
     this.connectSub = this.svc.getMessages()!.subscribe((message) => {
       this.messages.push(message);
     });
@@ -74,6 +83,7 @@ export class ChatboxComponent {
       this.messageData.username = this.userName;
       this.messageData.date = new Date();
       this.messageData.level = this.userLevel;
+      this.messageData.user_id = this.userId;
       this.svc.sendMessage(this.messageData);
       this.messageData.content = '';
       setTimeout(() => {
