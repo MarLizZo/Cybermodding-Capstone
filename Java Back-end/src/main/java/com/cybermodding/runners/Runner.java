@@ -10,10 +10,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.cybermodding.entities.ChatMessage;
+import com.cybermodding.entities.Comment;
+import com.cybermodding.entities.Post;
 import com.cybermodding.entities.Role;
+import com.cybermodding.entities.SideBlock;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
 import com.cybermodding.enumerators.ERole;
+import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.PostDTO;
 import com.cybermodding.payload.RegisterDto;
@@ -23,8 +27,10 @@ import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.services.AuthService;
 import com.cybermodding.services.ChatService;
+import com.cybermodding.services.CommentService;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.SectionService;
+import com.cybermodding.services.SideBlockService;
 import com.cybermodding.services.SubSectionService;
 import com.cybermodding.services.UserService;
 import com.github.javafaker.Faker;
@@ -50,6 +56,10 @@ public class Runner implements CommandLineRunner {
     SubSectionService ss_svc;
     @Autowired
     PostService p_svc;
+    @Autowired
+    SideBlockService sb_repo;
+    @Autowired
+    CommentService comm_svc;
 
     @Override
     public void run(String... args) throws Exception {
@@ -78,6 +88,12 @@ public class Runner implements CommandLineRunner {
 
         // create Posts
         // createPosts();
+
+        // create Side blocks
+        // createSideBlocks();
+
+        // create Comments
+        createComments(15);
     }
 
     private void createAndSetAdmin() {
@@ -166,6 +182,27 @@ public class Runner implements CommandLineRunner {
         // IA - News generali
         p_svc.createNewPost(new PostDTO(fk.hacker().adjective(), fk.lorem().paragraph(12), EPostType.NEWS, 10l, 3l));
         p_svc.createNewPost(new PostDTO(fk.hacker().abbreviation(), fk.lorem().paragraph(13), EPostType.NEWS, 1l, 3l));
+    }
+
+    private void createSideBlocks() {
+        Faker fk = Faker.instance();
+        sb_repo.saveBlock(SideBlock.builder().title("Block One").content(fk.lorem().paragraph()).active(true)
+                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(1).build());
+
+        sb_repo.saveBlock(SideBlock.builder().title("Block Two").content(fk.lorem().paragraph()).active(true)
+                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(2).build());
+
+        sb_repo.saveBlock(SideBlock.builder().title("Block Three").content(fk.lorem().paragraph()).active(true)
+                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(3).build());
+    }
+
+    private void createComments(int amount) {
+        Faker fk = Faker.instance();
+        for (int i = 0; i < amount; i++) {
+            Post p = p_svc.getRandom();
+            comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(3)).publishedDate(LocalDate.now())
+                    .post(p).user(userRepository.getRandomUser()).build());
+        }
     }
 
     private void setRoleDefault() {

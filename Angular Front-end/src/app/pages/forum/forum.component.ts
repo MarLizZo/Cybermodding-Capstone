@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Subscription, catchError } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { UserLevel } from 'src/app/enums/user-level';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
@@ -13,6 +13,7 @@ import { ForumService } from 'src/app/services/forum.service';
 })
 export class ForumComponent {
   isLoadingPage: boolean = true;
+  fetchErrors: boolean = false;
   username: string | undefined;
   user_id: number | undefined;
   userlevel: UserLevel | undefined;
@@ -45,26 +46,30 @@ export class ForumComponent {
         : UserLevel.BASE;
     });
 
-    this.sidesSub = this.fSvc
-      .getForumSideBlocks()
-      .pipe(
-        catchError((err) => {
-          throw err;
-        })
-      )
-      .subscribe((res) => {
-        this.sidesArr = res;
-      });
-
     this.forumSub = this.fSvc
       .getForumSections()
       .pipe(
         catchError((err) => {
-          throw err;
+          this.fetchErrors = true;
+          console.log('Error fetching sections data');
+          return EMPTY;
         })
       )
       .subscribe((res) => {
         this.sectionsArr = res;
+      });
+
+    this.sidesSub = this.fSvc
+      .getForumSideBlocks()
+      .pipe(
+        catchError((err) => {
+          this.fetchErrors = true;
+          console.log('Error fetching side blocks data');
+          return EMPTY;
+        })
+      )
+      .subscribe((res) => {
+        this.sidesArr = res;
       });
 
     setTimeout(() => {

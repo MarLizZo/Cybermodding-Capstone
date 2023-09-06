@@ -95,4 +95,8 @@ public class PostService {
             return new CustomResponse(new Date(), "** Post or User not found **", HttpStatus.BAD_REQUEST);
         }
     }
+
+    public Post getRandom() {
+        return repo.getRandom();
+    }
 }

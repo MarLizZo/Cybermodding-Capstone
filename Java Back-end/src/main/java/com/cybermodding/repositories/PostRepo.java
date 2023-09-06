@@ -11,4 +11,7 @@ public interface PostRepo extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE sub_section.id = :ssid ORDER BY p.id DESC")
     public List<Post> findAllBySubSId(Long ssid);
+
+    @Query("SELECT p FROM Post p ORDER BY RANDOM() LIMIT 1")
+    public Post getRandom();
 }
