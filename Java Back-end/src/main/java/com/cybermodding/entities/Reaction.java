@@ -1,6 +1,7 @@
 package com.cybermodding.entities;
 
 import com.cybermodding.enumerators.EReaction;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,5 +39,6 @@ public class Reaction {
     private EReaction type;
 
     @ManyToOne
+    @JsonIgnore
     private Post post;
 }

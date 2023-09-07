@@ -12,4 +12,7 @@ public interface SubSectionRepo extends JpaRepository<SubSection, Long> {
     // :parent_id AND s.active = true ORDER BY s.order_number")
     @Query("SELECT s FROM SubSection s WHERE s.parent_section.id = :parent_id AND s.active = true ORDER BY s.order_number")
     List<SubSection> findByActiveOrderedForSectionId(Long parent_id);
+
+    @Query("SELECT s FROM SubSection s ORDER BY RANDOM() LIMIT 1")
+    SubSection getRandom();
 }

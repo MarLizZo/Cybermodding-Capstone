@@ -72,4 +72,8 @@ public class SubSectionService {
     public List<SubSection> getSubSectionsOAFromPID(Long id) {
         return repo.findByActiveOrderedForSectionId(id);
     }
+
+    public SubSection getRandom() {
+        return repo.getRandom();
+    }
 }

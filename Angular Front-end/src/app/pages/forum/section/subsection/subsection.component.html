@@ -1,0 +1,50 @@
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div class="my-4">
+        <app-topbar [path]="'FORUM / ' + ssParentTitle + ' / ' + ssTitle"></app-topbar>
+    </div>
+    <div class="px-3 py-2 head-w-title">
+        <p class="mb-1 fs-5" [innerText]="subSData != undefined ? subSData.title : ''"></p>
+        <p class="mb-1" [innerText]="subSData != undefined ? subSData.description : ''"></p>
+    </div>
+    <div class="container-fluid mt-5">
+        <app-orange-button [btnTitle]="'Scrivi Nuovo Post'"></app-orange-button>
+        <div class="posts-container mt-4 d-flex justify-content-center">
+            <div class="row w-100">
+                <div class="col-12 d-flex p-2">
+                    <div class="col-8">
+                        <p class="m-0 fw-medium">Threads Aperti</p>
+                    </div>
+                    <div class="col-2">
+                        <p class="m-0 fw-medium">Statistiche</p>
+                    </div>
+                    <div class="col-2">
+                        <p class="m-0 fw-medium">Ultimo post</p>
+                    </div>
+                </div>
+                <div *ngFor="let post of postsArr" class="col-12 d-flex justify-content-between align-items-center p-2">
+                    <div class="col-8 d-flex align-items-center">
+                        <div [ngClass]="{'placeholder-img' : post.author.avatar == null}">
+                            <img *ngIf="post.author.avatar != null" src="">
+                        </div>
+                        <div class="ms-2 post-selectable" [routerLink]="'/forum/showthread/1'">
+                            <h6 class="m-0">{{ post.title }}</h6>
+                            <p class="m-0 small-f">Avviato da: {{ post.author.username }}, {{
+                                post.publishedDate }}</p>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <p class="m-0 small-f">{{ post.comments.length }} Commenti</p>
+                        <p class="m-0 small-f">{{ post.reactions.length }} Reazioni</p>
+                    </div>
+                    <div class="col-2">
+                        <p class="m-0 small-f">Ultimo commento</p>
+                        <p class="m-0 small-f">
+                            Link qui..
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

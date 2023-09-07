@@ -1,0 +1,39 @@
+.head-w-title {
+  background-color: var(--bg-lighter);
+  border-top: 1px solid var(--near-black);
+  border-bottom: 1px solid var(--near-black);
+}
+
+.col-12:not(.col-12:first-of-type) {
+  border: 2px solid var(--bg-lighter);
+}
+
+.col-12:first-of-type {
+  background-color: var(--bg-lighter);
+  font-size: 1.2em;
+}
+
+.placeholder-img {
+  width: 32px;
+  height: 32px;
+  background-color: var(--near-black);
+  border: 2px solid var(--orange);
+  border-radius: 50%;
+}
+
+.small-f {
+  font-size: 0.9em;
+}
+
+.post-selectable {
+  h6 {
+    transition: color 0.1s;
+  }
+  &:hover {
+    cursor: pointer;
+    h6 {
+      cursor: pointer;
+      color: var(--orange-hover);
+    }
+  }
+}

@@ -30,4 +30,8 @@ export class ForumService {
       this.subsectionsApiUrl + '?pid=' + p_id
     );
   }
+
+  public getSubSectionById(id: number): Observable<ISubSectionData> {
+    return this.http.get<ISubSectionData>(this.subsectionsApiUrl + '/' + id);
+  }
 }

@@ -9,6 +9,20 @@ const routes: Routes = [
     loadChildren: () =>
       import('./section/section.module').then((m) => m.SectionModule),
   },
+  {
+    path: 'subsection/:hash',
+    loadChildren: () =>
+      import('./section/subsection/subsection.module').then(
+        (m) => m.SubsectionModule
+      ),
+  },
+  {
+    path: 'showthread/:hash',
+    loadChildren: () =>
+      import('./section/subsection/showthread/showthread.module').then(
+        (m) => m.ShowthreadModule
+      ),
+  },
 ];
 
 @NgModule({

@@ -4,7 +4,6 @@ import { ForumService } from 'src/app/services/forum.service';
 import { Subscription, catchError } from 'rxjs';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { SubsectionBodyComponent } from '../subsection-body/subsection-body.component';
-import { IPostData } from 'src/app/interfaces/ipost-data';
 
 @Component({
   selector: 'app-section-head',

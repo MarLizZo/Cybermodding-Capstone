@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.SubSectionDto;
+import com.cybermodding.payload.SubSectionOutDTO;
 import com.cybermodding.services.SubSectionService;
 
 @RestController
@@ -29,8 +30,14 @@ public class SubSectionController {
     SubSectionService svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<SubSection> getById(@PathVariable Long id) {
-        return new ResponseEntity<SubSection>(svc.getById(id), HttpStatus.OK);
+    public ResponseEntity<SubSectionOutDTO> getById(@PathVariable Long id) {
+        SubSection sub = svc.getById(id);
+        SubSectionOutDTO ss = SubSectionOutDTO.builder().id(sub.getId()).title(sub.getTitle())
+                .active(sub.getActive()).description(sub.getDescription()).order_number(sub.getOrder_number())
+                .posts(sub.getPosts())
+                .parent_id(sub.getParent_section().getId()).parent_title(sub.getParent_section().getTitle())
+                .build();
+        return new ResponseEntity<SubSectionOutDTO>(ss, HttpStatus.OK);
     }
 
     @GetMapping("")
