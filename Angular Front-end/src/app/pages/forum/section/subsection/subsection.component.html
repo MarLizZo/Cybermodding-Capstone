@@ -1,14 +1,14 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="my-4">
-        <app-topbar [path]="'FORUM / ' + ssParentTitle + ' / ' + ssTitle"></app-topbar>
+        <app-topbar [path]="'FORUM > ' + ssParentTitle + ' > ' + ssTitle"></app-topbar>
     </div>
     <div class="px-3 py-2 head-w-title">
         <p class="mb-1 fs-5" [innerText]="subSData != undefined ? subSData.title : ''"></p>
         <p class="mb-1" [innerText]="subSData != undefined ? subSData.description : ''"></p>
     </div>
     <div class="container-fluid mt-5">
-        <app-orange-button [btnTitle]="'Scrivi Nuovo Post'"></app-orange-button>
+        <app-orange-button *ngIf="isAuthenticated" [btnTitle]="'Scrivi Nuovo Post'"></app-orange-button>
         <div class="posts-container mt-4 d-flex justify-content-center">
             <div class="row w-100">
                 <div class="col-12 d-flex p-2">
@@ -27,10 +27,12 @@
                         <div [ngClass]="{'placeholder-img' : post.author.avatar == null}">
                             <img *ngIf="post.author.avatar != null" src="">
                         </div>
-                        <div class="ms-2 post-selectable" [routerLink]="'/forum/showthread/1'">
+                        <div class="ms-2 post-selectable"
+                            [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replace(' ', '').replace('/', '')">
                             <h6 class="m-0">{{ post.title }}</h6>
-                            <p class="m-0 small-f">Avviato da: {{ post.author.username }}, {{
-                                post.publishedDate }}</p>
+                            <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)">{{
+                                    post.author.username }}</span>, il {{
+                                post.publishedDate | date : 'dd-MM-Y' }}</p>
                         </div>
                     </div>
                     <div class="col-2">

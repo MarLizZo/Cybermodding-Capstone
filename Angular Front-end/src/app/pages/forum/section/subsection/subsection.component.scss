@@ -34,6 +34,20 @@
     h6 {
       cursor: pointer;
       color: var(--orange-hover);
+      text-decoration: underline;
     }
   }
+}
+
+.txt-orange {
+  color: var(--orange);
+}
+
+.txt-mod {
+  color: var(--mod-color);
+}
+
+.txt-ban {
+  color: var(--text-muted);
+  text-decoration: line-through;
 }

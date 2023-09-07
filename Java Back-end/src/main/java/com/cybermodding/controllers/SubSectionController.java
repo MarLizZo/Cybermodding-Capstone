@@ -1,5 +1,6 @@
 package com.cybermodding.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.SubSection;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.CustomResponse;
+import com.cybermodding.payload.PostOutDTO;
 import com.cybermodding.payload.SubSectionDto;
 import com.cybermodding.payload.SubSectionOutDTO;
 import com.cybermodding.services.SubSectionService;
+import com.cybermodding.services.UserService;
 
 @RestController
 @RequestMapping("/api/subsections")
@@ -28,13 +32,23 @@ import com.cybermodding.services.SubSectionService;
 public class SubSectionController {
     @Autowired
     SubSectionService svc;
+    @Autowired
+    UserService u_svc;
 
     @GetMapping("/{id}")
     public ResponseEntity<SubSectionOutDTO> getById(@PathVariable Long id) {
         SubSection sub = svc.getById(id);
+        List<PostOutDTO> pout = new ArrayList<>();
+        sub.getPosts().forEach(p -> {
+            EUserLevel level = u_svc.getRank(p.getAuthor().getId());
+            pout.add(new PostOutDTO(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(),
+                    p.getAuthor(), p.getReactions(), p.getComments(), level,
+                    p.getSub_section().getParent_section().getTitle(), p.getSub_section().getParent_section().getId(),
+                    p.getSub_section().getTitle(), p.getSub_section().getId()));
+        });
         SubSectionOutDTO ss = SubSectionOutDTO.builder().id(sub.getId()).title(sub.getTitle())
                 .active(sub.getActive()).description(sub.getDescription()).order_number(sub.getOrder_number())
-                .posts(sub.getPosts())
+                .posts(pout)
                 .parent_id(sub.getParent_section().getId()).parent_title(sub.getParent_section().getTitle())
                 .build();
         return new ResponseEntity<SubSectionOutDTO>(ss, HttpStatus.OK);

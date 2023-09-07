@@ -9,7 +9,7 @@
             [userId]="user_id"></app-chatbox>
     </div>
     <div class="mt-5 mb-3">
-        <app-topbar [path]="'FORUM HOME /'"></app-topbar>
+        <app-topbar [path]="'FORUM HOME'"></app-topbar>
     </div>
     <div *ngFor="let s of sectionsArr" class="sections-container container-fluid d-flex justify-content-center mt-3">
         <app-section-head class="w-100 my-3" [sectionName]="s.title" [sectionDescr]="s.description"

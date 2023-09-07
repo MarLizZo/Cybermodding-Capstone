@@ -4,12 +4,14 @@ import { ISideBlockData } from '../interfaces/iside-block-data';
 import { Observable } from 'rxjs';
 import { ISectionData } from '../interfaces/isection-data';
 import { ISubSectionData } from '../interfaces/isub-section-data';
+import { IPostData } from '../interfaces/ipost-data';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ForumService {
   sidesApiUrl: string = 'http://localhost:8080/api/sides';
+  threadsApiUrl: string = 'http://localhost:8080/api/threads';
   sectionsApiUrl: string = 'http://localhost:8080/api/sections';
   subsectionsApiUrl: string = 'http://localhost:8080/api/subsections';
 
@@ -33,5 +35,9 @@ export class ForumService {
 
   public getSubSectionById(id: number): Observable<ISubSectionData> {
     return this.http.get<ISubSectionData>(this.subsectionsApiUrl + '/' + id);
+  }
+
+  public getPost(id: number): Observable<IPostData> {
+    return this.http.get<IPostData>(this.threadsApiUrl + '/' + id);
   }
 }

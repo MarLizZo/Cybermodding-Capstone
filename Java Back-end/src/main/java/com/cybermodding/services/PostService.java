@@ -13,9 +13,11 @@ import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.PostOutDTO;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.repositories.PostRepo;
 import com.cybermodding.repositories.SubSectionRepo;
@@ -27,6 +29,8 @@ public class PostService {
     PostRepo repo;
     @Autowired
     SubSectionRepo ss_repo;
+    @Autowired
+    UserService u_svc;
     @Autowired
     UserRepo u_repo;
 
@@ -98,5 +102,14 @@ public class PostService {
 
     public Post getRandom() {
         return repo.getRandom();
+    }
+
+    public PostOutDTO getPostOut(Long id) {
+        Post p = getById(id);
+        EUserLevel level = u_svc.getRank(p.getAuthor().getId());
+        return new PostOutDTO(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(), p.getAuthor(),
+                p.getReactions(), p.getComments(), level, p.getSub_section().getParent_section().getTitle(),
+                p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),
+                p.getSub_section().getId());
     }
 }

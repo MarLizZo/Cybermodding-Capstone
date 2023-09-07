@@ -1,1 +1,45 @@
-<p>showthread works!</p>
+<div *ngIf="isLoadingPage || isWaitingPage" class="h-100 d-flex justify-content-center align-items-center">
+    <app-loader></app-loader>
+</div>
+
+<div *ngIf="!isLoadingPage && !isWaitingPage" class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div class="mt-4">
+        <app-topbar [path]="'FORUM > ' + mainSectionTitle + ' > ' + subSectionTitle"></app-topbar>
+    </div>
+    <div class="container-fluid mt-5 d-flex justify-content-center">
+        <div class="row w-100 pt-2">
+            <div class="col-3 p-2 d-flex flex-column align-items-center">
+                <div *ngIf="postData.author.avatar == null" class="placeholder-img"></div>
+                <div *ngIf="postData.author.avatar != null">
+                    <!-- link all'img -->
+                </div>
+                <p class="mt-2 mb-1 fw-medium" [class]="getNameClass()">{{ postData.author.username }}</p>
+                <img [src]="getImgLink()">
+            </div>
+            <div class="col-9 d-flex flex-column pt-2 px-0">
+                <div class="flex-grow-1 px-2">
+                    <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
+                    <p class="m-0 mt-3">{{ postData.body }}</p>
+                </div>
+                <div class="subpost-container p-2 d-flex justify-content-between align-items-center mt-5">
+                    <div class="d-flex">
+                        <div class="single-react-container py-1 px-3 rounded-4">
+                            <span class="me-2" [innerHTML]="thumbUp"></span><span>{{ getReactionsCount(0) }}</span>
+                        </div>
+                        <div class="single-react-container py-1 px-3 rounded-4 mx-2">
+                            <span class="text-danger me-2" [innerHTML]="heart"></span><span>{{ getReactionsCount(1)
+                                }}</span>
+                        </div>
+                        <div class="single-react-container py-1 px-3 rounded-4">
+                            <span class="me-2" [innerHTML]="thumbDown"></span><span>{{ getReactionsCount(2) }}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <!--  -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

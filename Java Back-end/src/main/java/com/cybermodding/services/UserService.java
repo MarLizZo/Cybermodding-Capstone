@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.UserOperations;
@@ -87,5 +88,14 @@ public class UserService {
             return new CustomResponse(new Date(), "** User not found **",
                     HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public EUserLevel getRank(Long id) {
+        User u = u_repo.findById(id).get();
+        return u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_ADMIN)) ? EUserLevel.BOSS
+                : u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_MODERATOR)) ? EUserLevel.MID
+                        : u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_BANNED))
+                                ? EUserLevel.BANNED
+                                : EUserLevel.BASE;
     }
 }

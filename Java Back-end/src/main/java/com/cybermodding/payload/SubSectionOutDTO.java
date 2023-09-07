@@ -3,8 +3,6 @@ package com.cybermodding.payload;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cybermodding.entities.Post;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +18,7 @@ public class SubSectionOutDTO {
     private String description;
     private Boolean active;
     private Integer order_number;
-    private List<Post> posts = new ArrayList<Post>();
+    private List<PostOutDTO> posts = new ArrayList<PostOutDTO>();
     private Long parent_id;
     private String parent_title;
 }
