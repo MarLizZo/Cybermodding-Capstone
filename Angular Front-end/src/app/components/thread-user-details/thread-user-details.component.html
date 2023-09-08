@@ -1,0 +1,15 @@
+<div *ngIf="postData != null ? postData.author.avatar == null : commentData!.user.avatar == null"
+    class="placeholder-img"></div>
+<div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
+    <!-- link all'img -->
+</div>
+<p class="mt-2 mb-1 fw-medium" [class]="getNameClass()"
+    [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
+<img [src]="getImgLink()">
+<p class="my-3" [innerHTML]="getDescr()">
+    <i></i>
+</p>
+<div class="d-flex">
+    <p class="m-0">Utente dal:&nbsp;</p>
+    <p class="m-0">{{ getRegDate() | date : 'dd-MM-Y'}}</p>
+</div>

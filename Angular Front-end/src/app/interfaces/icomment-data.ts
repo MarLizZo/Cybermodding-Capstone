@@ -1,10 +1,10 @@
-import { IPostData } from './ipost-data';
+import { UserLevel } from '../enums/user-level';
 import { IUserData } from './iuser-data';
 
 export interface ICommentData {
   id?: number;
   content: string;
   user: IUserData;
-  post: IPostData;
   publishedDate: Date;
+  user_level?: UserLevel;
 }

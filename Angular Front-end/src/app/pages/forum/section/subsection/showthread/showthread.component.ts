@@ -60,26 +60,6 @@ export class ShowthreadComponent {
     if (this.postSub) this.postSub.unsubscribe();
   }
 
-  getNameClass(): string {
-    return this.postData.user_level!.toString() == 'BASE'
-      ? 'txt-orange'
-      : this.postData.user_level!.toString() == 'MID'
-      ? 'txt-mod'
-      : this.postData.user_level!.toString() == 'BOSS'
-      ? 'text-danger'
-      : 'txt-ban';
-  }
-
-  getImgLink(): string {
-    return this.postData.user_level!.toString() == 'BASE'
-      ? 'assets/rank/user.png'
-      : this.postData.user_level!.toString() == 'MID'
-      ? 'assets/rank/mod.png'
-      : this.postData.user_level!.toString() == 'BOSS'
-      ? 'assets/rank/admin.png'
-      : 'assets/rank/banned.png';
-  }
-
   getReactionsCount(flag: number): number {
     return flag == 0
       ? this.postData.reactions.filter((r) => r.type.toString() == 'LIKE')
@@ -89,5 +69,9 @@ export class ShowthreadComponent {
           .length
       : this.postData.reactions.filter((r) => r.type.toString() == 'DISLIKE')
           .length;
+  }
+
+  goToReply(): void {
+    console.log('eeee', this.postData);
   }
 }

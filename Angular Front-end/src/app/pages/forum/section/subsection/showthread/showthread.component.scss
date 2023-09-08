@@ -1,30 +1,10 @@
-.placeholder-img {
-  width: 64px;
-  height: 64px;
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-  border-radius: 50%;
-}
-
-.txt-orange {
-  color: var(--orange);
-}
-
-.txt-mod {
-  color: var(--mod-color);
-}
-
-.txt-ban {
-  color: var(--text-muted);
-  text-decoration: line-through;
-}
-
 .row {
   border-top: 2px solid var(--near-black);
   border-bottom: 2px solid var(--near-black);
 
   .col-3 {
     border-right: 1px solid var(--near-black);
+    background-color: var(--bg-lighter);
   }
 
   .subpost-container {
@@ -32,6 +12,17 @@
 
     .single-react-container {
       background-color: var(--bg);
+      &:hover {
+        cursor: pointer;
+        span {
+          cursor: pointer;
+        }
+      }
     }
   }
+}
+
+.row:first-child {
+  -webkit-box-shadow: 0px 0px 9px 1px var(--orange-hover-op);
+  box-shadow: 0px 0px 9px 1px var(--orange-hover-op);
 }

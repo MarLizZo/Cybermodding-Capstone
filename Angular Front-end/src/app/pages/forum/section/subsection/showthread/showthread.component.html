@@ -7,18 +7,14 @@
     <div class="mt-4">
         <app-topbar [path]="'FORUM > ' + mainSectionTitle + ' > ' + subSectionTitle"></app-topbar>
     </div>
-    <div class="container-fluid mt-5 d-flex justify-content-center">
-        <div class="row w-100 pt-2">
-            <div class="col-3 p-2 d-flex flex-column align-items-center">
-                <div *ngIf="postData.author.avatar == null" class="placeholder-img"></div>
-                <div *ngIf="postData.author.avatar != null">
-                    <!-- link all'img -->
-                </div>
-                <p class="mt-2 mb-1 fw-medium" [class]="getNameClass()">{{ postData.author.username }}</p>
-                <img [src]="getImgLink()">
+    <div class="container-fluid mt-5 d-flex flex-column align-items-center">
+        <div class="row w-100 mb-4 rounded-1">
+            <div class="col-3 py-3 px-2">
+                <app-thread-user-details [postData]="postData" [commentData]="null"
+                    class="d-flex flex-column align-items-center"></app-thread-user-details>
             </div>
             <div class="col-9 d-flex flex-column pt-2 px-0">
-                <div class="flex-grow-1 px-2">
+                <div class="flex-grow-1 px-2 pb-5">
                     <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
                     <p class="m-0 mt-3">{{ postData.body }}</p>
                 </div>
@@ -36,10 +32,12 @@
                         </div>
                     </div>
                     <div class="d-flex">
-                        <!--  -->
+                        <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
                     </div>
                 </div>
             </div>
         </div>
+        <app-comment *ngFor="let comment of postData.comments" [commentData]="comment"
+            class="row w-100 mt-2 rounded-1"></app-comment>
     </div>
 </div>

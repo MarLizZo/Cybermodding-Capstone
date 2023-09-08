@@ -13,14 +13,17 @@ import org.springframework.stereotype.Component;
 import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
+import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
+import com.cybermodding.enumerators.EReaction;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.payload.RegisterDto;
 import com.cybermodding.payload.SectionDto;
 import com.cybermodding.payload.SubSectionDto;
@@ -88,13 +91,16 @@ public class Runner implements CommandLineRunner {
                 // createSubSections();
 
                 // create Posts
-                // createPosts(35);
+                // createPosts(50);
 
                 // create Side blocks
                 // createSideBlocks();
 
                 // create Comments
-                // createComments(50);
+                // createComments(150);
+
+                // create Reactions
+                // createReactions(200);
         }
 
         private void createAndSetAdmin() {
@@ -182,7 +188,7 @@ public class Runner implements CommandLineRunner {
 
                 for (int i = 0; i < amount; i++) {
                         p_svc.createNewPost(
-                                        new PostDTO(fk.lordOfTheRings().character(),
+                                        new PostDTO(fk.lorem().sentence(5),
                                                         fk.lorem().paragraph(rand.nextInt(2, 8)),
                                                         rand.nextInt(1, 10) > 5 ? EPostType.GENERAL : EPostType.NEWS,
                                                         userRepository.getRandomUser().getId(),
@@ -206,9 +212,21 @@ public class Runner implements CommandLineRunner {
                 Faker fk = Faker.instance();
                 for (int i = 0; i < amount; i++) {
                         Post p = p_svc.getRandom();
-                        comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(3))
+                        comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(6))
                                         .publishedDate(LocalDate.now())
                                         .post(p).user(userRepository.getRandomUser()).build());
+                }
+        }
+
+        private void createReactions(int amount) {
+                for (int i = 0; i < amount; i++) {
+                        Random rand = new Random();
+                        int res = rand.nextInt(1, 20);
+                        EReaction type = res < 8 ? EReaction.LIKE
+                                        : res >= 8 && res < 13 ? EReaction.DISLIKE : EReaction.THANKS;
+                        ReactionDTO react = new ReactionDTO(userRepository.getRandomUser().getId(),
+                                        p_svc.getRandom().getId(), type);
+                        p_svc.addReaction(react);
                 }
         }
 

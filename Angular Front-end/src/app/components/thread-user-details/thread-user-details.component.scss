@@ -1,0 +1,20 @@
+.txt-orange {
+  color: var(--orange);
+}
+
+.txt-mod {
+  color: var(--mod-color);
+}
+
+.txt-ban {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.placeholder-img {
+  width: 64px;
+  height: 64px;
+  background-color: var(--near-black);
+  border: 2px solid var(--orange);
+  border-radius: 50%;
+}

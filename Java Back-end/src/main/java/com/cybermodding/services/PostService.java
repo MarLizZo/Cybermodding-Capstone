@@ -1,6 +1,7 @@
 package com.cybermodding.services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.SubSection;
@@ -15,11 +17,15 @@ import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.payload.CommentInDTO;
+import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
 import com.cybermodding.payload.PostOutDTO;
 import com.cybermodding.payload.ReactionDTO;
+import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.PostRepo;
+import com.cybermodding.repositories.ReactionRepo;
 import com.cybermodding.repositories.SubSectionRepo;
 import com.cybermodding.repositories.UserRepo;
 
@@ -33,6 +39,10 @@ public class PostService {
     UserService u_svc;
     @Autowired
     UserRepo u_repo;
+    @Autowired
+    ReactionRepo react_repo;
+    @Autowired
+    CommentRepo comm_repo;
 
     public Post getById(Long id) {
         if (repo.existsById(id)) {
@@ -91,14 +101,29 @@ public class PostService {
 
         if (post != null && u != null) {
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
-            List<Reaction> reactionsLs = post.getReactions();
-            reactionsLs.add(reaction);
-            post.setReactions(reactionsLs);
+            react_repo.save(reaction);
             return new CustomResponse(new Date(), "** Reaction added to Post succesfully **", HttpStatus.OK);
         } else {
             return new CustomResponse(new Date(), "** Post or User not found **", HttpStatus.BAD_REQUEST);
         }
     }
+
+    // delete reaction
+
+    public CustomResponse addComment(CommentInDTO comment) {
+        Post post = getById(comment.getPost_id());
+        User user = u_svc.getById(comment.getUser_id());
+
+        if (post != null && user != null) {
+            comm_repo.save(Comment.builder().content(comment.getContent()).user(user).post(post)
+                    .publishedDate(LocalDate.now()).build());
+            return new CustomResponse(new Date(), "** Comment added to Post succesfully **", HttpStatus.OK);
+        } else {
+            return new CustomResponse(new Date(), "** Post or User not found **", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // delete comment
 
     public Post getRandom() {
         return repo.getRandom();
@@ -107,8 +132,15 @@ public class PostService {
     public PostOutDTO getPostOut(Long id) {
         Post p = getById(id);
         EUserLevel level = u_svc.getRank(p.getAuthor().getId());
+
+        List<CommentOutDTO> lsOut = new ArrayList<>();
+        p.getComments().forEach(c -> {
+            lsOut.add(CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
+                    .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
+        });
+
         return new PostOutDTO(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(), p.getAuthor(),
-                p.getReactions(), p.getComments(), level, p.getSub_section().getParent_section().getTitle(),
+                p.getReactions(), lsOut, level, p.getSub_section().getParent_section().getTitle(),
                 p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),
                 p.getSub_section().getId());
     }

@@ -1,0 +1,10 @@
+<div class="col-3 py-3 px-2">
+    <app-thread-user-details [postData]="null" [commentData]="commentData"
+        class="d-flex flex-column align-items-center"></app-thread-user-details>
+</div>
+<div class="col-9 d-flex flex-column pt-3 px-0">
+    <div class="m-0 flex-grow-1 px-2" [innerHTML]="commentData.content"></div>
+    <div class="subcomment-container p-2 d-flex justify-content-center">
+        <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
+    </div>
+</div>

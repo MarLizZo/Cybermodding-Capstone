@@ -1,6 +1,5 @@
 package com.cybermodding.payload;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +17,7 @@ public class SubSectionOutDTO {
     private String description;
     private Boolean active;
     private Integer order_number;
-    private List<PostOutDTO> posts = new ArrayList<PostOutDTO>();
+    private List<PostOutDTO> posts;
     private Long parent_id;
     private String parent_title;
 }

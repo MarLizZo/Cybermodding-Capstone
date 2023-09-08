@@ -7,6 +7,9 @@ import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
 import { TopbarComponent } from 'src/app/components/topbar/topbar.component';
 import { LoaderComponent } from 'src/app/components/loader/loader.component';
+import { CommentComponent } from 'src/app/components/comment/comment.component';
+import { ThreadUserDetailsComponent } from 'src/app/components/thread-user-details/thread-user-details.component';
+import { BtnReplyComponent } from 'src/app/components/btn-reply/btn-reply.component';
 
 @NgModule({
   declarations: [ShowthreadComponent],
@@ -17,6 +20,9 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component';
     OrangeButtonComponent,
     TopbarComponent,
     LoaderComponent,
+    CommentComponent,
+    ThreadUserDetailsComponent,
+    BtnReplyComponent,
   ],
 })
 export class ShowthreadModule {}

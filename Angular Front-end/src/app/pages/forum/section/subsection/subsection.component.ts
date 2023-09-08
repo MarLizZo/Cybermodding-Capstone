@@ -41,6 +41,7 @@ export class SubsectionComponent {
           })
         )
         .subscribe((res) => {
+          console.log(res);
           this.subSData = res;
           this.ssParentTitle = res.parent_title;
           this.ssTitle = res.title;

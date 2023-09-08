@@ -2,8 +2,6 @@ package com.cybermodding.payload;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
@@ -25,7 +23,7 @@ public class PostOutDTO {
     private EPostType type;
     private User author;
     private List<Reaction> reactions;
-    private List<Comment> comments;
+    private List<CommentOutDTO> comments;
     private EUserLevel user_level;
     private String main_section_title;
     private Long main_section_id;
