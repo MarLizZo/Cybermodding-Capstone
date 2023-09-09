@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { ISectionData } from '../interfaces/isection-data';
 import { ISubSectionData } from '../interfaces/isub-section-data';
 import { IPostData } from '../interfaces/ipost-data';
+import { Ireaction } from '../interfaces/ireaction';
+import { ICustomResponse } from '../interfaces/icustom-response';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +41,18 @@ export class ForumService {
 
   public getPost(id: number): Observable<IPostData> {
     return this.http.get<IPostData>(this.threadsApiUrl + '/' + id);
+  }
+
+  public postReaction(reaction: Ireaction): Observable<ICustomResponse> {
+    return this.http.post<ICustomResponse>(
+      this.threadsApiUrl + '/add-react',
+      reaction
+    );
+  }
+
+  public deleteReaction(reaction_id: number): Observable<ICustomResponse> {
+    return this.http.get<ICustomResponse>(
+      this.threadsApiUrl + '/delete-react/' + reaction_id
+    );
   }
 }

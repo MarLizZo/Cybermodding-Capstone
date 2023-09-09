@@ -5,10 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostOutDTO;
+import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.UserService;
 
@@ -25,5 +29,15 @@ public class ThreadController {
     @GetMapping("/{id}")
     public ResponseEntity<PostOutDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(svc.getPostOut(id));
+    }
+
+    @PostMapping("/add-react")
+    public ResponseEntity<CustomResponse> addReaction(@RequestBody ReactionDTO react) {
+        return ResponseEntity.ok(svc.addReaction(react));
+    }
+
+    @GetMapping("/delete-react")
+    public ResponseEntity<CustomResponse> deleteReaction(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.removeReaction(id));
     }
 }

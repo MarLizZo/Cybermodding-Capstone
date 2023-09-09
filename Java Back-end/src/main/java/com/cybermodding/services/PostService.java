@@ -100,6 +100,10 @@ public class PostService {
         User u = u_repo.existsById(r.getUser_id()) ? u_repo.findById(r.getUser_id()).get() : null;
 
         if (post != null && u != null) {
+            if (post.getReactions().stream().anyMatch(re -> re.getUser().getId().equals(u.getId()))) {
+                react_repo.deleteById(post.getReactions().stream().filter(re -> re.getUser().getId() == u.getId())
+                        .findFirst().get().getId());
+            }
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
             react_repo.save(reaction);
             return new CustomResponse(new Date(), "** Reaction added to Post succesfully **", HttpStatus.OK);
@@ -108,7 +112,13 @@ public class PostService {
         }
     }
 
-    // delete reaction
+    public CustomResponse removeReaction(Long id) {
+        if (react_repo.existsById(id)) {
+            return new CustomResponse(new Date(), "** Reaction deleted succesfully **", HttpStatus.OK);
+        } else {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Reaction not found **");
+        }
+    }
 
     public CustomResponse addComment(CommentInDTO comment) {
         Post post = getById(comment.getPost_id());

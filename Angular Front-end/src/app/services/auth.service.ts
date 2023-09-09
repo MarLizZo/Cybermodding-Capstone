@@ -35,6 +35,7 @@ export class AuthService {
   privileges$ = this.privilegeSubj.asObservable();
   hasPrivileges$ = this.privileges$.pipe(map((l) => !!l));
   private checkValSub!: Subscription;
+  public user_id: number = 0;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -62,6 +63,7 @@ export class AuthService {
             };
             this.privilegeSubj.next(obj);
             this.subj.next(user);
+            this.user_id = user!.user_id;
           } else {
             console.log('INVALID TOKEN OR SERVER ERROR');
             localStorage.removeItem('user');
@@ -89,6 +91,7 @@ export class AuthService {
           isAdmin: res.accessToken.endsWith('9s'),
         };
         this.privilegeSubj.next(obj);
+        this.user_id = res.user_id;
         localStorage.setItem(
           'user',
           JSON.stringify({

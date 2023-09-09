@@ -14,6 +14,8 @@
       background-color: var(--bg);
       &:hover {
         cursor: pointer;
+        -webkit-box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
+        box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
         span {
           cursor: pointer;
         }
@@ -25,4 +27,9 @@
 .row:first-child {
   -webkit-box-shadow: 0px 0px 9px 1px var(--orange-hover-op);
   box-shadow: 0px 0px 9px 1px var(--orange-hover-op);
+}
+
+.reaction-sel {
+  -webkit-box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
+  box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
 }
