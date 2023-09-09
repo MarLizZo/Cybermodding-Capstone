@@ -32,6 +32,7 @@ export class ShowthreadComponent {
   thanksCount: number = 0;
   dislikeCount: number = 0;
   userID: number | undefined;
+  sentReactionID: number | undefined;
 
   constructor(
     private svc: ForumService,
@@ -53,7 +54,6 @@ export class ShowthreadComponent {
           })
         )
         .subscribe((res) => {
-          console.log(res);
           this.postData = res;
           this.mainSectionTitle = res.main_section_title!;
           this.subSectionTitle = res.subsection_title!;
@@ -64,7 +64,6 @@ export class ShowthreadComponent {
 
       this.authSub = this.auth.user$.subscribe((res) => {
         this.userID = res?.user_id;
-        console.log(res?.user_id);
       });
     }
     setTimeout(() => {
@@ -98,6 +97,7 @@ export class ShowthreadComponent {
     let like_check: boolean = re_type == 0 && this.hasUserLike;
     let thanks_check: boolean = re_type == 1 && this.hasUserThanks;
     let dislike_check: boolean = re_type == 2 && this.hasUserDislike;
+    if (this.reactSub) this.reactSub.unsubscribe();
 
     if (!like_check && !thanks_check && !dislike_check) {
       let react_type: ReactionType =
@@ -121,41 +121,105 @@ export class ShowthreadComponent {
           })
         )
         .subscribe((res) => {
-          if (re_type == 0) {
-            this.hasUserLike = true;
-            this.likeCount++;
-            if (this.hasUserThanks) {
-              this.thanksCount--;
-              this.hasUserThanks = false;
-            }
-            if (this.hasUserDislike) {
-              this.dislikeCount--;
-              this.hasUserDislike = false;
-            }
-          } else if (re_type == 1) {
-            this.hasUserThanks = true;
-            this.thanksCount++;
-            if (this.hasUserLike) {
-              this.likeCount--;
-              this.hasUserLike = false;
-            }
-            if (this.hasUserDislike) {
-              this.dislikeCount--;
-              this.hasUserDislike = false;
-            }
-          } else {
-            this.hasUserDislike = true;
-            this.dislikeCount++;
-            if (this.hasUserLike) {
-              this.likeCount--;
-              this.hasUserLike = false;
-            }
-            if (this.hasUserThanks) {
-              this.thanksCount--;
-              this.hasUserThanks = false;
-            }
-          }
+          this.sentReactionID = res.id;
+          this.fixCount(re_type);
         });
+    } else if (like_check) {
+      let id: number | undefined = this.postData.reactions.find(
+        (r) =>
+          r.type == ReactionType[ReactionType.LIKE] && r.user?.id == this.userID
+      )?.id;
+      this.reactSub = this.svc
+        .deleteReaction(
+          this.sentReactionID != undefined ? this.sentReactionID : id!
+        )
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.sentReactionID = undefined;
+          this.hasUserLike = false;
+          this.likeCount--;
+        });
+    } else if (thanks_check) {
+      let id: number | undefined = this.postData.reactions.find(
+        (r) =>
+          r.type == ReactionType[ReactionType.THANKS] &&
+          r.user?.id == this.userID
+      )?.id;
+      this.reactSub = this.svc
+        .deleteReaction(
+          this.sentReactionID != undefined ? this.sentReactionID : id!
+        )
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.sentReactionID = undefined;
+          this.hasUserThanks = false;
+          this.thanksCount--;
+        });
+    } else if (dislike_check) {
+      let id: number | undefined = this.postData.reactions.find(
+        (r) =>
+          r.type == ReactionType[ReactionType.DISLIKE] &&
+          r.user?.id == this.userID
+      )?.id;
+      this.reactSub = this.svc
+        .deleteReaction(
+          this.sentReactionID != undefined ? this.sentReactionID : id!
+        )
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.sentReactionID = undefined;
+          this.hasUserDislike = false;
+          this.dislikeCount--;
+        });
+    }
+  }
+
+  fixCount(type: number): void {
+    if (type == 0) {
+      this.hasUserLike = true;
+      this.likeCount++;
+      if (this.hasUserThanks) {
+        this.thanksCount--;
+        this.hasUserThanks = false;
+      }
+      if (this.hasUserDislike) {
+        this.dislikeCount--;
+        this.hasUserDislike = false;
+      }
+    } else if (type == 1) {
+      this.hasUserThanks = true;
+      this.thanksCount++;
+      if (this.hasUserLike) {
+        this.likeCount--;
+        this.hasUserLike = false;
+      }
+      if (this.hasUserDislike) {
+        this.dislikeCount--;
+        this.hasUserDislike = false;
+      }
+    } else {
+      this.hasUserDislike = true;
+      this.dislikeCount++;
+      if (this.hasUserLike) {
+        this.likeCount--;
+        this.hasUserLike = false;
+      }
+      if (this.hasUserThanks) {
+        this.thanksCount--;
+        this.hasUserThanks = false;
+      }
     }
   }
 

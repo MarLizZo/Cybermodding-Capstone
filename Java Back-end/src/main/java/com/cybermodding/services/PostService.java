@@ -95,7 +95,7 @@ public class PostService {
         }
     }
 
-    public CustomResponse addReaction(ReactionDTO r) {
+    public Reaction addReaction(ReactionDTO r) {
         Post post = repo.existsById(r.getPost_id()) ? repo.findById(r.getPost_id()).get() : null;
         User u = u_repo.existsById(r.getUser_id()) ? u_repo.findById(r.getUser_id()).get() : null;
 
@@ -106,14 +106,15 @@ public class PostService {
             }
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
             react_repo.save(reaction);
-            return new CustomResponse(new Date(), "** Reaction added to Post succesfully **", HttpStatus.OK);
+            return reaction;
         } else {
-            return new CustomResponse(new Date(), "** Post or User not found **", HttpStatus.BAD_REQUEST);
+            return null;
         }
     }
 
     public CustomResponse removeReaction(Long id) {
         if (react_repo.existsById(id)) {
+            react_repo.deleteById(id);
             return new CustomResponse(new Date(), "** Reaction deleted succesfully **", HttpStatus.OK);
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Reaction not found **");

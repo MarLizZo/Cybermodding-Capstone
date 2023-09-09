@@ -43,8 +43,8 @@ export class ForumService {
     return this.http.get<IPostData>(this.threadsApiUrl + '/' + id);
   }
 
-  public postReaction(reaction: Ireaction): Observable<ICustomResponse> {
-    return this.http.post<ICustomResponse>(
+  public postReaction(reaction: Ireaction): Observable<Ireaction> {
+    return this.http.post<Ireaction>(
       this.threadsApiUrl + '/add-react',
       reaction
     );

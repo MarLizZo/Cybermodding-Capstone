@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cybermodding.entities.Reaction;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostOutDTO;
 import com.cybermodding.payload.ReactionDTO;
@@ -32,11 +33,11 @@ public class ThreadController {
     }
 
     @PostMapping("/add-react")
-    public ResponseEntity<CustomResponse> addReaction(@RequestBody ReactionDTO react) {
+    public ResponseEntity<Reaction> addReaction(@RequestBody ReactionDTO react) {
         return ResponseEntity.ok(svc.addReaction(react));
     }
 
-    @GetMapping("/delete-react")
+    @GetMapping("/delete-react/{id}")
     public ResponseEntity<CustomResponse> deleteReaction(@PathVariable Long id) {
         return ResponseEntity.ok(svc.removeReaction(id));
     }
