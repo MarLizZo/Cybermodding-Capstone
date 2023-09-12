@@ -1,7 +1,8 @@
 package com.cybermodding.services;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -88,10 +89,23 @@ public class PostService {
         if (ss != null && u != null) {
             EPostType ept = pd.getType() == null ? EPostType.GENERAL : pd.getType();
             Post post = Post.builder().title(pd.getTitle()).body(pd.getBody()).type(ept).author(u)
-                    .sub_section(ss).publishedDate(LocalDate.now()).build();
+                    .sub_section(ss).publishedDate(LocalDateTime.now()).build();
             return repo.save(post);
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** User or SubSection not found **");
+        }
+    }
+
+    public Reaction updateReaction(Long id, Reaction react) {
+        if (react_repo.existsById(id)) {
+            if (id.equals(react.getId())) {
+                react_repo.save(react);
+                return react;
+            } else {
+                throw new CustomException(HttpStatus.BAD_REQUEST, "** ID and Reaction ID does not match **");
+            }
+        } else {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Reaction not found **");
         }
     }
 
@@ -121,16 +135,18 @@ public class PostService {
         }
     }
 
-    public CustomResponse addComment(CommentInDTO comment) {
+    public CommentOutDTO addComment(CommentInDTO comment) {
         Post post = getById(comment.getPost_id());
         User user = u_svc.getById(comment.getUser_id());
 
         if (post != null && user != null) {
-            comm_repo.save(Comment.builder().content(comment.getContent()).user(user).post(post)
-                    .publishedDate(LocalDate.now()).build());
-            return new CustomResponse(new Date(), "** Comment added to Post succesfully **", HttpStatus.OK);
+            Comment comm = comm_repo.save(Comment.builder().content(comment.getContent()).user(user).post(post)
+                    .publishedDate(LocalDateTime.now()).build());
+            return CommentOutDTO.builder().content(comm.getContent()).id(comm.getId())
+                    .publishedDate(comm.getPublishedDate()).user(comm.getUser())
+                    .user_level(u_svc.getRank(comm.getUser().getId())).build();
         } else {
-            return new CustomResponse(new Date(), "** Post or User not found **", HttpStatus.BAD_REQUEST);
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Post or User not found **");
         }
     }
 
@@ -148,6 +164,12 @@ public class PostService {
         p.getComments().forEach(c -> {
             lsOut.add(CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
                     .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
+        });
+        lsOut.sort(new Comparator<CommentOutDTO>() {
+            @Override
+            public int compare(CommentOutDTO c1, CommentOutDTO c2) {
+                return c1.getPublishedDate().compareTo(c2.getPublishedDate());
+            }
         });
 
         return new PostOutDTO(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(), p.getAuthor(),

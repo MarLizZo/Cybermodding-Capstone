@@ -1,6 +1,6 @@
 package com.cybermodding.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,7 +42,7 @@ public class Comment {
     private Post post;
 
     @Column(nullable = false)
-    private LocalDate publishedDate;
+    private LocalDateTime publishedDate;
 
     @Override
     public String toString() {

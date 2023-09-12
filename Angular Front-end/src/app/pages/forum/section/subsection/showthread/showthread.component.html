@@ -5,7 +5,8 @@
 <div *ngIf="!isLoadingPage && !isWaitingPage" class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="mt-4">
-        <app-topbar [path]="'FORUM > ' + mainSectionTitle + ' > ' + subSectionTitle"></app-topbar>
+        <app-topbar
+            [path]="'FORUM > ' + mainSectionTitle + ' > ' + subSectionTitle + ' > ' + postData.title"></app-topbar>
     </div>
     <div class="container-fluid mt-5 d-flex flex-column align-items-center">
         <div class="row w-100 mb-4 rounded-1">
@@ -16,7 +17,7 @@
             <div class="col-9 d-flex flex-column pt-2 px-0">
                 <div class="flex-grow-1 px-2 pb-5">
                     <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
-                    <p class="m-0 mt-3">{{ postData.body }}</p>
+                    <p class="m-0 mt-3" [innerHTML]="postData.body"></p>
                 </div>
                 <div class="subpost-container p-2 d-flex justify-content-between align-items-center mt-5">
                     <div class="d-flex">
@@ -40,7 +41,11 @@
                 </div>
             </div>
         </div>
-        <app-comment *ngFor="let comment of postData.comments" [commentData]="comment"
-            class="row w-100 mt-2 rounded-1"></app-comment>
+        <app-comment *ngFor="let comment of postData.comments; let i = index" [commentData]="comment"
+            [commentIndex]="i + 1" class="row w-100 mt-2 rounded-1" (onReply)="goToReply($event)"></app-comment>
+        <!-- Pageable -->
+        <div #editorForm class="separator my-5"></div>
+        <app-editor-form class="w-100 " [type]="'comment'" [postID]="postData.id!" [userID]="userID!"
+            (submitData)="onNewComment($event)" [quoted]="quotedMessage ? quotedMessage : undefined"></app-editor-form>
     </div>
 </div>

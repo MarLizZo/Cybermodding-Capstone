@@ -20,6 +20,7 @@ export class SubsectionComponent {
   ssParentTitle: string = '';
   ssTitle: string = '';
   isAuthenticated: boolean = false;
+  newThreadPath: string = '';
 
   constructor(
     private svc: ForumService,
@@ -31,6 +32,7 @@ export class SubsectionComponent {
     let ssId: number = parseInt(
       this.route.snapshot.paramMap.get('hash')!.split('-')[0]
     );
+    this.newThreadPath = '/forum/newthread/' + ssId;
 
     if (!isNaN(ssId) && ssId != null) {
       this.ssSub = this.svc
@@ -41,7 +43,6 @@ export class SubsectionComponent {
           })
         )
         .subscribe((res) => {
-          console.log(res);
           this.subSData = res;
           this.ssParentTitle = res.parent_title;
           this.ssTitle = res.title;

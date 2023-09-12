@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
 import { ThreadUserDetailsComponent } from '../thread-user-details/thread-user-details.component';
@@ -13,6 +13,9 @@ import { BtnReplyComponent } from '../btn-reply/btn-reply.component';
 })
 export class CommentComponent {
   @Input() commentData!: ICommentData;
+  @Input() commentIndex!: number;
+
+  @Output() onReply = new EventEmitter();
 
   constructor() {}
 
@@ -25,6 +28,6 @@ export class CommentComponent {
   }
 
   goToReply(): void {
-    console.log('eeee', this.commentData);
+    this.onReply.emit(this.commentData);
   }
 }

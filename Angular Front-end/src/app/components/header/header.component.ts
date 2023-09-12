@@ -45,6 +45,6 @@ export class HeaderComponent {
     return this.router.url == '/';
   }
   isForum(): boolean {
-    return this.router.url == '/forum';
+    return this.router.url.includes('/forum');
   }
 }

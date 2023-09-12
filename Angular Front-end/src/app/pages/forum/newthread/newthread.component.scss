@@ -1,0 +1,39 @@
+.container-fluid {
+  .input-group {
+    width: 85%;
+    @media screen and (min-width: 992px) {
+      width: 65%;
+    }
+    .custom-btn {
+      background-color: var(--bg-lighter);
+      color: var(--txt);
+      border: 0;
+      border-left: 2px solid var(--near-black);
+      &:hover {
+        background-color: var(--near-black);
+      }
+    }
+    .form-control {
+      background-color: var(--bg-lighter);
+      color: var(--txt);
+
+      &::placeholder {
+        color: var(--txt-muted);
+      }
+    }
+    div[ngbDropdownMenu] {
+      background-color: var(--bg-lighter);
+      button {
+        color: var(--txt);
+        &:hover {
+          background-color: var(--bg);
+          color: var(--orange);
+        }
+      }
+    }
+  }
+}
+
+.txt-orange {
+  color: var(--orange) !important;
+}

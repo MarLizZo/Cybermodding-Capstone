@@ -23,6 +23,11 @@ const routes: Routes = [
         (m) => m.ShowthreadModule
       ),
   },
+  {
+    path: 'newthread/:ssid',
+    loadChildren: () =>
+      import('./newthread/newthread.module').then((m) => m.NewthreadModule),
+  },
 ];
 
 @NgModule({

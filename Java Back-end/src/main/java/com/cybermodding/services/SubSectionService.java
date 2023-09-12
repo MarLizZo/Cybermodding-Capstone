@@ -1,5 +1,6 @@
 package com.cybermodding.services;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.cybermodding.entities.Post;
 import com.cybermodding.entities.Section;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.exception.CustomException;
@@ -25,7 +27,15 @@ public class SubSectionService {
 
     public SubSection getById(Long id) {
         if (repo.existsById(id)) {
-            return repo.findById(id).get();
+            SubSection ss = repo.findById(id).get();
+
+            ss.getPosts().sort(new Comparator<Post>() {
+                @Override
+                public int compare(Post p1, Post p2) {
+                    return p2.getPublishedDate().compareTo(p1.getPublishedDate());
+                }
+            });
+            return ss;
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Sub Section not found **");
         }

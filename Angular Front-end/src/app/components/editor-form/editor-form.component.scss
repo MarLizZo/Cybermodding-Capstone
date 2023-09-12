@@ -1,0 +1,19 @@
+.outer-container {
+  background-color: var(--bg-lighter);
+
+  .form-floating {
+    .form-control {
+      background-color: var(--bg);
+      border: 1px solid var(--orange-hover);
+      color: var(--txt);
+    }
+
+    .form-control::placeholder {
+      color: var(--txt-muted) !important;
+    }
+  }
+}
+
+app-ckeditor {
+  height: max-content;
+}

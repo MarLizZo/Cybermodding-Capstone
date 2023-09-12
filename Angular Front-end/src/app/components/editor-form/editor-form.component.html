@@ -1,0 +1,5 @@
+<div class="outer-container d-flex flex-column justify-content-center align-items-center py-3">
+    <app-ckeditor [style]="heightStyle" class="w-100 d-flex flex-column"
+        [placeholderText]="type == 'comment' ? 'Rispondi qui..' : 'Scrivi qui..'" [type]="type"
+        (onSubmit)="doPost($event)" [quotedMsg]="quoted == undefined ? undefined : quoted"></app-ckeditor>
+</div>

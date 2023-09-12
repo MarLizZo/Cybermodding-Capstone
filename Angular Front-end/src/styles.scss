@@ -12,7 +12,7 @@
   --bg-tert: #252525;
   --orange: #ff8c00;
   --orange-hover: #d67600;
-  --orange-hover-op: #d676008c;
+  --orange-hover-op: #ca70018c;
   --txt: #d3d3d3;
   --txt-muted: #808080;
   --mod-color: #42b883;
@@ -44,4 +44,11 @@ h4,
 h5,
 h6 {
   cursor: default;
+}
+
+blockquote {
+  background-color: var(--near-black);
+  padding: 1rem;
+  border: 2px solid var(--bg-lighter);
+  border-radius: 2px;
 }

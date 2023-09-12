@@ -8,7 +8,8 @@
         <p class="mb-1" [innerText]="subSData != undefined ? subSData.description : ''"></p>
     </div>
     <div class="container-fluid mt-5">
-        <app-orange-button *ngIf="isAuthenticated" [btnTitle]="'Scrivi Nuovo Post'"></app-orange-button>
+        <app-orange-button *ngIf="isAuthenticated" [btnTitle]="'Scrivi Nuovo Post'" [btnTheme]="'orange'"
+            [routerLink]="newThreadPath"></app-orange-button>
         <div class="posts-container mt-4 d-flex justify-content-center">
             <div class="row w-100">
                 <div class="col-12 d-flex p-2">

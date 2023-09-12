@@ -33,3 +33,9 @@
   -webkit-box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
   box-shadow: inset 0px 0px 7px 2px var(--orange-hover-op);
 }
+
+.separator {
+  width: 100%;
+  height: 1px;
+  background-color: var(--orange-hover);
+}

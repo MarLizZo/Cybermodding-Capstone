@@ -1,7 +1,5 @@
 package com.cybermodding.payload;
 
-import java.time.LocalDate;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +13,4 @@ public class CommentInDTO {
     private String content;
     private Long user_id;
     private Long post_id;
-    private LocalDate publishedDate;
 }

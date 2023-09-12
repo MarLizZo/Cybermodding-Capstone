@@ -10,6 +10,7 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component';
 import { CommentComponent } from 'src/app/components/comment/comment.component';
 import { ThreadUserDetailsComponent } from 'src/app/components/thread-user-details/thread-user-details.component';
 import { BtnReplyComponent } from 'src/app/components/btn-reply/btn-reply.component';
+import { EditorFormComponent } from 'src/app/components/editor-form/editor-form.component';
 
 @NgModule({
   declarations: [ShowthreadComponent],
@@ -23,6 +24,7 @@ import { BtnReplyComponent } from 'src/app/components/btn-reply/btn-reply.compon
     CommentComponent,
     ThreadUserDetailsComponent,
     BtnReplyComponent,
+    EditorFormComponent,
   ],
 })
 export class ShowthreadModule {}

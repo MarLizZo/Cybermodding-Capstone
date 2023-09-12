@@ -1,6 +1,6 @@
 package com.cybermodding.configurations;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class CommentConfig {
 
     @Bean
     @Scope("prototype")
-    Comment commentCreator(String _content, User _user, Post _post, LocalDate _publishedDate) {
+    Comment commentCreator(String _content, User _user, Post _post, LocalDateTime _publishedDate) {
         return Comment.builder().content(_content).user(_user).post(_post).publishedDate(_publishedDate).build();
     }
 }

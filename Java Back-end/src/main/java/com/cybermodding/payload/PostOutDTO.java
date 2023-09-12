@@ -1,6 +1,6 @@
 package com.cybermodding.payload;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.User;
@@ -19,7 +19,7 @@ public class PostOutDTO {
     private Long id;
     private String title;
     private String body;
-    private LocalDate publishedDate;
+    private LocalDateTime publishedDate;
     private EPostType type;
     private User author;
     private List<Reaction> reactions;

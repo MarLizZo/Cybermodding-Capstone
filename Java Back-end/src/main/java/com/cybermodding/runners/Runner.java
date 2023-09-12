@@ -1,6 +1,7 @@
 package com.cybermodding.runners;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Random;
 import java.util.Set;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Component;
 import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
-import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.entities.User;
@@ -91,16 +91,16 @@ public class Runner implements CommandLineRunner {
                 // createSubSections();
 
                 // create Posts
-                // createPosts(50);
+                // createPosts(100);
 
                 // create Side blocks
                 // createSideBlocks();
 
                 // create Comments
-                // createComments(150);
+                // createComments(250);
 
                 // create Reactions
-                // createReactions(200);
+                // createReactions(400);
         }
 
         private void createAndSetAdmin() {
@@ -213,7 +213,7 @@ public class Runner implements CommandLineRunner {
                 for (int i = 0; i < amount; i++) {
                         Post p = p_svc.getRandom();
                         comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(6))
-                                        .publishedDate(LocalDate.now())
+                                        .publishedDate(LocalDateTime.now())
                                         .post(p).user(userRepository.getRandomUser()).build());
                 }
         }

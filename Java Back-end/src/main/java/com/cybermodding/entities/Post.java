@@ -1,6 +1,6 @@
 package com.cybermodding.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cybermodding.enumerators.EPostType;
@@ -43,7 +43,7 @@ public class Post {
     private String body;
 
     @Column(nullable = false)
-    private LocalDate publishedDate;
+    private LocalDateTime publishedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

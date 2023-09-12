@@ -7,6 +7,9 @@ import { ISubSectionData } from '../interfaces/isub-section-data';
 import { IPostData } from '../interfaces/ipost-data';
 import { Ireaction } from '../interfaces/ireaction';
 import { ICustomResponse } from '../interfaces/icustom-response';
+import { ICommentDTO } from '../interfaces/icomment-dto';
+import { ICommentData } from '../interfaces/icomment-data';
+import { IPostDTO } from '../interfaces/ipost-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -44,15 +47,20 @@ export class ForumService {
   }
 
   public postReaction(reaction: Ireaction): Observable<Ireaction> {
-    return this.http.post<Ireaction>(
-      this.threadsApiUrl + '/add-react',
-      reaction
-    );
+    return this.http.post<Ireaction>(this.threadsApiUrl + '/react', reaction);
   }
 
   public deleteReaction(reaction_id: number): Observable<ICustomResponse> {
-    return this.http.get<ICustomResponse>(
-      this.threadsApiUrl + '/delete-react/' + reaction_id
+    return this.http.delete<ICustomResponse>(
+      this.threadsApiUrl + '/react/' + reaction_id
     );
+  }
+
+  public postComment(data: ICommentDTO): Observable<ICommentData> {
+    return this.http.post<ICommentData>(this.threadsApiUrl + '/reply', data);
+  }
+
+  public postNewThread(data: IPostDTO): Observable<IPostData> {
+    return this.http.post<IPostData>(this.threadsApiUrl, data);
   }
 }

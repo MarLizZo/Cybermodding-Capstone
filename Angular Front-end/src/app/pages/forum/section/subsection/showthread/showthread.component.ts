@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription, catchError } from 'rxjs';
 import { ReactionType } from 'src/app/enums/reaction-type';
+import { ICommentData } from 'src/app/interfaces/icomment-data';
 import { IPostData } from 'src/app/interfaces/ipost-data';
+import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
 import { Ireaction } from 'src/app/interfaces/ireaction';
 import { AuthService } from 'src/app/services/auth.service';
 import { ForumService } from 'src/app/services/forum.service';
@@ -33,6 +35,9 @@ export class ShowthreadComponent {
   dislikeCount: number = 0;
   userID: number | undefined;
   sentReactionID: number | undefined;
+  quotedMessage: IQuoteInfo | undefined;
+
+  @ViewChild('editorForm') editorForm!: ElementRef<HTMLElement>;
 
   constructor(
     private svc: ForumService,
@@ -89,8 +94,29 @@ export class ShowthreadComponent {
     ).length;
   }
 
-  goToReply(): void {
-    console.log('eeee', this.postData);
+  goToReply(comm?: ICommentData): void {
+    this.editorForm.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+
+    if (comm) {
+      this.quotedMessage = {
+        content: comm.content,
+        username: comm.user.username,
+        user_id: comm.user.id!,
+        user_level: comm.user_level!,
+      };
+      console.log(this.quotedMessage);
+    } else {
+      this.quotedMessage = {
+        content: this.postData.body,
+        user_id: this.postData.author.id!,
+        username: this.postData.author.username,
+        user_level: this.postData.user_level!,
+      };
+      console.log(this.quotedMessage);
+    }
   }
 
   addReaction(re_type: number): void {
@@ -236,5 +262,11 @@ export class ShowthreadComponent {
       this.postData.reactions.findIndex(
         (r) => r.type.toString() == 'DISLIKE' && r.user?.id == this.userID
       ) != -1;
+  }
+
+  onNewComment(comment: ICommentData) {
+    if (comment.content.length) {
+      this.postData.comments.push(comment);
+    }
   }
 }
