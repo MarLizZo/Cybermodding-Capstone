@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, catchError } from 'rxjs';
 import { UserLevel } from 'src/app/enums/user-level';
 import { IPostData } from 'src/app/interfaces/ipost-data';
@@ -25,7 +25,8 @@ export class SubsectionComponent {
   constructor(
     private svc: ForumService,
     private route: ActivatedRoute,
-    private auth: AuthService
+    private auth: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -74,5 +75,38 @@ export class SubsectionComponent {
       : level.toString() == 'BOSS'
       ? 'text-danger'
       : 'txt-ban';
+  }
+
+  removeTags(str: string): string {
+    return str
+      .replaceAll('<blockquote>', '')
+      .replaceAll('</blockquote>', '')
+      .replaceAll('<b>', '')
+      .replaceAll('</b>', '')
+      .replaceAll('<i>', '')
+      .replaceAll('</i>', '')
+      .replaceAll('<p>', '')
+      .replaceAll('</p>', '')
+      .replaceAll('&nbsp;', ' ');
+  }
+
+  getCommentLink(index: number) {
+    let baseUrl: string =
+      '/forum/showthread/' +
+      this.postsArr[index].id +
+      '-' +
+      this.postsArr[index].title
+        .replaceAll(' ', '-')
+        .replaceAll('/', '-')
+        .replaceAll('.', '')
+        .toLowerCase();
+
+    if (this.postsArr[index].comments_count! <= 8) {
+      this.router.navigateByUrl(baseUrl);
+    } else {
+      let page = Math.ceil(this.postsArr[index].comments_count! / 8);
+      this.router.navigateByUrl(baseUrl + '/' + page);
+    }
+    sessionStorage.setItem('scrolltocomment', 'true');
   }
 }

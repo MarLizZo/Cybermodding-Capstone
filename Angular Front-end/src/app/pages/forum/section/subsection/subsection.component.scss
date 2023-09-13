@@ -51,3 +51,19 @@
   color: var(--text-muted);
   text-decoration: line-through;
 }
+
+.par-truncate {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--orange);
+  transition: color 0.1s;
+
+  &:hover {
+    color: var(--orange-hover);
+  }
+}

@@ -20,4 +20,6 @@ export interface IPostData {
   main_section_id?: number;
   subsection_title?: string;
   subsection_id?: number;
+  comments_count?: number;
+  last_comment?: ICommentData;
 }

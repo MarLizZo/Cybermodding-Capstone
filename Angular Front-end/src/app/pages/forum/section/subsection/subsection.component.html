@@ -23,7 +23,8 @@
                         <p class="m-0 fw-medium">Ultimo post</p>
                     </div>
                 </div>
-                <div *ngFor="let post of postsArr" class="col-12 d-flex justify-content-between align-items-center p-2">
+                <div *ngFor="let post of postsArr; let i = index"
+                    class="col-12 d-flex justify-content-between align-items-center p-2">
                     <div class="col-8 d-flex align-items-center">
                         <div class="d-flex">
                             <div *ngIf="post.author.avatar == null" class="placeholder-img"></div>
@@ -38,13 +39,13 @@
                         </div>
                     </div>
                     <div class="col-2">
-                        <p class="m-0 small-f">{{ post.comments.length }} Commenti</p>
+                        <p class="m-0 small-f">{{ post.comments_count }} Commenti</p>
                         <p class="m-0 small-f">{{ post.reactions.length }} Reazioni</p>
                     </div>
                     <div class="col-2">
                         <p class="m-0 small-f">Ultimo commento</p>
-                        <p class="m-0 small-f">
-                            Link qui..
+                        <p class="m-0 small-f par-truncate" (click)="getCommentLink(i)">
+                            {{ removeTags(post.last_comment!.content) }}
                         </p>
                     </div>
                 </div>

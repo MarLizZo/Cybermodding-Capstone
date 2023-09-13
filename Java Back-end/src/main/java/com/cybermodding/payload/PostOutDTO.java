@@ -23,10 +23,11 @@ public class PostOutDTO {
     private EPostType type;
     private User author;
     private List<Reaction> reactions;
-    private List<CommentOutDTO> comments;
     private EUserLevel user_level;
     private String main_section_title;
     private Long main_section_id;
     private String subsection_title;
     private Long subsection_id;
+    private Integer comments_count;
+    private CommentOutDTO last_comment;
 }

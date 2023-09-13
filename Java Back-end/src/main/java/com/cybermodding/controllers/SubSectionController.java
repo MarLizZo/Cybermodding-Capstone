@@ -1,6 +1,7 @@
 package com.cybermodding.controllers;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
@@ -41,18 +43,17 @@ public class SubSectionController {
         List<PostOutDTO> pout = new ArrayList<>();
 
         sub.getPosts().forEach(post -> {
-            List<CommentOutDTO> lsOut = new ArrayList<>();
-            post.getComments().forEach(c -> {
-                lsOut.add(CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
-                        .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
-            });
+            Comment last = post.getComments().get(0);
+            CommentOutDTO cmOut = CommentOutDTO.builder().id(last.getId()).content(last.getContent())
+                    .user(last.getUser()).publishedDate(last.getPublishedDate())
+                    .user_level(u_svc.getRank(last.getUser().getId())).build();
 
             pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
                     post.getType(),
-                    post.getAuthor(), post.getReactions(), lsOut, u_svc.getRank(post.getAuthor().getId()),
+                    post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
                     post.getSub_section().getParent_section().getTitle(),
                     post.getSub_section().getParent_section().getId(),
-                    post.getSub_section().getTitle(), post.getSub_section().getId()));
+                    post.getSub_section().getTitle(), post.getSub_section().getId(), post.getComments().size(), cmOut));
         });
 
         SubSectionOutDTO ss = SubSectionOutDTO.builder().id(sub.getId()).title(sub.getTitle())
@@ -60,6 +61,7 @@ public class SubSectionController {
                 .posts(pout)
                 .parent_id(sub.getParent_section().getId()).parent_title(sub.getParent_section().getTitle())
                 .build();
+
         return new ResponseEntity<SubSectionOutDTO>(ss, HttpStatus.OK);
     }
 

@@ -49,42 +49,51 @@ export class ShowthreadComponent {
   ) {}
 
   doCall(page: number, refreshPage: boolean) {
-    if (refreshPage) {
-      this.router.navigate([
-        '/forum/showthread/' +
-          this.route.snapshot.paramMap.get('hash')! +
-          '/' +
-          (page + 1),
-      ]);
-    }
-
-    this.postSub = this.svc
-      .getPost(this.postId, {
-        size: 8,
-        page: page,
-      })
-      .pipe(
-        catchError((err) => {
-          this.isLoadingPage = false;
-          throw err;
+    if (this.postData == null || page != this.postData.comments.number) {
+      this.postSub = this.svc
+        .getPost(this.postId, {
+          size: 8,
+          page: page,
         })
-      )
-      .subscribe((res) => {
-        this.postData = res;
-        this.mainSectionTitle = res.main_section_title!;
-        this.subSectionTitle = res.subsection_title!;
-        this.getReactionsCount();
-        this.hasUserReaction();
-        this.isLoadingPage = false;
-        console.log(res);
-        this.pagesArr = [];
-        for (let i = 0; i < res.comments.totalPages; i++) {
-          this.pagesArr.push(i + 1);
-        }
-        if (refreshPage) {
-          document.querySelector('app-comment')?.scrollIntoView();
-        }
-      });
+        .pipe(
+          catchError((err) => {
+            this.isLoadingPage = false;
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.postData = res;
+          this.mainSectionTitle = res.main_section_title!;
+          this.subSectionTitle = res.subsection_title!;
+          this.getReactionsCount();
+          this.hasUserReaction();
+          this.isLoadingPage = false;
+          this.pagesArr = [];
+          for (let i = 0; i < res.comments.totalPages; i++) {
+            this.pagesArr.push(i + 1);
+          }
+          if (refreshPage) {
+            this.router.navigateByUrl(
+              '/forum/showthread/' +
+                this.route.snapshot.paramMap.get('hash')! +
+                '/' +
+                (page + 1)
+            );
+          }
+          if (sessionStorage.getItem('scrolltocomment')) {
+            sessionStorage.removeItem('scrolltocomment');
+            setTimeout(() => {
+              document
+                .querySelector('app-comment:last-of-type')
+                ?.scrollIntoView();
+            }, 1000);
+          } else if (refreshPage) {
+            setTimeout(() => {
+              document.querySelector('app-comment')?.scrollIntoView();
+            }, 1000);
+          }
+        });
+    }
   }
 
   ngOnInit() {
