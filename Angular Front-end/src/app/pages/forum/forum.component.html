@@ -1,7 +1,7 @@
 <div *ngIf="isLoadingPage" class="h-100 d-flex justify-content-center align-items-center">
     <app-loader></app-loader>
 </div>
-<div *ngIf="!isLoadingPage" class="h-100 pb-5">
+<div *ngIf="!isLoadingPage" class="h-100 mb-3 pb-5">
     <app-hero></app-hero>
     <div class="chat-container container-fluid d-flex justify-content-center mt-4">
         <app-chatbox class="w-100" [userLogged]="isUserLogged"
@@ -11,8 +11,20 @@
     <div class="mt-5 mb-3">
         <app-topbar [path]="'FORUM HOME'"></app-topbar>
     </div>
-    <div *ngFor="let s of sectionsArr" class="sections-container container-fluid d-flex justify-content-center mt-3">
-        <app-section-head class="w-100 my-3" [sectionName]="s.title" [sectionDescr]="s.description"
-            [sectionId]="s.id!"></app-section-head>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-9">
+                <div *ngFor="let s of sectionsArr; let lastEl = last" class="sections-container mt-3">
+                    <app-section-head class="w-100 my-3" [sectionName]="s.title" [sectionDescr]="s.description"
+                        [sectionId]="s.id!" [isLast]="lastEl"></app-section-head>
+                </div>
+            </div>
+            <div class="col-3">
+                <div *ngFor="let side of sidesArr" class="mt-3">
+                    <app-sideblock [sideBlockData]="side"></app-sideblock>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>

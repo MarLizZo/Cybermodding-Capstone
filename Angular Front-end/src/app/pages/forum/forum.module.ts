@@ -8,6 +8,7 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component';
 import { ChatboxComponent } from 'src/app/components/chatbox/chatbox.component';
 import { TopbarComponent } from 'src/app/components/topbar/topbar.component';
 import { SectionHeadComponent } from 'src/app/components/section-head/section-head.component';
+import { SideblockComponent } from 'src/app/components/sideblock/sideblock.component';
 
 @NgModule({
   declarations: [ForumComponent],
@@ -19,6 +20,7 @@ import { SectionHeadComponent } from 'src/app/components/section-head/section-he
     ChatboxComponent,
     TopbarComponent,
     SectionHeadComponent,
+    SideblockComponent,
   ],
 })
 export class ForumModule {}

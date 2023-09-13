@@ -2,10 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ShowthreadComponent } from './showthread.component';
 
-const routes: Routes = [{ path: '', component: ShowthreadComponent }];
+const routes: Routes = [
+  { path: '', component: ShowthreadComponent },
+  { path: ':page', component: ShowthreadComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ShowthreadRoutingModule { }
+export class ShowthreadRoutingModule {}

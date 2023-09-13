@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, catchError } from 'rxjs';
 import { ReactionType } from 'src/app/enums/reaction-type';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
-import { IPostData } from 'src/app/interfaces/ipost-data';
+import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
 import { Ireaction } from 'src/app/interfaces/ireaction';
 import { AuthService } from 'src/app/services/auth.service';
@@ -23,7 +23,7 @@ export class ShowthreadComponent {
   authSub!: Subscription;
   postSub!: Subscription;
   reactSub!: Subscription;
-  postData!: IPostData;
+  postData!: IPostDataPaged;
   thumbUp: string = '&#x1F44D;';
   thumbDown: string = '&#x1F44E;';
   heart: string = '&#x2764;';
@@ -36,36 +36,70 @@ export class ShowthreadComponent {
   userID: number | undefined;
   sentReactionID: number | undefined;
   quotedMessage: IQuoteInfo | undefined;
+  pagesArr: number[] = [];
+  postId: number = 0;
 
   @ViewChild('editorForm') editorForm!: ElementRef<HTMLElement>;
 
   constructor(
     private svc: ForumService,
     private auth: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
+  doCall(page: number, refreshPage: boolean) {
+    if (refreshPage) {
+      this.router.navigate([
+        '/forum/showthread/' +
+          this.route.snapshot.paramMap.get('hash')! +
+          '/' +
+          (page + 1),
+      ]);
+    }
+
+    this.postSub = this.svc
+      .getPost(this.postId, {
+        size: 8,
+        page: page,
+      })
+      .pipe(
+        catchError((err) => {
+          this.isLoadingPage = false;
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        this.postData = res;
+        this.mainSectionTitle = res.main_section_title!;
+        this.subSectionTitle = res.subsection_title!;
+        this.getReactionsCount();
+        this.hasUserReaction();
+        this.isLoadingPage = false;
+        console.log(res);
+        this.pagesArr = [];
+        for (let i = 0; i < res.comments.totalPages; i++) {
+          this.pagesArr.push(i + 1);
+        }
+        if (refreshPage) {
+          document.querySelector('app-comment')?.scrollIntoView();
+        }
+      });
+  }
+
   ngOnInit() {
-    let id: number = parseInt(
+    this.postId = parseInt(
       this.route.snapshot.paramMap.get('hash')!.split('-')[0]
     );
-    if (!isNaN(id) && id != null) {
-      this.postSub = this.svc
-        .getPost(id)
-        .pipe(
-          catchError((err) => {
-            this.isLoadingPage = false;
-            throw err;
-          })
-        )
-        .subscribe((res) => {
-          this.postData = res;
-          this.mainSectionTitle = res.main_section_title!;
-          this.subSectionTitle = res.subsection_title!;
-          this.getReactionsCount();
-          this.hasUserReaction();
-          this.isLoadingPage = false;
-        });
+    if (!isNaN(this.postId) && this.postId != null) {
+      if (this.route.snapshot.paramMap.get('page') == null) {
+        // initial call - page 0 default
+        this.doCall(0, false);
+      } else {
+        // call with specific page
+        let id: number = parseInt(this.route.snapshot.paramMap.get('page')!);
+        this.doCall(id - 1, false);
+      }
 
       this.authSub = this.auth.user$.subscribe((res) => {
         this.userID = res?.user_id;
@@ -266,7 +300,15 @@ export class ShowthreadComponent {
 
   onNewComment(comment: ICommentData) {
     if (comment.content.length) {
-      this.postData.comments.push(comment);
+      this.postData.comments.content.push(comment);
+    }
+  }
+
+  getCommentNumber(index: number): number {
+    if (this.postData.comments.number == 0) {
+      return index;
+    } else {
+      return 8 * this.postData.comments.number + index;
     }
   }
 }

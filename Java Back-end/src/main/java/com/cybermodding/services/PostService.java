@@ -1,12 +1,12 @@
 package com.cybermodding.services;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +22,10 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
-import com.cybermodding.payload.PostOutDTO;
+import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.repositories.CommentRepo;
+import com.cybermodding.repositories.CommentRepoPage;
 import com.cybermodding.repositories.PostRepo;
 import com.cybermodding.repositories.ReactionRepo;
 import com.cybermodding.repositories.SubSectionRepo;
@@ -44,6 +45,8 @@ public class PostService {
     ReactionRepo react_repo;
     @Autowired
     CommentRepo comm_repo;
+    @Autowired
+    CommentRepoPage comm_page;
 
     public Post getById(Long id) {
         if (repo.existsById(id)) {
@@ -150,30 +153,31 @@ public class PostService {
         }
     }
 
-    // delete comment
+    public CustomResponse deleteComment(Long id) {
+        if (comm_repo.existsById(id)) {
+            comm_repo.deleteById(id);
+            return new CustomResponse(new Date(), "** Comment deleted succesfully **", HttpStatus.OK);
+        } else {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+        }
+    }
 
     public Post getRandom() {
         return repo.getRandom();
     }
 
-    public PostOutDTO getPostOut(Long id) {
+    public PostOutDTOCPaged getPostOut(Long id, Pageable page) {
         Post p = getById(id);
         EUserLevel level = u_svc.getRank(p.getAuthor().getId());
+        Page<Comment> comments_page = comm_page.findAllByPostId(id, page);
 
-        List<CommentOutDTO> lsOut = new ArrayList<>();
-        p.getComments().forEach(c -> {
-            lsOut.add(CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
-                    .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
-        });
-        lsOut.sort(new Comparator<CommentOutDTO>() {
-            @Override
-            public int compare(CommentOutDTO c1, CommentOutDTO c2) {
-                return c1.getPublishedDate().compareTo(c2.getPublishedDate());
-            }
-        });
+        Page<CommentOutDTO> comments_page_out = comments_page
+                .map(c -> CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
+                        .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
 
-        return new PostOutDTO(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(), p.getAuthor(),
-                p.getReactions(), lsOut, level, p.getSub_section().getParent_section().getTitle(),
+        return new PostOutDTOCPaged(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(),
+                p.getAuthor(),
+                p.getReactions(), comments_page_out, level, p.getSub_section().getParent_section().getTitle(),
                 p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),
                 p.getSub_section().getId());
     }

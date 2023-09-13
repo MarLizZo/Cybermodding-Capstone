@@ -5,6 +5,6 @@ export interface ISideBlockData {
   title: string;
   content: string;
   active: boolean;
-  e_block_type: SideBlockType;
+  e_block_type: SideBlockType | string;
   order_number: number;
 }

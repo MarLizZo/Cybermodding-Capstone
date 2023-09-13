@@ -1,6 +1,7 @@
 package com.cybermodding.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +19,7 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
-import com.cybermodding.payload.PostOutDTO;
+import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.UserService;
@@ -34,8 +35,13 @@ public class ThreadController {
     UserService u_svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostOutDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(svc.getPostOut(id));
+    public ResponseEntity<PostOutDTOCPaged> getById(@PathVariable Long id, Pageable page) {
+        return ResponseEntity.ok(svc.getPostOut(id, page));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<CustomResponse> deleteComment(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.deleteComment(id));
     }
 
     @PostMapping("/react")

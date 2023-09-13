@@ -10,6 +10,12 @@ import { ICustomResponse } from '../interfaces/icustom-response';
 import { ICommentDTO } from '../interfaces/icomment-dto';
 import { ICommentData } from '../interfaces/icomment-data';
 import { IPostDTO } from '../interfaces/ipost-dto';
+import { IPostDataPaged } from '../interfaces/ipost-data-paged';
+
+type paramsPage = {
+  size: number;
+  page: number;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +48,13 @@ export class ForumService {
     return this.http.get<ISubSectionData>(this.subsectionsApiUrl + '/' + id);
   }
 
-  public getPost(id: number): Observable<IPostData> {
-    return this.http.get<IPostData>(this.threadsApiUrl + '/' + id);
+  public getPost(id: number, params: paramsPage): Observable<IPostDataPaged> {
+    return this.http.get<IPostDataPaged>(this.threadsApiUrl + '/' + id, {
+      params: {
+        size: params.size,
+        page: params.page,
+      },
+    });
   }
 
   public postReaction(reaction: Ireaction): Observable<Ireaction> {

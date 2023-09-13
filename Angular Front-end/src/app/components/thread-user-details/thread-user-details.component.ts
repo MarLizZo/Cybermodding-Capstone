@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
+import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
 
 @Component({
   selector: 'app-thread-user-details',
@@ -11,7 +12,7 @@ import { ICommentData } from 'src/app/interfaces/icomment-data';
   styleUrls: ['./thread-user-details.component.scss'],
 })
 export class ThreadUserDetailsComponent {
-  @Input() postData!: IPostData | null;
+  @Input() postData!: IPostData | IPostDataPaged | null;
   @Input() commentData!: ICommentData | null;
 
   getImgLink(): string {

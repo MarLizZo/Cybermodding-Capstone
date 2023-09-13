@@ -1,0 +1,11 @@
+.main-container {
+  border: 2px solid var(--near-black);
+
+  .header {
+    background-color: var(--near-black);
+  }
+
+  .body {
+    background-color: var(--bg-lighter);
+  }
+}
