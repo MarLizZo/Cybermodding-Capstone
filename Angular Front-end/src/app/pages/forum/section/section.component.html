@@ -1,1 +1,15 @@
-<p>section works!</p>
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div class="my-4">
+        <app-topbar [pathObject]="topBObj"></app-topbar>
+    </div>
+    <div class="px-3 py-2 head-w-title">
+        <p class="mb-1 fs-5" [innerText]="sectionData != undefined ? sectionData.title : ''"></p>
+        <p class="mb-1" [innerText]="sectionData != undefined ? sectionData.description : ''"></p>
+    </div>
+    <div class="container-fluid mt-5 pb-2">
+        <div *ngFor="let sub of subsData; let first = first;">
+            <app-subsection-body [subSection]="sub" [margin]="!first"></app-subsection-body>
+        </div>
+    </div>
+</div>

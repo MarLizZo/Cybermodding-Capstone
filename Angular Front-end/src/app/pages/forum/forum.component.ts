@@ -25,6 +25,12 @@ export class ForumComponent {
   isUserLogged: boolean = false;
   sectionsArr: ISectionData[] = [];
   sidesArr: ISideBlockData[] = [];
+  topBObj = [
+    {
+      name: 'FORUM Home',
+      url: '/forum',
+    },
+  ];
 
   constructor(private authSvc: AuthService, private fSvc: ForumService) {}
 

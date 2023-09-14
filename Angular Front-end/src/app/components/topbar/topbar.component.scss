@@ -1,4 +1,24 @@
 .main-container {
   background-color: var(--bg);
   border: 2px solid var(--bg-lighter);
+
+  p {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    span {
+      cursor: pointer;
+      transition: color 0.1s;
+      color: var(--txt);
+    }
+    span:hover:not(.sep) {
+      color: var(--orange-hover);
+    }
+  }
+
+  .active {
+    color: var(--orange-hover) !important;
+  }
 }

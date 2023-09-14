@@ -12,4 +12,5 @@ import { RouterModule } from '@angular/router';
 })
 export class SubsectionBodyComponent {
   @Input() subSection!: ISubSectionData;
+  @Input() margin!: boolean;
 }

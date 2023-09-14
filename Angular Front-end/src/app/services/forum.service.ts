@@ -38,6 +38,10 @@ export class ForumService {
     return this.http.get<ISectionData[]>(this.sectionsApiUrl + '?ordered=true');
   }
 
+  public getSectionById(id: number): Observable<ISectionData> {
+    return this.http.get<ISectionData>(this.sectionsApiUrl + '/' + id);
+  }
+
   public getSubSectionsPerSection(p_id: number): Observable<ISubSectionData[]> {
     return this.http.get<ISubSectionData[]>(
       this.subsectionsApiUrl + '?pid=' + p_id

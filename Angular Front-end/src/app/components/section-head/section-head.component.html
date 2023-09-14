@@ -1,7 +1,9 @@
 <div [ngClass]="{ 'mb-4' : !isLast }">
     <div class="main-container px-3 py-2 d-flex justify-content-between align-items-center rounded-1">
         <div>
-            <h5 class="m-0">{{ sectionName }}</h5>
+            <h5 class="m-0 selectable" (click)="goToPage()">
+                {{ sectionName }}
+            </h5>
             <p class="m-0">{{ sectionDescr }}</p>
         </div>
         <h6 class="m-0">..Collapse..</h6>

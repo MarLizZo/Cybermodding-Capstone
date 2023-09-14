@@ -5,8 +5,7 @@
 <div *ngIf="!isLoadingPage && !isWaitingPage" class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="mt-4">
-        <app-topbar
-            [path]="'FORUM > ' + mainSectionTitle + ' > ' + subSectionTitle + ' > ' + postData.title"></app-topbar>
+        <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
     <div class="container-fluid mt-5 d-flex flex-column align-items-center">
         <div class="row w-100 mb-4 rounded-1">

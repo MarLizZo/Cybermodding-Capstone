@@ -18,16 +18,46 @@ export class SubsectionComponent {
   subSData!: ISubSectionData;
   postsArr: IPostData[] = [];
   ssParentTitle: string = '';
+  ssParentId: number = 0;
   ssTitle: string = '';
   isAuthenticated: boolean = false;
   newThreadPath: string = '';
+  topBObj: any = [];
 
   constructor(
     private svc: ForumService,
     private route: ActivatedRoute,
-    private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService
   ) {}
+
+  setTopBarObj() {
+    this.topBObj = [
+      {
+        name: 'FORUM',
+        url: '/forum',
+      },
+      {
+        name: this.ssParentTitle,
+        url:
+          '/forum/section/' +
+          this.ssParentId +
+          '-' +
+          this.ssParentTitle
+            .replaceAll(' ', '')
+            .replaceAll('/', '')
+            .toLowerCase(),
+      },
+      {
+        name: this.ssTitle,
+        url:
+          '/forum/subsection/' +
+          this.subSData.id +
+          '-' +
+          this.ssTitle.replaceAll(' ', '').replaceAll('/', '').toLowerCase(),
+      },
+    ];
+  }
 
   ngOnInit() {
     let ssId: number = parseInt(
@@ -46,8 +76,10 @@ export class SubsectionComponent {
         .subscribe((res) => {
           this.subSData = res;
           this.ssParentTitle = res.parent_title;
+          this.ssParentId = res.parent_id;
           this.ssTitle = res.title;
           this.postsArr = res.posts;
+          this.setTopBarObj();
         });
     }
 
@@ -90,7 +122,7 @@ export class SubsectionComponent {
       .replaceAll('&nbsp;', ' ');
   }
 
-  getCommentLink(index: number) {
+  getCommentLink(index: number): void {
     let baseUrl: string =
       '/forum/showthread/' +
       this.postsArr[index].id +
@@ -101,12 +133,15 @@ export class SubsectionComponent {
         .replaceAll('.', '')
         .toLowerCase();
 
-    if (this.postsArr[index].comments_count! <= 8) {
+    if (this.postsArr[index].comments_count == 0) {
       this.router.navigateByUrl(baseUrl);
+    } else if (this.postsArr[index].comments_count! <= 8) {
+      sessionStorage.setItem('scrolltocomment', 'true');
+      this.router.navigateByUrl(baseUrl + '/1');
     } else {
       let page = Math.ceil(this.postsArr[index].comments_count! / 8);
+      sessionStorage.setItem('scrolltocomment', 'true');
       this.router.navigateByUrl(baseUrl + '/' + page);
     }
-    sessionStorage.setItem('scrolltocomment', 'true');
   }
 }

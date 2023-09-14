@@ -15,7 +15,6 @@ import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
-import com.cybermodding.payload.UserOperations;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserPageRepo;
 import com.cybermodding.repositories.UserRepo;
@@ -63,8 +62,7 @@ public class UserService {
             if (hasPriviliges || id.equals(u.getId())) {
                 // u.setPassword(u_repo.findById(id).get().getPassword());
                 User updatedUser = u_repo.save(u);
-                UserOperations output = new UserOperations(updatedUser, new Date(), "** User updated succesfully **");
-                return new ResponseEntity<UserOperations>(output, HttpStatus.OK);
+                return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
             } else {
                 CustomResponse cr = new CustomResponse(new Date(), "** Input ID and User ID do not match **",
                         HttpStatus.BAD_REQUEST);

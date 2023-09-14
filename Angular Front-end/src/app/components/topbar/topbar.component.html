@@ -1,3 +1,6 @@
 <div class="main-container py-1 px-3 d-flex align-items-center border-start-0 border-end-0">
-    <p class="m-0 fw-medium">{{ path }}</p>
+    <p class="m-0">
+        <span *ngFor="let p of pathObject; let last = last" class="m-0 fw-medium" [ngClass]="{'active' : last}"
+            [routerLink]="p.url">{{ p.name }}&nbsp;<span *ngIf="!last" class="sep">>&nbsp;</span></span>
+    </p>
 </div>

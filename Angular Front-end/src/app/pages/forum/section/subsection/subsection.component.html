@@ -1,7 +1,7 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="my-4">
-        <app-topbar [path]="'FORUM > ' + ssParentTitle + ' > ' + ssTitle"></app-topbar>
+        <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
     <div class="px-3 py-2 head-w-title">
         <p class="mb-1 fs-5" [innerText]="subSData != undefined ? subSData.title : ''"></p>
@@ -45,7 +45,7 @@
                     <div class="col-2">
                         <p class="m-0 small-f">Ultimo commento</p>
                         <p class="m-0 small-f par-truncate" (click)="getCommentLink(i)">
-                            {{ removeTags(post.last_comment!.content) }}
+                            {{ post.comments_count != 0 ? removeTags(post.last_comment!.content) : post.title }}
                         </p>
                     </div>
                 </div>

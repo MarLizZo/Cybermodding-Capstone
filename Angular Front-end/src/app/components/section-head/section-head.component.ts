@@ -4,6 +4,7 @@ import { ForumService } from 'src/app/services/forum.service';
 import { Subscription, catchError } from 'rxjs';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { SubsectionBodyComponent } from '../subsection-body/subsection-body.component';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-section-head',
@@ -13,7 +14,7 @@ import { SubsectionBodyComponent } from '../subsection-body/subsection-body.comp
   styleUrls: ['./section-head.component.scss'],
 })
 export class SectionHeadComponent {
-  constructor(private svc: ForumService) {}
+  constructor(private svc: ForumService, private router: Router) {}
 
   @Input() sectionName!: string;
   @Input() sectionDescr!: string;
@@ -37,5 +38,22 @@ export class SectionHeadComponent {
 
   ngOnDestroy() {
     if (this.subs) this.subs.unsubscribe();
+  }
+
+  goToPage(): void {
+    sessionStorage.setItem(
+      'secData',
+      JSON.stringify({
+        sectionId: this.sectionId,
+        sectionName: this.sectionName,
+        subs: this.subsArr,
+      })
+    );
+    this.router.navigateByUrl(
+      `/forum/section/${this.sectionId}-${this.sectionName
+        .replaceAll(' ', '-')
+        .replaceAll('/', '-')
+        .toLowerCase()}`
+    );
   }
 }

@@ -38,6 +38,7 @@ export class ShowthreadComponent {
   quotedMessage: IQuoteInfo | undefined;
   pagesArr: number[] = [];
   postId: number = 0;
+  topBObj: any = [];
 
   @ViewChild('editorForm') editorForm!: ElementRef<HTMLElement>;
 
@@ -47,6 +48,48 @@ export class ShowthreadComponent {
     private route: ActivatedRoute,
     private router: Router
   ) {}
+
+  setTopBarObj() {
+    this.topBObj = [
+      {
+        name: 'FORUM',
+        url: '/forum',
+      },
+      {
+        name: this.mainSectionTitle,
+        url:
+          '/forum/section/' +
+          this.postData.main_section_id +
+          '-' +
+          this.mainSectionTitle
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+      {
+        name: this.subSectionTitle,
+        url:
+          '/forum/subsection/' +
+          this.postData.subsection_id +
+          '-' +
+          this.subSectionTitle
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+      {
+        name: this.postData.title,
+        url:
+          '/forum/showthread/' +
+          this.postData.id +
+          '-' +
+          this.postData.title
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+    ];
+  }
 
   doCall(page: number, refreshPage: boolean) {
     if (this.postData == null || page != this.postData.comments.number) {
@@ -69,6 +112,7 @@ export class ShowthreadComponent {
           this.hasUserReaction();
           this.isLoadingPage = false;
           this.pagesArr = [];
+          this.setTopBarObj();
           for (let i = 0; i < res.comments.totalPages; i++) {
             this.pagesArr.push(i + 1);
           }

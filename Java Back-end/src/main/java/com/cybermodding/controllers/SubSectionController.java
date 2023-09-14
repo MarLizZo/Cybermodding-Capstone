@@ -1,7 +1,6 @@
 package com.cybermodding.controllers;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,19 +41,24 @@ public class SubSectionController {
         SubSection sub = svc.getById(id);
         List<PostOutDTO> pout = new ArrayList<>();
 
-        sub.getPosts().forEach(post -> {
-            Comment last = post.getComments().get(0);
-            CommentOutDTO cmOut = CommentOutDTO.builder().id(last.getId()).content(last.getContent())
-                    .user(last.getUser()).publishedDate(last.getPublishedDate())
-                    .user_level(u_svc.getRank(last.getUser().getId())).build();
+        if (sub.getPosts().size() != 0) {
+            sub.getPosts().forEach(post -> {
+                if (post.getComments().size() != 0) {
+                    Comment last = post.getComments().get(0);
+                    CommentOutDTO cmOut = CommentOutDTO.builder().id(last.getId()).content(last.getContent())
+                            .user(last.getUser()).publishedDate(last.getPublishedDate())
+                            .user_level(u_svc.getRank(last.getUser().getId())).build();
 
-            pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
-                    post.getType(),
-                    post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
-                    post.getSub_section().getParent_section().getTitle(),
-                    post.getSub_section().getParent_section().getId(),
-                    post.getSub_section().getTitle(), post.getSub_section().getId(), post.getComments().size(), cmOut));
-        });
+                    pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
+                            post.getType(),
+                            post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
+                            post.getSub_section().getParent_section().getTitle(),
+                            post.getSub_section().getParent_section().getId(),
+                            post.getSub_section().getTitle(), post.getSub_section().getId(), post.getComments().size(),
+                            cmOut));
+                }
+            });
+        }
 
         SubSectionOutDTO ss = SubSectionOutDTO.builder().id(sub.getId()).title(sub.getTitle())
                 .active(sub.getActive()).description(sub.getDescription()).order_number(sub.getOrder_number())

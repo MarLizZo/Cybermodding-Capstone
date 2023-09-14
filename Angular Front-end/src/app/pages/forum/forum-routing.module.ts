@@ -5,7 +5,7 @@ import { ForumComponent } from './forum.component';
 const routes: Routes = [
   { path: '', component: ForumComponent },
   {
-    path: 'section/:title',
+    path: 'section/:hash',
     loadChildren: () =>
       import('./section/section.module').then((m) => m.SectionModule),
   },

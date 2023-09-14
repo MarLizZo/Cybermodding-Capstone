@@ -17,10 +17,12 @@ export class NewthreadComponent {
   ssInfoSub!: Subscription;
   user_id: number | undefined = 0;
   ssParentTitle: string = '';
+  ssParentId: number = 0;
   ssTitle: string = '';
   ssId: number = 0;
   typeString: string = 'Type General';
   typeOfThread: PostType = PostType.GENERAL;
+  topBObj: any = [];
   @ViewChild('generalBtn') generalBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('newsBtn') newsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('guideBtn') guideBtn!: ElementRef<HTMLButtonElement>;
@@ -34,6 +36,38 @@ export class NewthreadComponent {
     private router: Router
   ) {}
 
+  setTopBarObj() {
+    this.topBObj = [
+      {
+        name: 'FORUM',
+        url: '/forum',
+      },
+      {
+        name: this.ssParentTitle,
+        url:
+          '/forum/section/' +
+          this.ssParentId +
+          '-' +
+          this.ssParentTitle
+            .replaceAll(' ', '-')
+            .replaceAll('/', '')
+            .toLowerCase(),
+      },
+      {
+        name: this.ssTitle,
+        url:
+          '/forum/subsection/' +
+          this.ssId +
+          '-' +
+          this.ssTitle.replaceAll(' ', '-').replaceAll('/', '').toLowerCase(),
+      },
+      {
+        name: 'Nuovo Post',
+        url: '/forum/newthread/' + this.ssId,
+      },
+    ];
+  }
+
   ngOnInit() {
     this.ssId = parseInt(this.route.snapshot.paramMap.get('ssid')!);
     this.ssInfoSub = this.svc
@@ -45,7 +79,9 @@ export class NewthreadComponent {
       )
       .subscribe((res) => {
         this.ssParentTitle = res.parent_title;
+        this.ssParentId = res.parent_id;
         this.ssTitle = res.title;
+        this.setTopBarObj();
       });
 
     this.authSub = this.authSvc.user$.subscribe((res) => {

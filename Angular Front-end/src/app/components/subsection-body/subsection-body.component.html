@@ -1,4 +1,4 @@
-<div class="main-container p-3">
+<div class="main-container p-3" [ngClass]="{'mt-3' : margin}">
     <div class="d-flex justify-content-between align-items-center">
         <div class="selectable"
             [routerLink]="'/forum/subsection/' + subSection.id + '-' + subSection.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
