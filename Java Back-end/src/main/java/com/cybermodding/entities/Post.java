@@ -52,7 +52,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.EAGER)
     private User author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private SubSection sub_section;
 

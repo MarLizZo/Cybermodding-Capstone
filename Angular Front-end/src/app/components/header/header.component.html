@@ -1,14 +1,13 @@
-<nav class="navbar navbar-expand-md navbar-dark pt-2 pb-0">
+<nav class="navbar navbar-expand-md navbar-dark pt-2 pb-2 pb-md-0">
     <div class="container-fluid ps-3 pe-4">
-        <a class="navbar-brand py-0" [routerLink]="''">Cybermodding.it</a>
 
         <!-- Step 3: Toggle the value of the property when the toggler button is clicked. -->
         <button class="navbar-toggler shadow-none" type="button"
             (click)="isMenuCollapsed = !isMenuCollapsed">&#9776;</button>
 
         <!-- Step 2: Add the ngbCollapse directive to the element below. -->
-        <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
-            <ul class="navbar-nav">
+        <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse h-100">
+            <ul class="navbar-nav d-flex">
                 <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                     <!-- Step 4: Close the menu when a link is clicked. -->
                     <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isHome()}" [routerLink]="''"
@@ -18,6 +17,14 @@
                     <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isForum()}"
                         [routerLink]="'/forum'" (click)="isMenuCollapsed = true">Forum</a>
                 </li>
+                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
+                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isCommunity()}"
+                        [routerLink]="'/users'" (click)="isMenuCollapsed = true">Community</a>
+                </li>
+                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
+                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isContacts()}"
+                        [routerLink]="'/contacts'" (click)="isMenuCollapsed = true">Contatti</a>
+                </li>
             </ul>
             <div class="ms-md-auto">
                 <li class="nav-item list-unstyled" ngbDropdown *ngIf="username != undefined">
@@ -25,7 +32,10 @@
                     <a class="nav-link d-inline fw-medium" [class]="usernameColor" tabindex="0" ngbDropdownToggle
                         id="navbarDropdown2" role="button">{{ username }}</a>
                     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
-                        <a ngbDropdownItem [routerLink]="'/profile'" (click)="$event.preventDefault()">Your Profile</a>
+                        <a ngbDropdownItem [routerLink]="'/profile'" (click)="$event.preventDefault()">Il tuo
+                            profilo</a>
+                        <a ngbDropdownItem [routerLink]="'/profile/pm'" (click)="$event.preventDefault()">Messaggi
+                            privati</a>
                         <a ngbDropdownItem [routerLink]="'/auth/logout'" (click)="$event.preventDefault()">Logout</a>
                     </div>
                 </li>
@@ -35,7 +45,33 @@
         </div>
     </div>
 </nav>
-<div *ngIf="isMod || isAdmin" class="container-fluid px-3 py-1">
-    <a [routerLink]="'/moderator'" class="text-decoration-none active-link me-3">Pannello Moderatore</a>
-    <a *ngIf="isAdmin" [routerLink]="'/admin'" class="text-decoration-none active-link">Pannello Admin</a>
+<div class="sub-header d-flex justify-content-between align-items-end px-3 py-2">
+    <div class="d-flex">
+        <div *ngIf="isMod || isAdmin" class="py-1 border-end border-2 border-black pe-3 me-3">
+            <a [routerLink]="'/moderator'" class="text-decoration-none active-link me-3">Moderator CP</a>
+            <a *ngIf="isAdmin" [routerLink]="'/admin'" class="text-decoration-none active-link">Admin CP</a>
+        </div>
+        <div class="d-flex align-items-center">
+            <li class="nav-item list-unstyled" ngbDropdown>
+                <a class="nav-link d-inline fw-medium" tabindex="0" ngbDropdownToggle id="navbarDropdownSections"
+                    role="button">Sezioni Principali</a>
+                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
+                    <a ngbDropdownItem [routerLink]="'/forum/subsection/3-news-generali'"
+                        (click)="$event.preventDefault()">IA News Generali</a>
+                    <a ngbDropdownItem [routerLink]="'/forum/subsection/7-guide-e-risorse'"
+                        (click)="$event.preventDefault()">IA Guide e Risorse</a>
+                    <a ngbDropdownItem [routerLink]="'/forum/subsection/8-hardware-e-componenti'"
+                        (click)="$event.preventDefault()">Computer Hardware</a>
+                    <a ngbDropdownItem [routerLink]="'/forum/subsection/11-pc-gaming'"
+                        (click)="$event.preventDefault()">Computer Gaming</a>
+                    <a ngbDropdownItem [routerLink]="'/forum/subsection/13-ps5-jailbreak'"
+                        (click)="$event.preventDefault()">Console PS5 Jailbreak</a>
+                </div>
+            </li>
+        </div>
+    </div>
+    <div class="search-container">
+        <input id="searchInput" type="text" class="form-control form-control-sm border-0"
+            placeholder="Ricerca nel sito..">
+    </div>
 </div>

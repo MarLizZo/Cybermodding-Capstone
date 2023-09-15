@@ -56,6 +56,14 @@ public class SubSectionController {
                             post.getSub_section().getParent_section().getId(),
                             post.getSub_section().getTitle(), post.getSub_section().getId(), post.getComments().size(),
                             cmOut));
+                } else {
+                    pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
+                            post.getType(),
+                            post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
+                            post.getSub_section().getParent_section().getTitle(),
+                            post.getSub_section().getParent_section().getId(),
+                            post.getSub_section().getTitle(), post.getSub_section().getId(), 0,
+                            null));
                 }
             });
         }

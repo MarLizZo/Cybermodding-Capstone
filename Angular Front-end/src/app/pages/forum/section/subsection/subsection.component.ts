@@ -15,6 +15,7 @@ import { ForumService } from 'src/app/services/forum.service';
 export class SubsectionComponent {
   ssSub!: Subscription;
   authSub!: Subscription;
+  routeSub!: Subscription;
   subSData!: ISubSectionData;
   postsArr: IPostData[] = [];
   ssParentTitle: string = '';
@@ -60,43 +61,44 @@ export class SubsectionComponent {
   }
 
   ngOnInit() {
-    let ssId: number = parseInt(
-      this.route.snapshot.paramMap.get('hash')!.split('-')[0]
-    );
-    this.newThreadPath = '/forum/newthread/' + ssId;
+    this.routeSub = this.route.paramMap.subscribe((res) => {
+      let ssId: number = parseInt(res.get('hash')!.split('-')[0]);
+      this.newThreadPath = '/forum/newthread/' + ssId;
 
-    if (!isNaN(ssId) && ssId != null) {
-      this.ssSub = this.svc
-        .getSubSectionById(ssId)
+      if (!isNaN(ssId) && ssId != null) {
+        this.ssSub = this.svc
+          .getSubSectionById(ssId)
+          .pipe(
+            catchError((err) => {
+              throw err;
+            })
+          )
+          .subscribe((res) => {
+            this.subSData = res;
+            this.ssParentTitle = res.parent_title;
+            this.ssParentId = res.parent_id;
+            this.ssTitle = res.title;
+            this.postsArr = res.posts;
+            this.setTopBarObj();
+          });
+      }
+
+      this.authSub = this.auth.isLogged$
         .pipe(
           catchError((err) => {
             throw err;
           })
         )
         .subscribe((res) => {
-          this.subSData = res;
-          this.ssParentTitle = res.parent_title;
-          this.ssParentId = res.parent_id;
-          this.ssTitle = res.title;
-          this.postsArr = res.posts;
-          this.setTopBarObj();
+          this.isAuthenticated = res;
         });
-    }
-
-    this.authSub = this.auth.isLogged$
-      .pipe(
-        catchError((err) => {
-          throw err;
-        })
-      )
-      .subscribe((res) => {
-        this.isAuthenticated = res;
-      });
+    });
   }
 
   ngOnDestroy() {
     if (this.ssSub) this.ssSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
+    if (this.routeSub) this.routeSub.unsubscribe();
   }
 
   getClassName(level: UserLevel): string {

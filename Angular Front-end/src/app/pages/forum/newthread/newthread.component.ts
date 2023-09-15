@@ -137,7 +137,6 @@ export class NewthreadComponent {
         })
       )
       .subscribe((res) => {
-        console.log(res);
         setTimeout(() => {
           this.router.navigate([
             '/forum/showthread/' +

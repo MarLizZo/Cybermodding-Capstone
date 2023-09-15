@@ -47,4 +47,13 @@ export class HeaderComponent {
   isForum(): boolean {
     return this.router.url.includes('/forum');
   }
+  isCommunity(): boolean {
+    return this.router.url.includes('/users');
+  }
+  isContacts(): boolean {
+    return this.router.url.includes('/contacts');
+  }
+  navigate(url: string) {
+    this.router.navigateByUrl(url);
+  }
 }
