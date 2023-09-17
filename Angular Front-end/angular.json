@@ -39,6 +39,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "@ckeditor/ckeditor5-build-classic"
+            ],
             "outputPath": "dist/front-end",
             "index": "src/index.html",
             "main": "src/main.ts",

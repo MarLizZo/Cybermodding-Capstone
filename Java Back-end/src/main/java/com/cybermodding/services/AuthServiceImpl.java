@@ -25,10 +25,10 @@ import com.cybermodding.security.JwtTokenProvider;
 
 @Service
 public class AuthServiceImpl implements AuthService {
-    private AuthenticationManager authenticationManager;
+    AuthenticationManager authenticationManager;
+    PasswordEncoder passwordEncoder;
     private UserRepo userRepository;
     private RoleRepo roleRepository;
-    private PasswordEncoder passwordEncoder;
     private JwtTokenProvider jwtTokenProvider;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,

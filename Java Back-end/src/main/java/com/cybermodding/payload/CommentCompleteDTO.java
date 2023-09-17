@@ -1,6 +1,6 @@
 package com.cybermodding.payload;
 
-import org.springframework.http.HttpStatus;
+import com.cybermodding.entities.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class ResponseTest<T> {
-    private String message;
-    private HttpStatus status;
-    private T content;
+public class CommentCompleteDTO {
+    private Long id;
+    private String content;
+    private Post post;
 }

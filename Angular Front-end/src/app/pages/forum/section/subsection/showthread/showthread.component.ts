@@ -131,6 +131,20 @@ export class ShowthreadComponent {
                 .querySelector('app-comment:last-of-type')
                 ?.scrollIntoView();
             }, 1000);
+          } else if (sessionStorage.getItem('scrolltonumber')) {
+            let commentIndex: number = parseInt(
+              sessionStorage.getItem('scrolltonumber')!
+            );
+            sessionStorage.removeItem('scrolltonumber');
+
+            let toIndex: number = this.postData.comments.content.findIndex(
+              (el) => el.id == commentIndex
+            );
+            setTimeout(() => {
+              document
+                .querySelector(`app-comment:nth-of-type(${toIndex + 1})`)
+                ?.scrollIntoView();
+            }, 1000);
           } else if (refreshPage) {
             setTimeout(() => {
               document.querySelector('app-comment')?.scrollIntoView();

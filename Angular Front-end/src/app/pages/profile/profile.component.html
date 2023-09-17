@@ -1,9 +1,155 @@
 <div class="h-100 mb-3 pb-5">
     <app-hero></app-hero>
-    <div class="container-fluid mt-5">
-        <div class="row w-100">
-            <div class="col-3"></div>
-            <div class="col-9"></div>
+    <div class="container-fluid mt-4">
+        <div class="d-flex align-items-center">
+            <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
+                class="img-placeholder profile-img me-3"></div>
+            <div *ngIf="profileData?.avatar">
+                <img [src]="profileData?.avatar" class="profile-img me-3">
+            </div>
+            <h1 class="mb-0 pb-1" [innerText]="profileData ? profileData.username : ''"
+                [class]="profileData ? getClassColor() : ''"></h1>
+        </div>
+        <div class="head-container py-2 px-3 rounded-1 mt-4 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 pb-1">Statistiche veloci</h4>
+            <i class="bi" (click)="isQuickStatsCollapsed = !isQuickStatsCollapsed"
+                [ngClass]="{'bi-arrow-bar-up' : !isQuickStatsCollapsed, 'bi-arrow-bar-down' : isQuickStatsCollapsed}"></i>
+        </div>
+        <div #collapseStats="ngbCollapse" [(ngbCollapse)]="isQuickStatsCollapsed"
+            class="row w-100 px-3 border-bottom border-1 border-black">
+            <div class="col-6 my-2">
+                <p class="m-0">Numero totale di Post avviati</p>
+            </div>
+            <div class="col-2 my-2">
+                <p class="m-0" [innerText]="profileData ? profileData.posts_count : 0"></p>
+            </div>
+            <div class="col-4 d-flex my-2"><span>Ultimo:&nbsp;</span>
+                <p class="m-0 trunc" [class]="profileData?.last_post ? 'selectable' : ''" (click)="goToPost()">{{
+                    profileData?.last_post ? profileData?.last_post!.title : 'Nessun Post..' }}</p>
+            </div>
+
+            <div class="col-6 my-2">
+                <p class="m-0">Numero totale di Commenti</p>
+            </div>
+            <div class="col-2 my-2">
+                <p class="m-0" [innerText]="profileData ? profileData.comments_count : 0"></p>
+            </div>
+            <div class="col-4 my-2 d-flex">
+                <span>Ultimo:&nbsp;</span>
+                <p class="m-0 trunc" [class]="profileData?.last_comment ? 'selectable' : ''" (click)="goToComment()">{{
+                    profileData?.last_comment ? removeTags(profileData?.last_comment!.content) : 'Nessun commento..' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="head-container py-2 px-3 rounded-1 mt-5 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 pb-1">Account Info</h4>
+            <i class="bi" (click)="isInfoCollapsed = !isInfoCollapsed"
+                [ngClass]="{'bi-arrow-bar-up' : !isInfoCollapsed, 'bi-arrow-bar-down' : isInfoCollapsed}"></i>
+        </div>
+        <div #collapseInfo="ngbCollapse" [(ngbCollapse)]="isInfoCollapsed"
+            class="row w-100 pb-4 px-3 border-bottom border-1 border-black">
+            <form #fInfo="ngForm" class="d-flex flex-column align-items-center">
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="usernameInput">Username</label>
+                        <p class="m-0 text-danger d-none" #usernameP>Min 3 chars</p>
+                    </div>
+                    <input id="usernameInput" [(ngModel)]="userObject.username" name="username" type="text"
+                        class="form-control form-control-sm border-0" [minlength]="3">
+                </div>
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="emailInput">Email</label>
+                        <p class="m-0 text-danger d-none" #emailP>Invalida</p>
+                    </div>
+                    <input id="emailInput" [(ngModel)]="userObject.email" name="email" type="email"
+                        class="form-control form-control-sm border-0">
+                </div>
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="descrInput">Descrizione - Max 20 char</label>
+                        <p class="m-0 text-danger d-none" #descriptionP>Max 20 chars</p>
+                    </div>
+                    <input id="descrInput" [(ngModel)]="userObject.description" name="descr" type="text"
+                        class="form-control form-control-sm border-0" [maxLength]="20">
+                </div>
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="avatarInput">Avatar - Link diretto</label>
+                        <p class="m-0 text-danger d-none" #avatarP>Invalid link</p>
+                    </div>
+                    <input id="avatarInput" [(ngModel)]="userObject.avatar" name="avatar" type="text"
+                        class="form-control form-control-sm border-0">
+                </div>
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="birthdateInput">Data di nascita</label>
+                        <p class="m-0 text-danger d-none" #birthdateP>Invalid date</p>
+                    </div>
+                    <input id="birthdateInput" [(ngModel)]="userObject.birthdate" name="birthdate" type="date"
+                        class="form-control form-control-sm border-0">
+                </div>
+                <div class="col-12 d-flex justify-content-center align-items-center mt-4"
+                    [ngClass]="{'disabled' : !fInfo.touched}">
+                    <app-orange-button (click)="updateUserInfo()" [btnTheme]="'orange'"
+                        [btnTitle]="'Aggiorna Account'"></app-orange-button>
+                    <div *ngIf="isSendingData" class="ms-3">
+                        <app-inline-loader></app-inline-loader>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="head-container py-2 px-3 rounded-1 mt-5 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 pb-1">Cambio Password</h4>
+            <i class="bi" (click)="isPassCollapsed = !isPassCollapsed"
+                [ngClass]="{'bi-arrow-bar-up' : !isPassCollapsed, 'bi-arrow-bar-down' : isPassCollapsed}"></i>
+        </div>
+        <div #collapsePass="ngbCollapse" [(ngbCollapse)]="isPassCollapsed"
+            class="row w-100 pb-4 px-3 border-bottom border-1 border-black">
+            <form #fPass="ngForm" class="d-flex flex-column align-items-center">
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="pOne">Password Attuale</label>
+                        <p class="m-0 text-danger d-none" #actualP>Min 8 chars</p>
+                    </div>
+                    <input id="pOne" [(ngModel)]="userPassObject.actual" name="pass-1" type="password"
+                        class="form-control form-control-sm border-0" required>
+                </div>
+                <div class="col-9 mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="pTwo">Ripeti Password Attuale</label>
+                        <p class="m-0 text-danger d-none" #repeatActualP>Min 8 chars</p>
+                    </div>
+                    <input id="pTwo" [(ngModel)]="userPassObject.repeatActual" name="pass-2" type="password"
+                        class="form-control form-control-sm border-0" required>
+                </div>
+                <div class="col-9 mt-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="newOne">Nuova Password</label>
+                        <p class="m-0 text-danger d-none" #newP>Min 8 chars</p>
+                    </div>
+                    <input id="newOne" [(ngModel)]="userPassObject.newPassword" name="newpass-1" type="password"
+                        class="form-control form-control-sm border-0" required>
+                </div>
+                <div class="col-9 mt-4">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="newTwo">Ripeti Nuova Password</label>
+                        <p class="m-0 text-danger d-none" #repeatNewP>Min 8 chars</p>
+                    </div>
+                    <input id="newTwo" [(ngModel)]="userPassObject.repeatNewPassword" name="newpass-2" type="password"
+                        class="form-control form-control-sm border-0" required>
+                </div>
+                <div class="mt-4 d-flex align-items-center justify-content-center"
+                    [ngClass]="{'disabled' : !fPass.touched }">
+                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Cambia Password'"
+                        (click)="updatePass()"></app-orange-button>
+                    <div *ngIf="isSendingDataPass" class="ms-3">
+                        <app-inline-loader></app-inline-loader>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
