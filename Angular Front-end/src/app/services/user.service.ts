@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IUserData } from '../interfaces/iuser-data';
 import { IPasswordChange } from '../interfaces/ipassword-change';
+import { IBosses } from '../interfaces/ibosses';
+import { IUserDataPageable } from '../interfaces/iuser-data-pageable';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +24,18 @@ export class UserService {
 
   public updatePassword(data: IPasswordChange): Observable<IUserData> {
     return this.http.post<IUserData>(this.apiUrl + '/pass/' + data.id, data);
+  }
+
+  public getBosses(): Observable<IBosses> {
+    return this.http.get<IBosses>(this.apiUrl + '/bosses');
+  }
+
+  public getUsersPaged(
+    size: number,
+    page: number
+  ): Observable<IUserDataPageable> {
+    return this.http.get<IUserDataPageable>(
+      this.apiUrl + `?size=${size}&page=${page}`
+    );
   }
 }

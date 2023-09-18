@@ -1,8 +1,9 @@
-<div *ngIf="postData != null ? postData.author.avatar == null : commentData!.user.avatar == null"
+<div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
     class="placeholder-img"></div>
 <div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
     <!-- link all'img -->
 </div>
+
 <p class="mt-2 mb-1 fw-medium" [class]="getNameClass()"
     [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
 <img [src]="getImgLink()">

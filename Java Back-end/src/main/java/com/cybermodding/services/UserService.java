@@ -1,8 +1,11 @@
 package com.cybermodding.services;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +22,12 @@ import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.payload.AdminModsDTO;
 import com.cybermodding.payload.CommentCompleteDTO;
 import com.cybermodding.payload.CustomResponse;
-import com.cybermodding.payload.MyProfileDTO;
+import com.cybermodding.payload.ProfileOutDTO;
 import com.cybermodding.payload.PasswordUpdateDTO;
+import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserPageRepo;
 import com.cybermodding.repositories.UserRepo;
@@ -48,6 +53,85 @@ public class UserService {
 
     public Page<User> getUsersPagination(Pageable pageable) {
         return u_page_repo.findAll(pageable);
+    }
+
+    public AdminModsDTO getAdminMods() {
+        List<User> ls = u_repo.findAll();
+        List<User> admins = ls.stream().filter(u -> getRank(u.getId()).equals(EUserLevel.BOSS))
+                .collect(Collectors.toList());
+        List<User> mods = ls.stream()
+                .filter(u -> getRank(u.getId()).equals(EUserLevel.MID)).collect(Collectors.toList());
+
+        List<ProfileOutDTO> outAdmins = new ArrayList<ProfileOutDTO>();
+        admins.forEach(ad -> {
+            Post p = ad.getPosts().size() != 0 ? getLastPost(ad.getPosts()) : null;
+            Comment c = ad.getComments().size() != 0 ? getLastComment(ad.getComments()) : null;
+            PostDTOWithID pdto = p != null
+                    ? new PostDTOWithID(p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+                            p.getSub_section().getId(), p.getComments().size())
+                    : null;
+            CommentCompleteDTO cc = c != null
+                    ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                            new PostDTOWithID(c.getId(), c.getPost().getTitle(), c.getPost().getBody(),
+                                    c.getPost().getType(),
+                                    c.getPost().getAuthor().getId(), c.getPost().getSub_section().getId(),
+                                    c.getPost().getComments().size()))
+                    : null;
+
+            outAdmins.add(new ProfileOutDTO(ad.getId(), ad.getUsername(), ad.getEmail(), ad.getRegistrationDate(),
+                    ad.getDescription(), ad.getAvatar(), ad.getBirthdate(), ad.getPosts().size(),
+                    ad.getComments().size(), pdto, cc, getRank(ad.getId())));
+        });
+
+        List<ProfileOutDTO> outMods = new ArrayList<ProfileOutDTO>();
+        mods.forEach(mod -> {
+            Post p = mod.getPosts().size() != 0 ? getLastPost(mod.getPosts()) : null;
+            PostDTOWithID pdto = p != null
+                    ? new PostDTOWithID(p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+                            p.getSub_section().getId(), p.getComments().size())
+                    : null;
+            Comment c = mod.getComments().size() != 0 ? getLastComment(mod.getComments()) : null;
+            CommentCompleteDTO cc = c != null
+                    ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                            new PostDTOWithID(c.getId(), c.getPost().getTitle(), c.getPost().getBody(),
+                                    c.getPost().getType(),
+                                    c.getPost().getAuthor().getId(), c.getPost().getSub_section().getId(),
+                                    c.getPost().getComments().size()))
+                    : null;
+
+            outMods.add(new ProfileOutDTO(mod.getId(), mod.getUsername(), mod.getEmail(), mod.getRegistrationDate(),
+                    mod.getDescription(), mod.getAvatar(), mod.getBirthdate(), mod.getPosts().size(),
+                    mod.getComments().size(), pdto, cc, getRank(mod.getId())));
+        });
+
+        return AdminModsDTO.builder().admins(outAdmins).mods(outMods).build();
+    }
+
+    public Page<ProfileOutDTO> getUsersPaginationProfile(Pageable page) {
+        Page<User> users = u_page_repo.findAll(page);
+
+        Page<ProfileOutDTO> outPage = users.map(u -> {
+            Comment last = u.getComments().size() != 0 ? getLastComment(u.getComments()) : null;
+            Post last_p = u.getPosts().size() != 0 ? getLastPost(u.getPosts()) : null;
+            PostDTOWithID pdto = last_p != null
+                    ? new PostDTOWithID(last_p.getId(), last_p.getTitle(), last_p.getBody(), last_p.getType(),
+                            last_p.getAuthor().getId(), last_p.getSub_section().getId(), last_p.getComments().size())
+                    : null;
+            CommentCompleteDTO cc = last != null
+                    ? new CommentCompleteDTO(last.getId(), last.getContent(),
+                            last_p != null
+                                    ? new PostDTOWithID(last_p.getId(), last.getPost().getTitle(),
+                                            last.getPost().getBody(), last.getPost().getType(),
+                                            last.getPost().getAuthor().getId(), last.getPost().getSub_section().getId(),
+                                            last.getPost().getComments().size())
+                                    : null)
+                    : null;
+
+            return new ProfileOutDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRegistrationDate(),
+                    u.getDescription(), u.getAvatar(), u.getBirthdate(), u.getPosts().size(),
+                    u.getComments().size(), pdto, cc, getRank(u.getId()));
+        });
+        return outPage;
     }
 
     public ResponseEntity<CustomResponse> deleteById(Long id) {
@@ -143,34 +227,47 @@ public class UserService {
                                 : EUserLevel.BASE;
     }
 
-    public MyProfileDTO getProfile(Long id) {
+    public ProfileOutDTO getProfile(Long id) {
         User u = getById(id);
+        Post p = u.getPosts().size() != 0 ? getLastPost(u.getPosts()) : null;
+        PostDTOWithID pdto = p != null
+                ? new PostDTOWithID(p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+                        p.getSub_section().getId(), p.getComments().size())
+                : null;
+        Comment c = u.getComments().size() != 0 ? getLastComment(u.getComments()) : null;
+        CommentCompleteDTO cc = c != null
+                ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                        new PostDTOWithID(c.getPost().getId(), c.getPost().getTitle(), c.getPost().getBody(),
+                                c.getPost().getType(),
+                                c.getPost().getAuthor().getId(), c.getPost().getSub_section().getId(),
+                                c.getPost().getComments().size()))
+                : null;
 
-        if (u.getPosts().size() != 0) {
-            u.getPosts().sort(new Comparator<Post>() {
-                @Override
-                public int compare(Post p1, Post p2) {
-                    return p2.getPublishedDate().compareTo(p1.getPublishedDate());
-                }
-            });
-        }
+        return new ProfileOutDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRegistrationDate(), u.getDescription(),
+                u.getAvatar(), u.getBirthdate(), u.getPosts().size(), u.getComments().size(), pdto, cc, getRank(id));
+    }
 
-        Post p = u.getPosts().size() != 0 ? u.getPosts().get(0) : null;
+    public Post getLastPost(List<Post> ls) {
+        ls.sort(new Comparator<Post>() {
+            @Override
+            public int compare(Post p1, Post p2) {
+                return p2.getPublishedDate().compareTo(p1.getPublishedDate());
+            }
+        });
+        return ls.get(0);
+    }
 
-        if (u.getComments().size() != 0) {
-            u.getComments().sort(new Comparator<Comment>() {
-                @Override
-                public int compare(Comment p1, Comment p2) {
-                    return p2.getPublishedDate().compareTo(p1.getPublishedDate());
-                }
-            });
-        }
+    public Comment getLastComment(List<Comment> ls) {
+        ls.sort(new Comparator<Comment>() {
+            @Override
+            public int compare(Comment p1, Comment p2) {
+                return p2.getPublishedDate().compareTo(p1.getPublishedDate());
+            }
+        });
+        return ls.get(0);
+    }
 
-        Comment c = u.getComments().size() != 0 ? u.getComments().get(0) : null;
-
-        CommentCompleteDTO cc = c != null ? new CommentCompleteDTO(c.getId(), c.getContent(), c.getPost()) : null;
-
-        return new MyProfileDTO(u.getId(), u.getUsername(), u.getEmail(), u.getRegistrationDate(), u.getDescription(),
-                u.getAvatar(), u.getBirthdate(), u.getPosts().size(), u.getComments().size(), p, cc, getRank(id));
+    public User getRandom() {
+        return u_repo.getRandomUser();
     }
 }

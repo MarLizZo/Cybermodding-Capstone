@@ -113,8 +113,24 @@ export class ShowthreadComponent {
           this.isLoadingPage = false;
           this.pagesArr = [];
           this.setTopBarObj();
-          for (let i = 0; i < res.comments.totalPages; i++) {
-            this.pagesArr.push(i + 1);
+          if (page + 1 <= 3) {
+            for (let i = 0; i < res.comments.totalPages; i++) {
+              i < 5 || i > res.comments.totalPages - 3
+                ? this.pagesArr.push(i + 1)
+                : null;
+            }
+          } else if (page + 1 >= res.comments.totalPages - 2) {
+            for (let i = 0; i < res.comments.totalPages; i++) {
+              i < 2 || i > res.comments.totalPages - 6
+                ? this.pagesArr.push(i + 1)
+                : null;
+            }
+          } else {
+            this.pagesArr.push(1);
+            for (let i = page - 2; i < page + 3; i++) {
+              this.pagesArr.push(i + 1);
+            }
+            this.pagesArr.push(res.comments.totalPages);
           }
           if (refreshPage) {
             this.router.navigateByUrl(

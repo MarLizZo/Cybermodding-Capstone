@@ -1,0 +1,129 @@
+.users-container {
+  .head {
+    background-color: var(--bg-lighter);
+    border-bottom: 2px solid var(--near-black);
+  }
+
+  .row:not(.pageable-container.row, #users .row) {
+    border-bottom: 2px solid var(--near-black);
+  }
+
+  .row {
+    .col-12:first-of-type {
+      background-color: var(--bg-lighter);
+    }
+  }
+
+  i {
+    font-size: 1.3rem;
+    color: var(--orange);
+    cursor: pointer;
+  }
+}
+
+.border-bottom-bgligth {
+  border-bottom: 2px solid var(--bg-lighter);
+}
+
+.pageable-container {
+  border-top: 1px solid var(--orange-hover);
+  border-bottom: 1px solid var(--orange-hover);
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  .previous,
+  .next {
+    transition: all 0.2s;
+    cursor: pointer;
+    width: max-content;
+    p,
+    i {
+      cursor: pointer;
+    }
+    background-color: var(--bg-lighter);
+    border: 2px solid var(--near-black);
+    &:hover {
+      background-color: var(--near-black);
+      i,
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+
+  .pages {
+    .btn-page {
+      border: 2px solid var(--near-black);
+      background-color: var(--bg-lighter);
+      font-size: 1.1rem;
+      cursor: pointer;
+      p {
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: var(--near-black);
+        p {
+          color: var(--orange-hover);
+        }
+      }
+    }
+
+    .actual-page {
+      background-color: var(--near-black);
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+}
+
+.txt-orange {
+  color: var(--orange);
+}
+
+.txt-mod {
+  color: var(--mod-color);
+}
+
+.img-placeholder {
+  background-color: var(--near-black);
+  border: 2px solid var(--orange);
+}
+
+.profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+}
+
+.head-container {
+  background-color: var(--bg-lighter);
+  border-bottom: 2px solid var(--near-black);
+
+  i {
+    color: var(--orange);
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+}
+
+.trunc {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.selectable {
+  color: var(--orange);
+  transition: 0.1s;
+  cursor: pointer;
+  &:hover {
+    color: var(--orange-hover);
+    text-decoration: underline;
+  }
+}

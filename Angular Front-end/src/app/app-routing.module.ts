@@ -37,6 +37,16 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/error/error.module').then((m) => m.ErrorModule),
   },
+  {
+    path: 'users',
+    loadChildren: () =>
+      import('./pages/users/users.module').then((m) => m.UsersModule),
+  },
+  {
+    path: 'users/:hash',
+    loadChildren: () =>
+      import('./pages/users/users.module').then((m) => m.UsersModule),
+  },
 ];
 
 @NgModule({

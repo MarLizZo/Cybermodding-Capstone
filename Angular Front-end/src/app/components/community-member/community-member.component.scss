@@ -1,0 +1,37 @@
+.row {
+  border-bottom: 2px solid var(--near-black);
+  .col-12:first-of-type {
+    background-color: var(--bg-lighter);
+  }
+}
+
+.img-placeholder {
+  background-color: var(--near-black);
+  border: 2px solid var(--orange);
+}
+
+.profile-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+}
+
+.selectable {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.txt-mod {
+  color: var(--mod-color);
+}
+
+.txt-orange {
+  color: var(--orange);
+}
+
+.border-bgligth {
+  border-bottom: 2px solid var(--bg-lighter);
+}

@@ -17,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.User;
+import com.cybermodding.payload.AdminModsDTO;
 import com.cybermodding.payload.CustomResponse;
-import com.cybermodding.payload.MyProfileDTO;
+import com.cybermodding.payload.ProfileOutDTO;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.services.UserService;
 
@@ -55,9 +56,14 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<User>> getUsersPage(Pageable pageable) {
-        Page<User> p = u_svc.getUsersPagination(pageable);
-        return new ResponseEntity<Page<User>>(p, HttpStatus.OK);
+    public ResponseEntity<?> getUsersPageSorted(Pageable pageable) {
+        return new ResponseEntity<Page<ProfileOutDTO>>(u_svc.getUsersPaginationProfile(pageable),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/bosses")
+    public ResponseEntity<AdminModsDTO> getBosses() {
+        return ResponseEntity.ok(u_svc.getAdminMods());
     }
 
     @GetMapping("/ban/{id}")
@@ -67,7 +73,7 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<MyProfileDTO> getProfileInfo(@PathVariable Long id) {
+    public ResponseEntity<ProfileOutDTO> getProfileInfo(@PathVariable Long id) {
         return ResponseEntity.ok(u_svc.getProfile(id));
     }
 }

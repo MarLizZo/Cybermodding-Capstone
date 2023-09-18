@@ -1,0 +1,159 @@
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div *ngIf="!isLoadingPage && !isSingleUser" class="container-fluid mt-4">
+        <h2 class="m-0">Cybermodding Community</h2>
+        <div class="users-container mt-5">
+            <div class="d-flex justify-content-between align-items-center head rounded-1 px-3 pt-2 pb-3">
+                <h4 class="m-0">Admin & Moderatori</h4>
+                <i class="bi" (click)="isBossesCollapsed = !isBossesCollapsed"
+                    [ngClass]="{'bi-arrow-bar-up' : !isBossesCollapsed, 'bi-arrow-bar-down' : isBossesCollapsed}"></i>
+            </div>
+            <div #collapseBosses="ngbCollapse" [(ngbCollapse)]="isBossesCollapsed" class="row m-0 mb-4 w-100">
+                <div class="col-12 p-0 d-flex py-2 px-3">
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Info utente</p>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Data registrazione</p>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Statistiche</p>
+                    </div>
+                </div>
+                <app-community-member *ngFor="let a of bossesArr.admins; let last = last;" [user]="a" class="p-0"
+                    [ngClass]="{'border-bottom-bgligth' : !last}"></app-community-member>
+
+                <app-community-member *ngFor="let m of bossesArr.mods; let last = last;" [user]="m" class="p-0"
+                    [ngClass]="{'border-bottom-bgligth' : !last}"></app-community-member>
+            </div>
+        </div>
+
+        <div id="users" class="users-container mt-5">
+            <div class="d-flex justify-content-between align-items-center head rounded-1 px-3 pt-2 pb-3">
+                <h4 class="m-0">La community</h4>
+                <i class="bi" (click)="isCommunityCollapsed = !isCommunityCollapsed"
+                    [ngClass]="{'bi-arrow-bar-up' : !isCommunityCollapsed, 'bi-arrow-bar-down' : isCommunityCollapsed}"></i>
+            </div>
+            <div #collapseBosses="ngbCollapse" [(ngbCollapse)]="isCommunityCollapsed" class="row m-0 w-100">
+                <div class="col-12 p-0 d-flex py-2 px-3">
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Info utente</p>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Data registrazione</p>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <p class="m-0">Statistiche</p>
+                    </div>
+                </div>
+                <div *ngIf="usersArr != null" class="p-0">
+                    <app-community-member *ngFor="let u of usersArr.content; let last = last;" [user]="u"
+                        [giveBorder]="!last" class="p-0"
+                        [ngClass]="{'border-bottom-bgligth' : !last}"></app-community-member>
+                    <div class="row w-100 pageable-container py-2 px-3 my-4 d-flex align-items-center">
+                        <div class="col-3">
+                            <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersArr.first"
+                                (click)="doCall(usersArr.number - 1)">
+                                <i class="bi bi-arrow-bar-left"></i>
+                                <p class="m-0 ms-2">Indietro</p>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex flex-wrap justify-content-center">
+                            <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                                <div *ngFor="let p of pagesArr; let first = first;"
+                                    [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersArr.number}"
+                                    class="btn-page px-2" (click)="doCall(p - 1)">
+                                    <p class="m-0">{{ p }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex justify-content-end">
+                            <div class="next rounded-1 px-2 d-flex" *ngIf="!usersArr.last"
+                                (click)="doCall(usersArr.number + 1)">
+                                <p class="m-0 me-2">Avanti</p>
+                                <i class="bi bi-arrow-bar-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!isLoadingPage && isSingleUser" class="container-fluid mt-4">
+        <div class="d-flex align-items-center">
+            <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
+                class="img-placeholder profile-img me-3"></div>
+            <div *ngIf="profileData?.avatar">
+                <img [src]="profileData.avatar" class="profile-img me-3">
+            </div>
+            <div>
+                <h1 class="mb-0 pb-1" [innerText]="profileData ? profileData.username : ''"
+                    [class]="profileData ? getClassColor() : ''"></h1>
+                <h6 class="m-0">{{ profileData.description }}</h6>
+            </div>
+            <app-orange-button class="ms-auto" [btnTheme]="'orange'" [btnTitle]="'Invia messaggio'"
+                (click)="goToMessage()"></app-orange-button>
+        </div>
+        <div class="head-container py-2 px-3 rounded-1 mt-5 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 pb-1">Statistiche veloci</h4>
+            <i class="bi" (click)="isQuickStatsCollapsed = !isQuickStatsCollapsed"
+                [ngClass]="{'bi-arrow-bar-up' : !isQuickStatsCollapsed, 'bi-arrow-bar-down' : isQuickStatsCollapsed}"></i>
+        </div>
+        <div #collapseStats="ngbCollapse" [(ngbCollapse)]="isQuickStatsCollapsed"
+            class="row w-100 px-3 border-bottom border-1 border-black">
+            <div class="col-6 my-2">
+                <p class="m-0">Numero totale di Post avviati</p>
+            </div>
+            <div class="col-2 my-2">
+                <p class="m-0" [innerText]="profileData ? profileData.posts_count : 0"></p>
+            </div>
+            <div class="col-4 d-flex my-2"><span>Ultimo:&nbsp;</span>
+                <p class="m-0 trunc" [class]="profileData.last_post ? 'selectable' : ''" (click)="goToPost()">{{
+                    profileData.last_post ? profileData.last_post!.title : 'Nessun Post..' }}</p>
+            </div>
+
+            <div class="col-6 my-2">
+                <p class="m-0">Numero totale di Commenti</p>
+            </div>
+            <div class="col-2 my-2">
+                <p class="m-0" [innerText]="profileData ? profileData.comments_count : 0"></p>
+            </div>
+            <div class="col-4 my-2 d-flex">
+                <span>Ultimo:&nbsp;</span>
+                <p class="m-0 trunc" [class]="profileData.last_comment ? 'selectable' : ''" (click)="goToComment()">{{
+                    profileData.last_comment ? removeTags(profileData.last_comment.content) : 'Nessun commento..' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="head-container py-2 px-3 rounded-1 mt-5 d-flex justify-content-between align-items-center">
+            <h4 class="m-0 pb-1">Informazioni</h4>
+            <i class="bi" (click)="isInfosCollapsed = !isInfosCollapsed"
+                [ngClass]="{'bi-arrow-bar-up' : !isInfosCollapsed, 'bi-arrow-bar-down' : isInfosCollapsed}"></i>
+        </div>
+        <div #collapseStats="ngbCollapse" [(ngbCollapse)]="isInfosCollapsed"
+            class="row w-100 px-3 border-bottom border-1 border-black">
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">Data di registrazione</p>
+            </div>
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">{{ profileData.registrationDate | date : 'dd-MM-YY' }}</p>
+            </div>
+
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">Compleanno</p>
+            </div>
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">{{ profileData.birthdate | date : 'dd-MM-YY' }}</p>
+            </div>
+
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">Indirizzo E-Mail</p>
+            </div>
+            <div class="col-6 my-2 d-flex justify-content-center">
+                <p class="m-0">{{ profileData.email }}</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -75,6 +75,9 @@ public class Runner implements CommandLineRunner {
                 // create my user and give admin privileges
                 // createAndSetAdmin();
 
+                // set random Moderators and Admin
+                // setPrivileges();
+
                 // faker users
                 // createFakeUsers(80);
 
@@ -101,6 +104,19 @@ public class Runner implements CommandLineRunner {
 
                 // create Reactions
                 // createReactions(400);
+        }
+
+        private void setPrivileges() {
+                for (int i = 0; i < 4; i++) {
+                        User u = svc.getRandom();
+                        u.setRoles(Set.of(roleRepository.findById(2l).get()));
+                        userRepository.save(u);
+                }
+                for (int i = 0; i < 3; i++) {
+                        User u = svc.getRandom();
+                        u.setRoles(Set.of(roleRepository.findById(3l).get()));
+                        userRepository.save(u);
+                }
         }
 
         private void createAndSetAdmin() {

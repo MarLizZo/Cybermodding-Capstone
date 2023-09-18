@@ -77,6 +77,7 @@ export class ProfileComponent {
             this.userObject.description = res.description;
             this.userObject.avatar = res.avatar;
             this.userObject.birthdate = res.birthdate;
+            console.log(res);
           });
       }
     });
@@ -128,11 +129,11 @@ export class ProfileComponent {
         'scrolltonumber',
         this.profileData.last_comment.id!.toString()
       );
-      if (this.profileData.last_comment.post!.comments.length <= 8) {
+      if (this.profileData.last_comment.post!.comments_count! <= 8) {
         this.router.navigateByUrl(baseUrl + '/1');
       } else {
         let pageIndex = Math.ceil(
-          this.profileData.last_comment.post!.comments.length / 8
+          this.profileData.last_comment.post!.comments_count! / 8
         );
         this.router.navigateByUrl(baseUrl + '/' + pageIndex);
       }

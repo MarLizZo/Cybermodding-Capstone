@@ -4,7 +4,7 @@
 </div>
 <div class="col-9 d-flex flex-column pt-3 px-0">
     <div class="d-flex justify-content-between pb-2 px-2 comm-info">
-        <p class="m-0">{{ commentData.publishedDate | date : 'dd-MM-YY, H:m' }}</p>
+        <p class="m-0">{{ commentData.publishedDate | date : 'dd-MM-YY, HH:mm' }}</p>
         <p class="m-0 selectable">#{{ commentIndex }}</p>
     </div>
     <div class="m-0 flex-grow-1 px-2 pt-2" [innerHTML]="commentData.content"></div>

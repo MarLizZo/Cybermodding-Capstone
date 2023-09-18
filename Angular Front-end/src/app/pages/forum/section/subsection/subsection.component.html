@@ -27,8 +27,10 @@
                     class="col-12 d-flex justify-content-between align-items-center p-2">
                     <div class="col-8 d-flex align-items-center">
                         <div class="d-flex">
-                            <div *ngIf="post.author.avatar == null" class="placeholder-img"></div>
-                            <img *ngIf="post.author.avatar != null" [src]="post.author.avatar">
+                            <div *ngIf="post.author.avatar == null || post.author.avatar == ''" class="placeholder-img">
+                            </div>
+                            <img *ngIf="post.author.avatar != null && post.author.avatar != ''"
+                                [src]="post.author.avatar">
                         </div>
                         <div class="ms-2 post-selectable"
                             [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
