@@ -215,13 +215,16 @@ public class Runner implements CommandLineRunner {
         private void createSideBlocks() {
                 Faker fk = Faker.instance();
                 sb_repo.saveBlock(SideBlock.builder().title("Block One").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(1).build());
+                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(1).build());
 
                 sb_repo.saveBlock(SideBlock.builder().title("Block Two").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(2).build());
+                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(2).build());
 
                 sb_repo.saveBlock(SideBlock.builder().title("Block Three").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_FORUM).order_number(3).build());
+                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(3).build());
+
+                sb_repo.saveBlock(SideBlock.builder().title("Block All").content(fk.lorem().paragraph()).active(true)
+                                .e_block_type(ESideBlock.BLOCK_ALL).order_number(4).build());
         }
 
         private void createComments(int amount) {

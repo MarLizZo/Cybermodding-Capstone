@@ -1,0 +1,121 @@
+.sections-container {
+  background-color: var(--bg-lighter);
+
+  .custom-btn {
+    background-color: var(--bg);
+    border: 1px solid var(--orange-hover);
+    color: var(--txt);
+  }
+
+  div[ngbDropdownMenu] {
+    background-color: var(--bg);
+
+    button {
+      background-color: var(--bg);
+      color: var(--txt);
+
+      &:hover {
+        background-color: var(--bg-lighter);
+      }
+    }
+
+    .selected {
+      color: var(--orange-hover);
+    }
+  }
+}
+
+.posts-container {
+  background-color: var(--bg-lighter);
+
+  .single-post {
+    border: 2px solid var(--bg);
+    .head-title {
+      background-color: var(--bg);
+      h5 {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .title-trunc {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+    }
+
+    .body-trunc {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.text-mod {
+  color: var(--mod-color);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.pageable-container {
+  border-top: 1px solid var(--orange-hover);
+  border-bottom: 1px solid var(--orange-hover);
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  .previous,
+  .next {
+    transition: all 0.2s;
+    cursor: pointer;
+    width: max-content;
+    p,
+    i {
+      cursor: pointer;
+    }
+    background-color: var(--bg-lighter);
+    border: 2px solid var(--near-black);
+    &:hover {
+      background-color: var(--near-black);
+      i,
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+
+  .pages {
+    .btn-page {
+      border: 2px solid var(--near-black);
+      background-color: var(--bg-lighter);
+      font-size: 1.1rem;
+      cursor: pointer;
+      p {
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: var(--near-black);
+        p {
+          color: var(--orange-hover);
+        }
+      }
+    }
+
+    .actual-page {
+      background-color: var(--near-black);
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+}

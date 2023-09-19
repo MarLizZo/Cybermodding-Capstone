@@ -22,10 +22,12 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.CommentRepoPage;
+import com.cybermodding.repositories.PostPageableRepo;
 import com.cybermodding.repositories.PostRepo;
 import com.cybermodding.repositories.ReactionRepo;
 import com.cybermodding.repositories.SubSectionRepo;
@@ -35,6 +37,8 @@ import com.cybermodding.repositories.UserRepo;
 public class PostService {
     @Autowired
     PostRepo repo;
+    @Autowired
+    PostPageableRepo page_repo;
     @Autowired
     SubSectionRepo ss_repo;
     @Autowired
@@ -180,5 +184,53 @@ public class PostService {
                 p.getReactions(), comments_page_out, level, p.getSub_section().getParent_section().getTitle(),
                 p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),
                 p.getSub_section().getId());
+    }
+
+    public Page<PostHome> getPostsForHomeOrderDate(Long id, Pageable page) {
+        Page<Post> p = page_repo.getPostsHomeForSectionIdDate(id, page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getPostsForHomeOrderReact(Long id, Pageable page) {
+        Page<Post> p = page_repo.getPostsHomeForSectionIdReact(id, page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getPostsForHomeOrderComments(Long id, Pageable page) {
+        Page<Post> p = page_repo.getPostsHomeForSectionIdComments(id, page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getAllPostsPaged(Pageable page) {
+        Page<Post> p = page_repo.findAllOrderDate(page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getAllPostsPagedReact(Pageable page) {
+        Page<Post> p = page_repo.findAllOrderReact(page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getAllPostsPagedComments(Pageable page) {
+        Page<Post> p = page_repo.findAllOrderComments(page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
     }
 }

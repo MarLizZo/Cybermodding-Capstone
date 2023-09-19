@@ -42,10 +42,14 @@ export class ForumService {
     return this.http.get<ISectionData>(this.sectionsApiUrl + '/' + id);
   }
 
-  public getSubSectionsPerSection(p_id: number): Observable<ISubSectionData[]> {
-    return this.http.get<ISubSectionData[]>(
-      this.subsectionsApiUrl + '?pid=' + p_id
-    );
+  public getSubSectionsPerSection(
+    p_id: number | null
+  ): Observable<ISubSectionData[]> {
+    return p_id != null
+      ? this.http.get<ISubSectionData[]>(
+          this.subsectionsApiUrl + '?pid=' + p_id
+        )
+      : this.http.get<ISubSectionData[]>(this.subsectionsApiUrl);
   }
 
   public getSubSectionById(id: number): Observable<ISubSectionData> {

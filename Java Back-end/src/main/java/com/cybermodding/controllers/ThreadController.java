@@ -1,6 +1,7 @@
 package com.cybermodding.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.Post;
@@ -19,6 +21,7 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.services.PostService;
@@ -67,5 +70,27 @@ public class ThreadController {
     @PostMapping("")
     public ResponseEntity<Post> postNewThread(@RequestBody PostDTO post) {
         return ResponseEntity.ok(svc.createNewPost(post));
+    }
+
+    @GetMapping("/home/{id}")
+    public ResponseEntity<Page<PostHome>> getPostsHome(@PathVariable Long id,
+            @RequestParam(name = "orderBy", defaultValue = "date") String orderBy, Pageable page) {
+        if (String.valueOf(id).equals("0")) {
+            if (orderBy.equals("react")) {
+                return ResponseEntity.ok(svc.getAllPostsPagedReact(page));
+            } else if (orderBy.equals("comments")) {
+                return ResponseEntity.ok(svc.getAllPostsPagedComments(page));
+            } else {
+                return ResponseEntity.ok(svc.getAllPostsPaged(page));
+            }
+        } else {
+            if (orderBy.equals("react")) {
+                return ResponseEntity.ok(svc.getPostsForHomeOrderReact(id, page));
+            } else if (orderBy.equals("comments")) {
+                return ResponseEntity.ok(svc.getPostsForHomeOrderComments(id, page));
+            } else {
+                return ResponseEntity.ok(svc.getPostsForHomeOrderDate(id, page));
+            }
+        }
     }
 }

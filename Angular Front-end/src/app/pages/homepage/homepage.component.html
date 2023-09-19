@@ -1,7 +1,101 @@
-<div *ngIf="isLoadingPage" class="h-100 d-flex justify-content-center align-items-center">
+<div *ngIf="isLoadingPage || isWaitingPage" class="h-100 d-flex justify-content-center align-items-center">
     <app-loader></app-loader>
 </div>
-<div *ngIf="!isLoadingPage" class="h-100">
+<div *ngIf="!isLoadingPage && !isWaitingPage" class="h-100 pb-4">
     <app-hero></app-hero>
+    <div class="container-fluid">
+        <h2 class="mt-4 mb-5">Cybermodding Homepage</h2>
+        <div class="row">
+            <div class="col-9">
+                <div class="sections-container d-flex justify-content-between p-3 rounded-1">
+                    <div class="btn-group">
+                        <button id="sec-btn" type="button" class="btn custom-btn"
+                            [innerText]="btnSectionsText"></button>
+                        <div class="btn-group" ngbDropdown role="group">
+                            <button type="button" class="btn custom-btn rounded-end-1 dropdown-toggle-split"
+                                ngbDropdownToggle></button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                                <button ngbDropdownItem (click)="switchSection(0)"
+                                    [ngClass]="{'selected' : selectedSectionIndex == 0 }">Tutte le sezioni</button>
+                                <button *ngFor="let section of sectionsArr; let i = index" ngbDropdownItem
+                                    [ngClass]="{'selected' : i + 1 == selectedSectionIndex }"
+                                    (click)="switchSection(i + 1)">{{
+                                    section.title }}</button>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="btn-group">
+                        <button type="button" class="btn custom-btn">{{ btnSectionsOrderText }}</button>
+                        <div class="btn-group" ngbDropdown role="group">
+                            <button type="button" class="btn custom-btn rounded-end-1 dropdown-toggle-split"
+                                ngbDropdownToggle></button>
+                            <div class="dropdown-menu" ngbDropdownMenu>
+                                <button ngbDropdownItem [ngClass]="{'selected' : selectedSectionOrderIndex == 0 }"
+                                    (click)="switchOrder(0)">Data
+                                    pubblicazione</button>
+                                <button ngbDropdownItem [ngClass]="{'selected' : selectedSectionOrderIndex == 1 }"
+                                    (click)="switchOrder(1)">Numero di
+                                    commenti</button>
+                                <button ngbDropdownItem [ngClass]="{'selected' : selectedSectionOrderIndex == 2 }"
+                                    (click)="switchOrder(2)">Numero di
+                                    reazioni</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="posts-container mt-2 p-3 pb-5 rounded-1">
+                    <h3 class="m-0">Sezione > {{ btnSectionsText }}</h3>
+                    <div *ngFor="let post of postsData.content; let first = first" class="single-post mt-5">
+                        <div class="head-title pt-2 px-2 pb-3 rounded-1">
+                            <h4 class="mb-1 title-trunc">{{ post.title }}</h4>
+                            <h5 class="m-0 d-inline" [class]="getClassName(post.user_level!.toString())"
+                                (click)="goToProfile(post.author)">{{
+                                post.author.username
+                                }}</h5>
+                            <span>, il {{ post.publishedDate | date : 'dd-MM-YY' }}</span>
+                        </div>
+                        <div class="post-body d-flex flex-column px-2 pt-3 rounded-1">
+                            <div class="flex-grow-1 body-trunc pb-4" [innerHTML]="post.body"></div>
+                            <div class="py-4 align-self-center">
+                                <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Leggi nel Forum'"
+                                    (click)="goToForumPost(post)"></app-orange-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
+                    <div class="col-3">
+                        <div class="previous rounded-1 px-2 d-flex" *ngIf="!postsData.first"
+                            (click)="doPostsCall(selectedSectionIndex, postsData.number - 1)">
+                            <i class="bi bi-arrow-bar-left"></i>
+                            <p class="m-0 ms-2">Indietro</p>
+                        </div>
+                    </div>
+                    <div class="col-6 d-flex justify-content-center">
+                        <div class="pages d-flex rounded-1">
+                            <div *ngFor="let p of pagesArr; let first = first;"
+                                [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == postsData.number}"
+                                class="btn-page px-2" (click)="doPostsCall(selectedSectionIndex, p - 1)">
+                                <p class="m-0">{{ p }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex justify-content-end">
+                        <div class="next rounded-1 px-2 d-flex" *ngIf="!postsData.last"
+                            (click)="doPostsCall(selectedSectionIndex, postsData.number + 1)">
+                            <p class="m-0 me-2">Avanti</p>
+                            <i class="bi bi-arrow-bar-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div *ngFor="let side of sidesArr">
+                    <app-sideblock [sideBlockData]="side"></app-sideblock>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
