@@ -4,6 +4,7 @@ import { Subscription, catchError } from 'rxjs';
 import { UserLevel } from 'src/app/enums/user-level';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
+import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
 import { ForumService } from 'src/app/services/forum.service';
 
@@ -145,5 +146,19 @@ export class SubsectionComponent {
       sessionStorage.setItem('scrolltocomment', 'true');
       this.router.navigateByUrl(baseUrl + '/' + page);
     }
+  }
+
+  goToProfile(user: IUserData) {
+    this.authSub = this.auth.user$.subscribe((res) => {
+      if (res?.user_id == user.id) {
+        this.router.navigateByUrl('/profile');
+      } else {
+        this.router.navigateByUrl(
+          `/users/${user.id}-${user.username
+            .replaceAll(' ', '')
+            .replaceAll('.', '')}`
+        );
+      }
+    });
   }
 }

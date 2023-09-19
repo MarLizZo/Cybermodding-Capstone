@@ -66,7 +66,7 @@ export class HomepageComponent {
         this.sectionsArr = res;
       });
 
-    this.doPostsCall(0, 0);
+    this.doPostsCall(0, 0, true);
 
     setTimeout(() => {
       this.isWaitingPage = false;
@@ -82,7 +82,7 @@ export class HomepageComponent {
     if (this.authSub) this.authSub.unsubscribe();
   }
 
-  doPostsCall(parent_id: number, page: number) {
+  doPostsCall(parent_id: number, page: number, init: boolean) {
     this.postsSub = this.svc
       .getPosts(
         parent_id,
@@ -112,6 +112,7 @@ export class HomepageComponent {
           }
           this.pagesArr.push(res.totalPages);
         }
+        if (!init) document.querySelector('#home-head')?.scrollIntoView();
       });
   }
 
@@ -120,10 +121,10 @@ export class HomepageComponent {
       this.selectedSectionIndex = index;
       if (index == 0) {
         this.btnSectionsText = 'Tutte le sezioni';
-        this.doPostsCall(0, 0);
+        this.doPostsCall(0, 0, false);
       } else {
         this.btnSectionsText = this.sectionsArr[index - 1].title;
-        this.doPostsCall(this.sectionsArr[index - 1].id!, 0);
+        this.doPostsCall(this.sectionsArr[index - 1].id!, 0, false);
       }
     }
   }

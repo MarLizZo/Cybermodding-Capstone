@@ -4,7 +4,7 @@
     <!-- link all'img -->
 </div>
 
-<p class="mt-2 mb-1 fw-medium" [class]="getNameClass()"
+<p class="mt-2 mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"
     [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
 <img [src]="getImgLink()">
 <p class="my-3" [innerHTML]="getDescr()">

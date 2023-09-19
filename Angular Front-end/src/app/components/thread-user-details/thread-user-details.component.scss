@@ -18,3 +18,10 @@
   border: 2px solid var(--orange);
   border-radius: 50%;
 }
+
+.selectable {
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}

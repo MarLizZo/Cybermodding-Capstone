@@ -6,9 +6,10 @@
             </h5>
             <p class="m-0">{{ sectionDescr }}</p>
         </div>
-        <h6 class="m-0">..Collapse..</h6>
+        <i class="bi" (click)="setConfig()"
+            [ngClass]="{'bi-arrow-bar-up' : !isSectionCollapsed, 'bi-arrow-bar-down' : isSectionCollapsed}"></i>
     </div>
-    <div *ngFor="let ss of subsArr">
+    <div #collapseSection="ngbCollapse" [(ngbCollapse)]="isSectionCollapsed" *ngFor="let ss of subsArr">
         <app-subsection-body [subSection]="ss"></app-subsection-body>
     </div>
 </div>

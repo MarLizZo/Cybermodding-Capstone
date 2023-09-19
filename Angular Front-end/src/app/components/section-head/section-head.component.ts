@@ -4,12 +4,20 @@ import { ForumService } from 'src/app/services/forum.service';
 import { Subscription, catchError } from 'rxjs';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { SubsectionBodyComponent } from '../subsection-body/subsection-body.component';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+
+type secConf = [
+  {
+    id: number;
+    collapsed: boolean;
+  }
+];
 
 @Component({
   selector: 'app-section-head',
   standalone: true,
-  imports: [CommonModule, SubsectionBodyComponent],
+  imports: [CommonModule, SubsectionBodyComponent, NgbCollapseModule],
   templateUrl: './section-head.component.html',
   styleUrls: ['./section-head.component.scss'],
 })
@@ -20,6 +28,7 @@ export class SectionHeadComponent {
   @Input() sectionDescr!: string;
   @Input() sectionId!: number;
   @Input() isLast!: boolean;
+  isSectionCollapsed: boolean = false;
   subs!: Subscription;
   subsArr: ISubSectionData[] = [];
 
@@ -34,6 +43,14 @@ export class SectionHeadComponent {
       .subscribe((res) => {
         this.subsArr = res;
       });
+
+    if (localStorage.getItem('sections-config')) {
+      let config: secConf = JSON.parse(
+        localStorage.getItem('sections-config')!
+      );
+      let sec = config.findIndex((el) => el.id == this.sectionId);
+      if (sec != -1) this.isSectionCollapsed = config[sec].collapsed;
+    }
   }
 
   ngOnDestroy() {
@@ -55,5 +72,28 @@ export class SectionHeadComponent {
         .replaceAll('/', '-')
         .toLowerCase()}`
     );
+  }
+
+  setConfig() {
+    this.isSectionCollapsed = !this.isSectionCollapsed;
+    if (localStorage.getItem('sections-config')) {
+      let config: secConf = JSON.parse(
+        localStorage.getItem('sections-config')!
+      );
+      let sec = config.findIndex((el) => el.id == this.sectionId);
+      if (sec != -1) {
+        config[sec].collapsed = this.isSectionCollapsed;
+      } else {
+        config.push({ id: this.sectionId, collapsed: this.isSectionCollapsed });
+      }
+      localStorage.setItem('sections-config', JSON.stringify(config));
+    } else {
+      localStorage.setItem(
+        'sections-config',
+        JSON.stringify([
+          { id: this.sectionId, collapsed: this.isSectionCollapsed },
+        ])
+      );
+    }
   }
 }

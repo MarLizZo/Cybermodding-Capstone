@@ -7,7 +7,7 @@
         <h2 class="mt-4 mb-5">Cybermodding Homepage</h2>
         <div class="row">
             <div class="col-9">
-                <div class="sections-container d-flex justify-content-between p-3 rounded-1">
+                <div id="home-head" class="sections-container d-flex justify-content-between p-3 rounded-1">
                     <div class="btn-group">
                         <button id="sec-btn" type="button" class="btn custom-btn"
                             [innerText]="btnSectionsText"></button>
@@ -68,7 +68,7 @@
                 <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
                     <div class="col-3">
                         <div class="previous rounded-1 px-2 d-flex" *ngIf="!postsData.first"
-                            (click)="doPostsCall(selectedSectionIndex, postsData.number - 1)">
+                            (click)="doPostsCall(selectedSectionIndex, postsData.number - 1, false)">
                             <i class="bi bi-arrow-bar-left"></i>
                             <p class="m-0 ms-2">Indietro</p>
                         </div>
@@ -77,14 +77,14 @@
                         <div class="pages d-flex rounded-1">
                             <div *ngFor="let p of pagesArr; let first = first;"
                                 [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == postsData.number}"
-                                class="btn-page px-2" (click)="doPostsCall(selectedSectionIndex, p - 1)">
+                                class="btn-page px-2" (click)="doPostsCall(selectedSectionIndex, p - 1, false)">
                                 <p class="m-0">{{ p }}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-3 d-flex justify-content-end">
                         <div class="next rounded-1 px-2 d-flex" *ngIf="!postsData.last"
-                            (click)="doPostsCall(selectedSectionIndex, postsData.number + 1)">
+                            (click)="doPostsCall(selectedSectionIndex, postsData.number + 1, false)">
                             <p class="m-0 me-2">Avanti</p>
                             <i class="bi bi-arrow-bar-right"></i>
                         </div>

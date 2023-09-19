@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
 import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-thread-user-details',
@@ -14,6 +17,9 @@ import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
 export class ThreadUserDetailsComponent {
   @Input() postData!: IPostData | IPostDataPaged | null;
   @Input() commentData!: ICommentData | null;
+  authSub!: Subscription;
+
+  constructor(private router: Router, private authSvc: AuthService) {}
 
   getImgLink(): string {
     if (this.postData != null) {
@@ -67,5 +73,33 @@ export class ThreadUserDetailsComponent {
         ? this.postData.author.description
         : this.commentData!.user.description;
     return '<i>' + actualDescr + '</i>';
+  }
+
+  goToProfile() {
+    this.authSub = this.authSvc.user$.subscribe((res) => {
+      if (this.postData != null) {
+        if (res?.user_id == this.postData?.author.id) {
+          this.router.navigateByUrl('/profile');
+        } else {
+          this.router.navigateByUrl(
+            `/users/${this.postData?.author.id}-${this.postData?.author.username
+              .replaceAll(' ', '')
+              .replaceAll('.', '')}`
+          );
+        }
+      } else {
+        if (res?.user_id == this.commentData?.user.id) {
+          this.router.navigateByUrl('/profile');
+        } else {
+          this.router.navigateByUrl(
+            `/users/${
+              this.commentData?.user.id
+            }-${this.commentData?.user.username
+              .replaceAll(' ', '')
+              .replaceAll('.', '')}`
+          );
+        }
+      }
+    });
   }
 }

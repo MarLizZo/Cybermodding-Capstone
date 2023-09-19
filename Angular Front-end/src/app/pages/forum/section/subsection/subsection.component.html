@@ -32,10 +32,12 @@
                             <img *ngIf="post.author.avatar != null && post.author.avatar != ''"
                                 [src]="post.author.avatar">
                         </div>
-                        <div class="ms-2 post-selectable"
-                            [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
-                            <h6 class="m-0">{{ post.type.toString() + ' > ' + post.title }}</h6>
-                            <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)">{{
+                        <div class="ms-2">
+                            <h6 class="m-0 selectable"
+                                [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
+                                {{ post.type.toString() + ' > ' + post.title }}</h6>
+                            <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)"
+                                    class="selectable" (click)="goToProfile(post.author)">{{
                                     post.author.username }}</span>, il {{
                                 post.publishedDate | date : ' dd-MM-Y' }}</p>
                         </div>

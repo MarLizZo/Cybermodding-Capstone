@@ -25,18 +25,15 @@
   font-size: 0.9em;
 }
 
-.post-selectable {
-  h6 {
-    transition: color 0.1s;
-  }
+.selectable {
+  cursor: pointer;
   &:hover {
-    cursor: pointer;
-    h6 {
-      cursor: pointer;
-      color: var(--orange-hover);
-      text-decoration: underline;
-    }
+    text-decoration: underline;
   }
+}
+
+h6.selectable:hover {
+  color: var(--orange-hover);
 }
 
 .txt-orange {
