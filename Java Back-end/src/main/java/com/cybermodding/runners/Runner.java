@@ -67,7 +67,7 @@ public class Runner implements CommandLineRunner {
 
         @Override
         public void run(String... args) throws Exception {
-                System.out.println("** ..Runner.. **");
+                System.out.println("** ..Running.. **");
 
                 // create roles columns
                 setRoleDefault();

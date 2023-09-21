@@ -1,1 +1,120 @@
-<p>modcp works!</p>
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div *ngIf="!isLoadingPage && !granted" class="container-fluid d-flex flex-column align-items-center mt-5">
+        <h2>Non sei autorizzato..</h2>
+        <h2>Ti rispedisco alla Home..</h2>
+    </div>
+    <div *ngIf="!isLoadingPage && granted" class="container-fluid mt-4">
+        <h1 class="mb-2" [class]="classColor">{{ username }}</h1>
+        <h3 class="mb-4">Pannello Moderatore</h3>
+
+        <div class="head-container d-flex justify-content-evenly p-3">
+            <button #userMod class="btn moderation-btn px-4 rounded-1 btn-selected border-0"
+                (click)="switchModeration(0)">Moderazione utenti</button>
+            <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0"
+                (click)="switchModeration(1)">Moderazione thread</button>
+        </div>
+        <div class="main-container p-3">
+            <div *ngIf="isUsersModeration" class="users-moderation d-flex flex-column align-items-center mt-2">
+                <p class="mb-2">Cerca utenti</p>
+                <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">
+                    <input [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
+                        class="form-control form-control-sm px-2 border-0 shadow-none w-50"
+                        placeholder="Cerca utente..">
+                </form>
+
+                <p *ngIf="usersFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
+                <div *ngIf="usersFound != undefined && usersFound.content.length != 0"
+                    class="user-container w-100 mt-4 p-3">
+                    <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-user"
+                        [ngClass]="{'mt-3' : !first}">
+                        <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                            <p class="m-0 fw-medium fs-5" [innerText]="namesArr[i]"
+                                [ngClass]="{'text-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
+                            </p>
+                            <i class="bi bi-arrow-bar-down" (click)="collapseableArr[i] = !collapseableArr[i]"></i>
+                        </div>
+
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableArr[i]"
+                            class="options-container p-3 pb-4">
+                            <form #f="ngForm" class="d-flex flex-column align-items-center"
+                                [ngClass]="{'disabled' : u.roles![0].id == 3}">
+                                <div class="w-75">
+                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID
+                                        Utente</label>
+                                    <input [id]="'uid-' + i" type="text" ngModel name="uid"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                        [(ngModel)]="u.id">
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <label [htmlFor]="'username-' + i" class="mb-1 align-self-start">Username</label>
+                                    <input [disabled]="u.roles![0].id == 3" [id]="'username-' + i" type="text" ngModel
+                                        name="username" class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.username" minlength="3">
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <label [htmlFor]="'email-' + i" class="mb-1 align-self-start">Email</label>
+                                    <input [disabled]="u.roles![0].id == 3" ngModel name="email" [id]="'email-' + i"
+                                        type="email" class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.email">
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <label [htmlFor]="'descr-' + i" class="mb-1 align-self-start">Description</label>
+                                    <input [disabled]="u.roles![0].id == 3" [id]="'descr-' + i" type="text" ngModel
+                                        name="description"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.description" maxlength="20">
+                                </div>
+
+                                <div class="w-75 mt-3 mb-4">
+                                    <label [htmlFor]="'role-' + i" class="mb-1 align-self-start">Ruolo</label>
+                                    <select [disabled]="u.roles![0].id == 3" name="role" [id]="'role-' + i"
+                                        [(ngModel)]="u.roles![0].id"
+                                        class="form-select form-select-sm border-0 shadow-none">
+                                        <option value="1">User</option>
+                                        <option value="2">Moderator</option>
+                                        <option disabled value="3">Admin</option>
+                                        <option value="4">Bannato</option>
+                                    </select>
+                                </div>
+                                <app-orange-button *ngIf="u.roles![0].id != 3" [btnTheme]="'orange'"
+                                    [btnTitle]="'Modera utente'" (click)="doUserModerate(f, i)"
+                                    [ngClass]="{'disabled' : u.roles![0].id == 3}"></app-orange-button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
+                        <div class="col-3">
+                            <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersFound.first"
+                                (click)="searchUsers(usersFound.number - 1)">
+                                <i class="bi bi-arrow-bar-left"></i>
+                                <p class="m-0 ms-2">Indietro</p>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex flex-wrap justify-content-center">
+                            <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                                <div *ngFor="let p of pagesArr; let first = first;"
+                                    [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersFound.number}"
+                                    class="btn-page px-2" (click)="searchUsers(p - 1)">
+                                    <p class="m-0">{{ p }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex justify-content-end">
+                            <div class="next rounded-1 px-2 d-flex" *ngIf="!usersFound.last"
+                                (click)="searchUsers(usersFound.number + 1)">
+                                <p class="m-0 me-2">Avanti</p>
+                                <i class="bi bi-arrow-bar-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isThreadsModeration"></div>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,16 @@ export class UserService {
     return this.http.get<IUserData>(this.apiUrl + '/profile/' + id);
   }
 
+  public getUsersFromName(
+    name: string,
+    page: number = 0
+  ): Observable<IUserDataPageable> {
+    let params: string = `&size=8&page=${page}`;
+    return this.http.get<IUserDataPageable>(
+      this.apiUrl + '/name?u=' + name + params
+    );
+  }
+
   public updateUser(data: Partial<IUserData>): Observable<IUserData> {
     return this.http.patch<IUserData>(this.apiUrl + '/' + data.id, data);
   }
@@ -28,6 +38,16 @@ export class UserService {
 
   public getBosses(): Observable<IBosses> {
     return this.http.get<IBosses>(this.apiUrl + '/bosses');
+  }
+
+  public moderate(
+    id: number,
+    data: Partial<IUserData>
+  ): Observable<Partial<IUserData>> {
+    return this.http.post<Partial<IUserData>>(
+      this.apiUrl + '/moderate/' + id,
+      data
+    );
   }
 
   public getUsersPaged(

@@ -15,4 +15,10 @@ export interface IUserData {
   last_post?: IPostData | null;
   last_comment?: ICommentData | null;
   level?: UserLevel | string;
+  roles?: [
+    {
+      id: number;
+      roleName: string;
+    }
+  ];
 }

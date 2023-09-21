@@ -1,0 +1,133 @@
+.text-mod {
+  color: var(--mod-color);
+}
+
+.head-container {
+  background-color: var(--bg-lighter);
+  border-bottom: 2px solid var(--near-black);
+
+  .moderation-btn {
+    background-color: var(--bg);
+    color: var(--txt);
+    transition: 0.2s;
+
+    &:hover,
+    &:active {
+      background-color: var(--near-black);
+    }
+  }
+
+  .btn-selected {
+    color: var(--orange-hover);
+    background-color: var(--near-black);
+  }
+}
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  .users-moderation {
+    input {
+      background-color: var(--bg);
+      color: var(--txt);
+    }
+
+    .user-container {
+      .single-user {
+        background-color: var(--bg);
+
+        .su-head {
+          border-bottom: 1px solid var(--near-black);
+        }
+
+        .options-container {
+          background-color: var(--bg-lighter);
+          border: 1px solid var(--near-black);
+          border-top: 0;
+
+          select {
+            background-color: var(--bg);
+            color: var(--txt);
+
+            option {
+              background-color: var(--bg-lighter);
+              color: var(--txt);
+            }
+          }
+        }
+
+        i {
+          cursor: pointer;
+          color: var(--orange-hover);
+          font-size: 1.2rem;
+        }
+      }
+    }
+  }
+
+  ::placeholder {
+    color: var(--txt-muted);
+  }
+}
+
+.pageable-container {
+  border-top: 1px solid var(--orange-hover);
+  border-bottom: 1px solid var(--orange-hover);
+
+  i {
+    font-size: 1.2rem;
+  }
+
+  .previous,
+  .next {
+    transition: all 0.2s;
+    cursor: pointer;
+    width: max-content;
+    p,
+    i {
+      cursor: pointer;
+    }
+    background-color: var(--bg-lighter);
+    border: 2px solid var(--near-black);
+    &:hover {
+      background-color: var(--near-black);
+      i,
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+
+  .pages {
+    .btn-page {
+      border: 2px solid var(--near-black);
+      background-color: var(--bg-lighter);
+      font-size: 1.1rem;
+      cursor: pointer;
+      p {
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: var(--near-black);
+        p {
+          color: var(--orange-hover);
+        }
+      }
+    }
+
+    .actual-page {
+      background-color: var(--near-black);
+      p {
+        color: var(--orange-hover);
+      }
+    }
+  }
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.text-mod {
+  color: var(--mod-color);
+}

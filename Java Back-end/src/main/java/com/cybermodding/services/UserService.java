@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,7 @@ import com.cybermodding.payload.AdminModsDTO;
 import com.cybermodding.payload.CommentCompleteDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.ProfileOutDTO;
+import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.repositories.RoleRepo;
@@ -154,7 +154,7 @@ public class UserService {
 
         if (u_repo.existsById(id)) {
             if (hasPriviliges || id.equals(u.getId())) {
-                User fromDB = u_repo.findById(id).get();
+                User fromDB = u_repo.findById(u.getId()).get();
                 fromDB.setUsername(u.getUsername());
                 fromDB.setEmail(u.getEmail());
                 fromDB.setDescription(u.getDescription());
@@ -205,17 +205,14 @@ public class UserService {
         }
     }
 
-    public CustomResponse banUser(Long id) {
-        if (u_repo.existsById(id)) {
-            User u = u_repo.findById(id).get();
-            u.setRoles(Set.of(roleRepository.findById(4l).get()));
-            u_repo.save(u);
-            return new CustomResponse(new Date(), "** User Banned succesfully **",
-                    HttpStatus.OK);
-        } else {
-            return new CustomResponse(new Date(), "** User not found **",
-                    HttpStatus.BAD_REQUEST);
-        }
+    public Page<UserModerationData> getFromUsername(String username, Pageable page) {
+        Page<User> ls = this.u_page_repo.findAllByUsername(username.toLowerCase(), page);
+        Page<UserModerationData> ls_data = ls.map(u -> {
+            return new UserModerationData(u.getId(), u.getUsername(), u.getEmail(), u.getRegistrationDate(),
+                    u.getDescription(), u.getAvatar(), u.getBirthdate(), u.getRoles(), u.getPosts().size(),
+                    u.getComments().size());
+        });
+        return ls_data;
     }
 
     public EUserLevel getRank(Long id) {

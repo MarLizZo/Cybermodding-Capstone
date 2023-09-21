@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.User;
 import com.cybermodding.payload.AdminModsDTO;
 import com.cybermodding.payload.CustomResponse;
+import com.cybermodding.payload.ModerateUserInDTO;
 import com.cybermodding.payload.ProfileOutDTO;
+import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.payload.PasswordUpdateDTO;
+import com.cybermodding.services.ModerationService;
 import com.cybermodding.services.UserService;
 
 @RestController
@@ -30,11 +34,19 @@ public class UserController {
 
     @Autowired
     UserService u_svc;
+    @Autowired
+    ModerationService m_svc;
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return new ResponseEntity<User>(u_svc.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/name")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Page<UserModerationData>> getFromUsername(@RequestParam String u, Pageable page) {
+        return ResponseEntity.ok(u_svc.getFromUsername(u, page));
     }
 
     @PatchMapping("/{id}")
@@ -69,7 +81,13 @@ public class UserController {
     @GetMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
     public ResponseEntity<CustomResponse> banUser(@PathVariable Long id) {
-        return ResponseEntity.ok(u_svc.banUser(id));
+        return ResponseEntity.ok(m_svc.banUser(id));
+    }
+
+    @PostMapping("/moderate/{id}")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
+    public ResponseEntity<UserModerationData> banUser(@PathVariable Long id, @RequestBody ModerateUserInDTO data) {
+        return ResponseEntity.ok(m_svc.moderateUser(id, data));
     }
 
     @GetMapping("/profile/{id}")

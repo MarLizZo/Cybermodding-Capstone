@@ -1,10 +1,151 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription, catchError } from 'rxjs';
+import { IUserData } from 'src/app/interfaces/iuser-data';
+import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
+import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-modcp',
   templateUrl: './modcp.component.html',
-  styleUrls: ['./modcp.component.scss']
+  styleUrls: ['./modcp.component.scss'],
 })
 export class ModcpComponent {
+  isLoadingPage: boolean = true;
+  username: string = '';
+  user_id: number = 0;
+  classColor: string = '';
+  granted: boolean = false;
+  isUsersModeration: boolean = true;
+  isThreadsModeration: boolean = false;
+  authPrivSub!: Subscription;
+  authUserSub!: Subscription;
+  usersSub!: Subscription;
+  searcUserSub!: Subscription;
+  moderateUserSub!: Subscription;
+  inputSearchUser: string = '';
+  usersFound!: IUserDataPageable;
+  collapseableArr: boolean[] = [true, true, true, true, true, true, true, true];
+  namesArr: string[] = [];
+  pagesArr: number[] = [];
 
+  @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
+
+  constructor(
+    private authSvc: AuthService,
+    private router: Router,
+    private user_svc: UserService
+  ) {}
+
+  ngOnInit() {
+    this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
+      if (res?.isMod || res?.isAdmin) {
+        this.granted = true;
+        this.classColor = res.isMod ? 'text-mod' : 'text-danger';
+
+        this.authUserSub = this.authSvc.user$.subscribe((res) => {
+          this.username = res!.username;
+          this.user_id = res!.user_id;
+          this.isLoadingPage = false;
+        });
+      } else {
+        this.isLoadingPage = false;
+        this.granted = false;
+        setTimeout(() => {
+          this.router.navigateByUrl('/');
+        }, 2000);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.authPrivSub) this.authPrivSub.unsubscribe();
+    if (this.authUserSub) this.authUserSub.unsubscribe();
+    if (this.usersSub) this.usersSub.unsubscribe();
+    if (this.searcUserSub) this.searcUserSub.unsubscribe();
+    if (this.moderateUserSub) this.moderateUserSub.unsubscribe();
+  }
+
+  switchModeration(flag: number) {
+    if (flag == 0) {
+      if (!this.isUsersModeration) {
+        this.isUsersModeration = !this.isUsersModeration;
+        this.isThreadsModeration = !this.isThreadsModeration;
+        this.usersBtn.nativeElement.classList.toggle('btn-selected');
+        this.threadsBtn.nativeElement.classList.toggle('btn-selected');
+      }
+    } else {
+      if (!this.isThreadsModeration) {
+        this.isThreadsModeration = !this.isThreadsModeration;
+        this.isUsersModeration = !this.isUsersModeration;
+        this.usersBtn.nativeElement.classList.toggle('btn-selected');
+        this.threadsBtn.nativeElement.classList.toggle('btn-selected');
+      }
+    }
+  }
+
+  searchUsers(page: number) {
+    this.searcUserSub = this.user_svc
+      .getUsersFromName(this.inputSearchUser, page)
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        this.pagesArr = [];
+
+        if (page + 1 <= 3) {
+          for (let i = 0; i < res.totalPages; i++) {
+            i < 5 || i > res.totalPages - 3 ? this.pagesArr.push(i + 1) : null;
+          }
+        } else if (page + 1 >= res.totalPages - 2) {
+          for (let i = 0; i < res.totalPages; i++) {
+            i < 2 || i > res.totalPages - 6 ? this.pagesArr.push(i + 1) : null;
+          }
+        } else {
+          this.pagesArr.push(1);
+          for (let i = page - 2; i < page + 3; i++) {
+            this.pagesArr.push(i + 1);
+          }
+          this.pagesArr.push(res.totalPages);
+        }
+
+        for (let i = 0; i < res.numberOfElements; i++) {
+          this.namesArr[i] = res.content[i].username;
+        }
+
+        this.usersFound = res;
+      });
+  }
+
+  doUserModerate(data: NgForm, index: number) {
+    let outData: Partial<IUserData> = {
+      id: data.controls['uid'].value,
+      username: data.controls['username'].value,
+      email: data.controls['email'].value,
+      description: data.controls['description'].value,
+      roles:
+        data.controls['role'].value == 4
+          ? [{ id: 4, roleName: 'ROLE_BANNED' }]
+          : data.controls['role'].value == 2
+          ? [{ id: 2, roleName: 'ROLE_MODERATOR' }]
+          : [{ id: 1, roleName: 'ROLE_USER' }],
+    };
+
+    this.moderateUserSub = this.user_svc
+      .moderate(this.user_id, outData)
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        console.log(res);
+        this.namesArr[index] = res.username!;
+      });
+  }
 }

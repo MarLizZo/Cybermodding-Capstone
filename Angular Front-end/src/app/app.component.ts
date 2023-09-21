@@ -27,8 +27,10 @@ export class AppComponent {
             ? 'Cybermodding - Control Panel'
             : this.router.url.includes('auth')
             ? 'Cybermodding - Auth'
+            : this.router.url.includes('users')
+            ? 'Cybermodding - Community'
             : this.router.url.includes('profile')
-            ? 'Cybermodding - Profile'
+            ? 'Cybermodding - Profilo'
             : 'Cybermodding';
       }
     });

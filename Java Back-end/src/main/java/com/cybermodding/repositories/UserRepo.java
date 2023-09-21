@@ -1,6 +1,5 @@
 package com.cybermodding.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,9 +17,6 @@ public interface UserRepo extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
-
-    @Query("SELECT u FROM User u WHERE u.username LIKE username")
-    List<User> findAllByUsername(String username);
 
     @Query("SELECT u FROM User u ORDER BY RANDOM() LIMIT 1")
     User getRandomUser();
