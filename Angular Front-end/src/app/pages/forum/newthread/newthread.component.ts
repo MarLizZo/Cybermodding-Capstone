@@ -23,6 +23,7 @@ export class NewthreadComponent {
   typeString: string = 'Type General';
   typeOfThread: PostType = PostType.GENERAL;
   topBObj: any = [];
+  threadTitle = '';
   @ViewChild('generalBtn') generalBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('newsBtn') newsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('guideBtn') guideBtn!: ElementRef<HTMLButtonElement>;

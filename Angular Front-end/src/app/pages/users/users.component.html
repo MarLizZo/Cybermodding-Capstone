@@ -5,7 +5,7 @@
         <div class="users-container mt-5">
             <div class="d-flex justify-content-between align-items-center head rounded-1 px-3 pt-2 pb-3">
                 <h4 class="m-0">Admin & Moderatori</h4>
-                <i class="bi" (click)="isBossesCollapsed = !isBossesCollapsed"
+                <i class="bi" (click)="doCollapse(0)"
                     [ngClass]="{'bi-arrow-bar-up' : !isBossesCollapsed, 'bi-arrow-bar-down' : isBossesCollapsed}"></i>
             </div>
             <div #collapseBosses="ngbCollapse" [(ngbCollapse)]="isBossesCollapsed" class="row m-0 mb-4 w-100">
@@ -31,7 +31,7 @@
         <div id="users" class="users-container mt-5">
             <div class="d-flex justify-content-between align-items-center head rounded-1 px-3 pt-2 pb-3">
                 <h4 class="m-0">La community</h4>
-                <i class="bi" (click)="isCommunityCollapsed = !isCommunityCollapsed"
+                <i class="bi" (click)="doCollapse(1)"
                     [ngClass]="{'bi-arrow-bar-up' : !isCommunityCollapsed, 'bi-arrow-bar-down' : isCommunityCollapsed}"></i>
             </div>
             <div #collapseBosses="ngbCollapse" [(ngbCollapse)]="isCommunityCollapsed" class="row m-0 w-100">

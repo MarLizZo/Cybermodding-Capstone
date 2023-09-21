@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, catchError } from 'rxjs';
 import { IBosses } from 'src/app/interfaces/ibosses';
+import { ICollapseable } from 'src/app/interfaces/icollapseable';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
@@ -135,6 +136,22 @@ export class UsersComponent {
           });
       }
     });
+
+    if (!this.isSingleUser) {
+      if (localStorage.getItem('usersConfig')) {
+        let fromStorage: ICollapseable[] = JSON.parse(
+          localStorage.getItem('usersConfig')!
+        );
+        let bosses = fromStorage.findIndex((el) => el.id == 0);
+        let users = fromStorage.findIndex((el) => el.id == 1);
+        if (bosses != -1) {
+          this.isBossesCollapsed = fromStorage[bosses].collapsed;
+        }
+        if (users != -1) {
+          this.isCommunityCollapsed = fromStorage[users].collapsed;
+        }
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -209,5 +226,41 @@ export class UsersComponent {
 
   goToMessage() {
     //
+  }
+
+  doCollapse(index: number) {
+    let fromStorage: ICollapseable[] | null = null;
+    if (localStorage.getItem('usersConfig')) {
+      fromStorage = JSON.parse(localStorage.getItem('usersConfig')!);
+    }
+
+    if (index == 0) {
+      this.isBossesCollapsed = !this.isBossesCollapsed;
+    } else {
+      this.isCommunityCollapsed = !this.isCommunityCollapsed;
+    }
+
+    let copy: boolean =
+      index == 0 ? this.isBossesCollapsed : this.isCommunityCollapsed;
+
+    if (fromStorage == null) {
+      localStorage.setItem(
+        'usersConfig',
+        JSON.stringify([
+          {
+            id: index,
+            collapsed: copy,
+          },
+        ])
+      );
+    } else {
+      let ind: number = fromStorage.findIndex((el) => el.id == index);
+      if (ind != -1) {
+        fromStorage[ind].collapsed = copy;
+      } else {
+        fromStorage.push({ id: index, collapsed: copy });
+      }
+      localStorage.setItem('usersConfig', JSON.stringify(fromStorage));
+    }
   }
 }

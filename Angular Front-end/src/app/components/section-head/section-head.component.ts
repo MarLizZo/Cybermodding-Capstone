@@ -6,13 +6,7 @@ import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { SubsectionBodyComponent } from '../subsection-body/subsection-body.component';
 import { Router } from '@angular/router';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-
-type secConf = [
-  {
-    id: number;
-    collapsed: boolean;
-  }
-];
+import { ICollapseable } from 'src/app/interfaces/icollapseable';
 
 @Component({
   selector: 'app-section-head',
@@ -45,7 +39,7 @@ export class SectionHeadComponent {
       });
 
     if (localStorage.getItem('sections-config')) {
-      let config: secConf = JSON.parse(
+      let config: ICollapseable[] = JSON.parse(
         localStorage.getItem('sections-config')!
       );
       let sec = config.findIndex((el) => el.id == this.sectionId);
@@ -77,7 +71,7 @@ export class SectionHeadComponent {
   setConfig() {
     this.isSectionCollapsed = !this.isSectionCollapsed;
     if (localStorage.getItem('sections-config')) {
-      let config: secConf = JSON.parse(
+      let config: ICollapseable[] = JSON.parse(
         localStorage.getItem('sections-config')!
       );
       let sec = config.findIndex((el) => el.id == this.sectionId);

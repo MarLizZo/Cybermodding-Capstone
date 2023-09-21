@@ -1,1 +1,9 @@
-<p>modal works!</p>
+<div class="modal-header">
+    <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body" [innerHTML]="body">
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn custom-btn shadow-none border-0 px-4"
+        (click)="activeModal.close('Close click')">Chiudi</button>
+</div>

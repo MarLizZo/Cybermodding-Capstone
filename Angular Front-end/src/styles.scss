@@ -50,5 +50,6 @@ blockquote {
   background-color: var(--near-black);
   padding: 1rem;
   border: 2px solid var(--bg-lighter);
+  border-left: 5px solid var(--txt-muted);
   border-radius: 2px;
 }

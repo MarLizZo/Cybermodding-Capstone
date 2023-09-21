@@ -22,6 +22,7 @@ export class EditorFormComponent {
   @Input() type!: string;
   @Input() postID!: number;
   @Input() userID!: number;
+  @Input() postTitle!: string | undefined;
   @Input() quoted!: IQuoteInfo | undefined;
   @Output() submitData = new EventEmitter();
   @Output() submitPost = new EventEmitter();
@@ -40,6 +41,9 @@ export class EditorFormComponent {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['quoted']) {
       this.quoted = changes['quoted'].currentValue;
+    }
+    if (changes['postTitle']) {
+      this.postTitle = changes['postTitle'].currentValue;
     }
   }
 

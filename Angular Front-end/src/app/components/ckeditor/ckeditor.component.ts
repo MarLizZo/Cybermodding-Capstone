@@ -11,11 +11,13 @@ import { CKEditorComponent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { OrangeButtonComponent } from '../orange-button/orange-button.component';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-ckeditor',
   standalone: true,
-  imports: [CKEditorModule, FormsModule, OrangeButtonComponent],
+  imports: [CKEditorModule, FormsModule, OrangeButtonComponent, ModalComponent],
   templateUrl: './ckeditor.component.html',
   styleUrls: ['./ckeditor.component.scss'],
 })
@@ -23,12 +25,15 @@ export class CkeditorComponent {
   @Input() type: string | undefined;
   @Input() placeholderText!: string;
   @Input() quotedMsg!: IQuoteInfo | undefined;
+  @Input() heightIn!: string;
+  @Input() threadTitle!: string | undefined;
   @Output() onSubmit = new EventEmitter();
   @ViewChild('editor') editorComponent!: CKEditorComponent;
   finalPlaceholderText: string = '';
   Editor = ClassicEditor;
   editorData: string = '';
-  @Input() heightIn!: string;
+
+  constructor(private modalSvc: NgbModal) {}
 
   public config = {
     toolbar: [
@@ -66,6 +71,10 @@ export class CkeditorComponent {
       </blockquote><p></p>
       `;
     }
+
+    if (changes['threadTitle']) {
+      this.threadTitle = changes['threadTitle'].currentValue;
+    }
   }
 
   emitData(): void {
@@ -75,6 +84,12 @@ export class CkeditorComponent {
   }
 
   previewPost(): void {
-    console.log('Preview', this.editorData);
+    const modal = this.modalSvc.open(ModalComponent, {
+      size: 'xl',
+      scrollable: true,
+    });
+    modal.componentInstance.title =
+      (this.threadTitle != '' && this.threadTitle) || 'Preview Post';
+    modal.componentInstance.body = this.editorData;
   }
 }

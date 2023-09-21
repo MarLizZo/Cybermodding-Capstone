@@ -5,10 +5,10 @@
     </div>
     <div class="container-fluid px-3 d-flex flex-column">
         <h2 class="mb-4">Scrivi nuovo Thread</h2>
-        <label for="thread-info">Titolo</label>
+        <p class="m-0">Titolo</p>
         <div id="thread-info" class="input-group mt-1 mb-5">
-            <input #titleInput type="text" class="form-control shadow-none rounded-2 rounded-end-0 border-0 px-1"
-                placeholder="Scrivi..">
+            <input #titleInput [(ngModel)]="threadTitle" name="ttitlee" type="text"
+                class="form-control shadow-none rounded-2 rounded-end-0 border-0 px-1" placeholder="Scrivi..">
             <div ngbDropdown class="d-inline-block">
                 <button type="button" class="btn custom-btn rounded-start-0" id="dropdownType" ngbDropdownToggle
                     [innerText]="typeString"></button>
@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <app-editor-form class="w-100 flex-grow-1" [type]="'thread'"
-            (submitPost)="postThread($event)"></app-editor-form>
+        <app-editor-form class="w-100 flex-grow-1" [type]="'thread'" (submitPost)="postThread($event)"
+            [postTitle]="threadTitle"></app-editor-form>
     </div>
 </div>
