@@ -3,15 +3,20 @@ import { CommonModule } from '@angular/common';
 
 import { AdmincpRoutingModule } from './admincp-routing.module';
 import { AdmincpComponent } from './admincp.component';
-
+import { HeroComponent } from 'src/app/components/hero/hero.component';
+import { FormsModule } from '@angular/forms';
+import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [
-    AdmincpComponent
-  ],
+  declarations: [AdmincpComponent],
   imports: [
     CommonModule,
-    AdmincpRoutingModule
-  ]
+    AdmincpRoutingModule,
+    HeroComponent,
+    FormsModule,
+    OrangeButtonComponent,
+    NgbCollapseModule,
+  ],
 })
-export class AdmincpModule { }
+export class AdmincpModule {}

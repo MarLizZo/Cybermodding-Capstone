@@ -1,1 +1,353 @@
-<p>admincp works!</p>
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div *ngIf="!isLoadingPage && !granted" class="container-fluid d-flex flex-column align-items-center mt-5">
+        <h2>Non sei autorizzato..</h2>
+        <h2>Ti rispedisco alla Home..</h2>
+    </div>
+    <div *ngIf="!isLoadingPage && granted" class="container-fluid mt-4">
+        <h1 class="mb-2 text-danger">{{ username }}</h1>
+        <h3 class="mb-4">Pannello Admin</h3>
+
+        <div class="head-container d-flex justify-content-evenly p-3">
+            <button #userMod class="btn moderation-btn px-4 rounded-1 btn-selected border-0"
+                (click)="switchModeration(0)">Moderazione utenti</button>
+            <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0"
+                (click)="switchModeration(1)">Moderazione threads</button>
+            <button #sectionMod class="btn moderation-btn px-4 rounded-1 border-0"
+                (click)="switchModeration(2)">Moderazione sections</button>
+            <button #blockMod class="btn moderation-btn px-4 rounded-1 border-0"
+                (click)="switchModeration(3)">Moderazione blocchi</button>
+        </div>
+
+        <div class="main-container p-3">
+            <div *ngIf="isUsersModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <p id="top-user" class="mb-2">Cerca utenti</p>
+                <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">
+                    <input [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
+                        class="form-control form-control-sm px-2 border-0 shadow-none w-50"
+                        placeholder="Cerca utente..">
+                </form>
+                <p *ngIf="usersFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
+
+                <div *ngIf="usersFound != undefined && usersFound.content.length != 0" class="w-100 mt-4 p-3">
+                    <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-result"
+                        [ngClass]="{'mt-3' : !first}">
+                        <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                            <p class="m-0 fw-medium fs-5" [innerText]="userNamesArr[i]"
+                                [ngClass]="{'text-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
+                            </p>
+                            <i class="bi bi-arrow-bar-down" (click)="collapseableArr[i] = !collapseableArr[i]"></i>
+                        </div>
+
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableArr[i]"
+                            class="options-container p-3 pb-4">
+                            <form #f="ngForm" class="d-flex flex-column align-items-center">
+                                <div class="w-75">
+                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID Utente</label>
+                                    <input [id]="'uid-' + i" type="text" ngModel name="uid"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                        [(ngModel)]="u.id" disabled>
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'username-' + i">Username</label>
+                                        <p [id]="'err-us-' + i" class="m-0 text-danger d-none"></p>
+                                    </div>
+                                    <input [id]="'username-' + i" type="text" ngModel name="username"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.username" minlength="3" maxlength="30">
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'email-' + i">Email</label>
+                                        <p [id]="'err-em-' + i" class="m-0 text-danger d-none">Invalida</p>
+                                    </div>
+                                    <input ngModel name="email" [id]="'email-' + i" type="email"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.email">
+                                </div>
+
+                                <div class="w-75 mt-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'descr-' + i">Description</label>
+                                        <p [id]="'err-de-' + i" class="m-0 text-danger d-none">Max 20 chars</p>
+                                    </div>
+                                    <input [id]="'descr-' + i" type="text" ngModel name="description"
+                                        class="form-control form-control-sm px-1 border-0 shadow-none"
+                                        [(ngModel)]="u.description" maxlength="25">
+                                </div>
+
+                                <div class="w-75 mt-3 mb-4">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'role-' + i">Ruolo</label>
+                                        <p [id]="'err-ru-' + i" class="m-0 text-danger d-none">Non consentito</p>
+                                    </div>
+                                    <select name="role" [id]="'role-' + i" [(ngModel)]="u.roles![0].id"
+                                        class="form-select form-select-sm border-0 shadow-none">
+                                        <option value="1">User</option>
+                                        <option value="2">Moderator</option>
+                                        <option value="3">Admin</option>
+                                        <option value="4">Bannato</option>
+                                    </select>
+                                </div>
+                                <app-orange-button *ngIf="u.roles![0].id != 3" [btnTheme]="'orange'"
+                                    [btnTitle]="'Modera utente'" (click)="doUserModerate(f, i)"
+                                    [ngClass]="{'disabled' : u.roles![0].id == 3}"></app-orange-button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
+                        <div class="col-3">
+                            <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersFound.first"
+                                (click)="searchUsers(usersFound.number - 1)">
+                                <i class="bi bi-arrow-bar-left"></i>
+                                <p class="m-0 ms-2">Indietro</p>
+                            </div>
+                        </div>
+                        <div class="col-6 d-flex flex-wrap justify-content-center">
+                            <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                                <div *ngFor="let p of userPagesArr; let first = first;"
+                                    [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersFound.number}"
+                                    class="btn-page px-2" (click)="searchUsers(p - 1)">
+                                    <p class="m-0">{{ p }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 d-flex justify-content-end">
+                            <div class="next rounded-1 px-2 d-flex" *ngIf="!usersFound.last"
+                                (click)="searchUsers(usersFound.number + 1)">
+                                <p class="m-0 me-2">Avanti</p>
+                                <i class="bi bi-arrow-bar-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isThreadsModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <div class="thread-view w-100 d-flex justify-content-evenly pb-3">
+                    <button #threadViewSearch class="btn moderation-btn btn-sm px-4 rounded-1 border-0 btn-selected"
+                        (click)="switchThreadView(0)">Cerca Thread</button>
+                    <button #threadViewAll class="btn btn-sm moderation-btn px-4 rounded-1 border-0"
+                        (click)="switchThreadView(1)">Tutti i thread</button>
+                </div>
+
+                <div *ngIf="isThreadViewSearch" class="mt-3 w-100 d-flex flex-column align-items-center">
+                    <p id="top-user" class="mb-2">Cerca thread in base a</p>
+                    <select #selectCriteria name="criteria" [(ngModel)]="threadSearchCriteria"
+                        class="form-select form-select-sm border-0 shadow-none mb-3">
+                        <option value="0">Titolo</option>
+                        <option value="1">Username Autore</option>
+                        <option value="2">Data pubblicazione</option>
+                    </select>
+                    <div *ngIf="threadSearchCriteria == 2" class="d-flex justify-content-evenly w-75 mb-3">
+                        <div>
+                            <label for="data-1">Data Inizio</label>
+                            <input type="date" name="data-1" id="data-1" [(ngModel)]="startDateThread"
+                                class="form-control form-control-sm border-0 shadow-none">
+                        </div>
+                        <div>
+                            <label for="data-2">Data Fine</label>
+                            <input type="date" name="data-2" id="data-2" [(ngModel)]="endDateThread"
+                                class="form-control form-control-sm border-0 shadow-none">
+                        </div>
+                    </div>
+                    <form *ngIf="threadSearchCriteria != 2" (submit)="doThreadSearch(0)"
+                        class="w-100 d-flex justify-content-center">
+                        <input [(ngModel)]="inputSearchThread" name="inputSearchThread" type="text"
+                            class="form-control form-control-sm px-2 border-0 shadow-none w-50"
+                            placeholder="Cerca thread..">
+                    </form>
+                    <button *ngIf="threadSearchCriteria == 2"
+                        class="btn moderation-btn btn-sm px-5 rounded-1 border-0 btn-selected"
+                        (click)="doThreadSearch(0)">Cerca thread per Data</button>
+                    <p *ngIf="threadsCustomFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
+
+                    <div *ngIf="threadsCustomFound != undefined" class="w-100 p-3 mt-4">
+                        <div *ngFor="let t of threadsCustomFound.content; let i = index; let first = first"
+                            class="single-result" [ngClass]="{'mt-3' : !first}">
+                            <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                                <div class="flex-grow-1">
+                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ threadTitleCustomArr[i] }}</p>
+                                    <p class="m-0">Avviato da: <span
+                                            [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
+                                            {{ t.author.username }}</span>
+                                    </p>
+                                </div>
+                                <i class="bi bi-arrow-bar-down"
+                                    (click)="collapseableTCArr[i] = !collapseableTCArr[i]"></i>
+                            </div>
+                            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableTCArr[i]"
+                                class="options-container p-3 pb-4">
+
+                                <form #f="ngForm" class="d-flex flex-column align-items-center">
+                                    <div class="w-75">
+                                        <label [htmlFor]="'tidc-' + i" class="mb-1 align-self-start">ID Thread</label>
+                                        <input [id]="'tidc-' + i" type="text" ngModel name="tidc"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                            [(ngModel)]="t.id" disabled>
+                                    </div>
+
+                                    <div class="w-75 mt-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'titlec-' + i">Titolo</label>
+                                            <p [id]="'err-tic-' + i" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'titlec-' + i" type="text" ngModel name="titlec"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            [(ngModel)]="t.title" maxlength="80">
+                                    </div>
+
+                                    <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input shadow-none" type="radio"
+                                                name="flexRadioDefault" id="flexRadioDefault1" checked>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Attivo e visibile
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input shadow-none" type="radio"
+                                                name="flexRadioDefault" id="flexRadioDefault2">
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Disattivo e non visibile
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera Thread'"
+                                        (click)="doPostModerate(f, i)"></app-orange-button>
+                                </form>
+
+                            </div>
+                        </div>
+                        <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
+                            <div class="col-3">
+                                <div class="previous rounded-1 px-2 d-flex" *ngIf="!threadsCustomFound.first"
+                                    (click)="doThreadSearch(threadsCustomFound.number - 1)">
+                                    <i class="bi bi-arrow-bar-left"></i>
+                                    <p class="m-0 ms-2">Indietro</p>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex flex-wrap justify-content-center">
+                                <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                                    <div *ngFor="let p of threadPagesCustomArr; let first = first;"
+                                        [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == threadsCustomFound.number}"
+                                        class="btn-page px-2" (click)="doThreadSearch(p - 1)">
+                                        <p class="m-0">{{ p }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 d-flex justify-content-end">
+                                <div class="next rounded-1 px-2 d-flex" *ngIf="!threadsCustomFound.last"
+                                    (click)="doThreadSearch(threadsCustomFound.number + 1)">
+                                    <p class="m-0 me-2">Avanti</p>
+                                    <i class="bi bi-arrow-bar-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div *ngIf="isThreadViewAll" class="mt-3 w-100 d-flex flex-column align-items-center">
+                    <button *ngIf="threadsFound == undefined"
+                        class="btn moderation-btn btn-sm px-4 rounded-1 border-0 btn-selected"
+                        (click)="doThreadSearch(0)">Cerca tutti i
+                        thread</button>
+                    <div *ngIf="threadsFound != undefined" class="w-100">
+                        <div *ngFor="let t of threadsFound.content; let i = index; let first = first"
+                            class="single-result" [ngClass]="{'mt-3' : !first}">
+                            <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                                <div class="flex-grow-1">
+                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ threadTitleArr[i] }}</p>
+                                    <p class="m-0">Avviato da: <span
+                                            [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
+                                            {{ t.author.username }}</span>
+                                    </p>
+                                </div>
+                                <i class="bi bi-arrow-bar-down"
+                                    (click)="collapseableTArr[i] = !collapseableTArr[i]"></i>
+                            </div>
+                            <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableTArr[i]"
+                                class="options-container p-3 pb-4">
+
+                                <form #f="ngForm" class="d-flex flex-column align-items-center">
+                                    <div class="w-75">
+                                        <label [htmlFor]="'tid-' + i" class="mb-1 align-self-start">ID Thread</label>
+                                        <input [id]="'tid-' + i" type="text" ngModel name="tid"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                            [(ngModel)]="t.id" disabled>
+                                    </div>
+
+                                    <div class="w-75 mt-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'title-' + i">Titolo</label>
+                                            <p [id]="'err-ti-' + i" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'title-' + i" type="text" ngModel name="title"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            [(ngModel)]="t.title" maxlength="80">
+                                    </div>
+
+                                    <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input shadow-none" type="radio"
+                                                name="flexRadioDefault" id="flexRadioDefault1" checked>
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Attivo e visibile
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input shadow-none" type="radio"
+                                                name="flexRadioDefault" id="flexRadioDefault2">
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Disattivo e non visibile
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera Thread'"
+                                        (click)="doPostModerate(f, i)"></app-orange-button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
+                            <div class="col-3">
+                                <div class="previous rounded-1 px-2 d-flex" *ngIf="!threadsFound.first"
+                                    (click)="doThreadSearch(threadsFound.number - 1)">
+                                    <i class="bi bi-arrow-bar-left"></i>
+                                    <p class="m-0 ms-2">Indietro</p>
+                                </div>
+                            </div>
+                            <div class="col-6 d-flex flex-wrap justify-content-center">
+                                <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                                    <div *ngFor="let p of threadPagesArr; let first = first;"
+                                        [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == threadsFound.number}"
+                                        class="btn-page px-2" (click)="doThreadSearch(p - 1)">
+                                        <p class="m-0">{{ p }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3 d-flex justify-content-end">
+                                <div class="next rounded-1 px-2 d-flex" *ngIf="!threadsFound.last"
+                                    (click)="doThreadSearch(threadsFound.number + 1)">
+                                    <p class="m-0 me-2">Avanti</p>
+                                    <i class="bi bi-arrow-bar-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="isSectionsModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                </div>
+
+                <div *ngIf="isBlocksModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                </div>
+            </div>
+        </div>
+    </div>

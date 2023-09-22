@@ -1,5 +1,7 @@
 package com.cybermodding.controllers;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ import com.cybermodding.payload.PostDTO;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
+import com.cybermodding.payload.UpdatePostDTO;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.UserService;
 
@@ -40,6 +43,29 @@ public class ThreadController {
     @GetMapping("/{id}")
     public ResponseEntity<PostOutDTOCPaged> getById(@PathVariable Long id, Pageable page) {
         return ResponseEntity.ok(svc.getPostOut(id, page));
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<Page<PostHome>> getPagedPosts(@RequestParam String by,
+            @RequestParam(defaultValue = "") String param,
+            @RequestParam(defaultValue = "") String paramtwo, Pageable page) {
+        if (by.equals("title")) {
+            return ResponseEntity.ok(svc.getPagedByTitle(param, page));
+        } else if (by.equals("user")) {
+            return ResponseEntity.ok(svc.getPagedByUsername(param, page));
+        } else {
+            try {
+                return ResponseEntity
+                        .ok(svc.getPagedByDate(LocalDateTime.parse(param), LocalDateTime.parse(paramtwo), page));
+            } catch (Exception ex) {
+                return ResponseEntity.ok(Page.empty());
+            }
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Post> updatePost(@RequestBody UpdatePostDTO data) {
+        return ResponseEntity.ok(svc.updatePost(data));
     }
 
     @DeleteMapping("/{id}")

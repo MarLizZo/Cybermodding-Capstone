@@ -25,6 +25,7 @@ import com.cybermodding.payload.PostDTO;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
+import com.cybermodding.payload.UpdatePostDTO;
 import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.CommentRepoPage;
 import com.cybermodding.repositories.PostPageableRepo;
@@ -64,18 +65,14 @@ public class PostService {
         return repo.findAllBySubSId(ss_id);
     }
 
-    public CustomResponse updatePost(Long id, Post p) {
-        if (repo.existsById(id)) {
-            if (id.equals(p.getId())) {
-                repo.save(p);
-                return new CustomResponse(new Date(), "** Post updated succesfully **", HttpStatus.OK);
-            } else {
-                return new CustomResponse(new Date(), "** Input ID and Post ID does not match **",
-                        HttpStatus.BAD_REQUEST);
-            }
+    public Post updatePost(UpdatePostDTO p) {
+        if (repo.existsById(p.getId())) {
+            Post fromDB = repo.findById(p.getId()).get();
+            fromDB.setTitle(p.getTitle());
+            repo.save(fromDB);
+            return fromDB;
         } else {
-            return new CustomResponse(new Date(), "** Post not found **",
-                    HttpStatus.NOT_FOUND);
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Post not found **");
         }
     }
 
@@ -212,6 +209,30 @@ public class PostService {
 
     public Page<PostHome> getAllPostsPaged(Pageable page) {
         Page<Post> p = page_repo.findAllOrderDate(page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getPagedByTitle(String title, Pageable page) {
+        Page<Post> p = page_repo.findAllByTitle(title, page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getPagedByUsername(String name, Pageable page) {
+        Page<Post> p = page_repo.findAllByAuthorName(name, page);
+        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
+                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
+                u_svc.getRank(post.getAuthor().getId())));
+        return pout;
+    }
+
+    public Page<PostHome> getPagedByDate(LocalDateTime date1, LocalDateTime date2, Pageable page) {
+        Page<Post> p = page_repo.findAllByPublishedDateBetween(date1, date2, page);
         Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
                 post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
                 u_svc.getRank(post.getAuthor().getId())));

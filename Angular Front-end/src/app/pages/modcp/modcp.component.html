@@ -16,7 +16,7 @@
         </div>
         <div class="main-container p-3">
             <div *ngIf="isUsersModeration" class="users-moderation d-flex flex-column align-items-center mt-2">
-                <p class="mb-2">Cerca utenti</p>
+                <p id="top-user" class="mb-2">Cerca utenti</p>
                 <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">
                     <input [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
                         class="form-control form-control-sm px-2 border-0 shadow-none w-50"
@@ -40,37 +40,48 @@
                             <form #f="ngForm" class="d-flex flex-column align-items-center"
                                 [ngClass]="{'disabled' : u.roles![0].id == 3}">
                                 <div class="w-75">
-                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID
-                                        Utente</label>
+                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID Utente</label>
                                     <input [id]="'uid-' + i" type="text" ngModel name="uid"
                                         class="form-control form-control-sm px-1 border-0 shadow-none disabled"
                                         [(ngModel)]="u.id">
                                 </div>
 
                                 <div class="w-75 mt-3">
-                                    <label [htmlFor]="'username-' + i" class="mb-1 align-self-start">Username</label>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'username-' + i">Username</label>
+                                        <p [id]="'err-us-' + i" class="m-0 text-danger d-none"></p>
+                                    </div>
                                     <input [disabled]="u.roles![0].id == 3" [id]="'username-' + i" type="text" ngModel
                                         name="username" class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.username" minlength="3">
+                                        [(ngModel)]="u.username" minlength="3" maxlength="30">
                                 </div>
 
                                 <div class="w-75 mt-3">
-                                    <label [htmlFor]="'email-' + i" class="mb-1 align-self-start">Email</label>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'email-' + i">Email</label>
+                                        <p [id]="'err-em-' + i" class="m-0 text-danger d-none">Invalida</p>
+                                    </div>
                                     <input [disabled]="u.roles![0].id == 3" ngModel name="email" [id]="'email-' + i"
                                         type="email" class="form-control form-control-sm px-1 border-0 shadow-none"
                                         [(ngModel)]="u.email">
                                 </div>
 
                                 <div class="w-75 mt-3">
-                                    <label [htmlFor]="'descr-' + i" class="mb-1 align-self-start">Description</label>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'descr-' + i">Description</label>
+                                        <p [id]="'err-de-' + i" class="m-0 text-danger d-none">Max 20 chars</p>
+                                    </div>
                                     <input [disabled]="u.roles![0].id == 3" [id]="'descr-' + i" type="text" ngModel
                                         name="description"
                                         class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.description" maxlength="20">
+                                        [(ngModel)]="u.description" maxlength="25">
                                 </div>
 
                                 <div class="w-75 mt-3 mb-4">
-                                    <label [htmlFor]="'role-' + i" class="mb-1 align-self-start">Ruolo</label>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <label [htmlFor]="'role-' + i">Ruolo</label>
+                                        <p [id]="'err-ru-' + i" class="m-0 text-danger d-none">Non consentito</p>
+                                    </div>
                                     <select [disabled]="u.roles![0].id == 3" name="role" [id]="'role-' + i"
                                         [(ngModel)]="u.roles![0].id"
                                         class="form-select form-select-sm border-0 shadow-none">
@@ -114,7 +125,12 @@
                 </div>
             </div>
 
-            <div *ngIf="isThreadsModeration"></div>
+            <div *ngIf="isThreadsModeration">
+                <!-- for future revisions -->
+                <div class="d-flex justify-content-center">
+                    <p class="m-0">Features for Mods will be added in the future</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

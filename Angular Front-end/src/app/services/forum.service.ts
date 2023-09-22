@@ -11,6 +11,8 @@ import { ICommentDTO } from '../interfaces/icomment-dto';
 import { ICommentData } from '../interfaces/icomment-data';
 import { IPostDTO } from '../interfaces/ipost-dto';
 import { IPostDataPaged } from '../interfaces/ipost-data-paged';
+import { IPostHomePaged } from '../interfaces/ipost-home-paged';
+import { IUpdatePostDTO } from '../interfaces/iupdate-post-dto';
 
 type paramsPage = {
   size: number;
@@ -63,6 +65,14 @@ export class ForumService {
         page: params.page,
       },
     });
+  }
+
+  public getPostPaged(q: string): Observable<IPostHomePaged> {
+    return this.http.get<IPostHomePaged>(this.threadsApiUrl + '/paged?' + q);
+  }
+
+  public updatePost(data: IUpdatePostDTO): Observable<IPostData> {
+    return this.http.put<IPostData>(this.threadsApiUrl + '/' + data.id, data);
   }
 
   public postReaction(reaction: Ireaction): Observable<Ireaction> {

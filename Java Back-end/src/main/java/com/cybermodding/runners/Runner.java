@@ -109,11 +109,17 @@ public class Runner implements CommandLineRunner {
         private void setPrivileges() {
                 for (int i = 0; i < 4; i++) {
                         User u = svc.getRandom();
+                        if (u.getId().equals(1l)) {
+                                continue;
+                        }
                         u.setRoles(Set.of(roleRepository.findById(2l).get()));
                         userRepository.save(u);
                 }
                 for (int i = 0; i < 3; i++) {
                         User u = svc.getRandom();
+                        if (u.getId().equals(1l)) {
+                                continue;
+                        }
                         u.setRoles(Set.of(roleRepository.findById(3l).get()));
                         userRepository.save(u);
                 }
@@ -154,6 +160,7 @@ public class Runner implements CommandLineRunner {
                                 true, 2));
                 s_svc.saveSection(new SectionDto("Computer", "Trattiamo qui tutto ciò che riguarda i PC", true, 3));
                 s_svc.saveSection(new SectionDto("Console", "Tutto il mondo delle Console da gioco", true, 4));
+                s_svc.saveSection(new SectionDto("Off Topic", "Qui si può parlare liberamente di ogni cosa", true, 5));
         }
 
         private void createSubSections() {
@@ -196,6 +203,10 @@ public class Runner implements CommandLineRunner {
                                                 true, 3, 4l));
                 ss_svc.saveSubSection(new SubSectionDto("Nintendo Switch News",
                                 "Qui troviamo le notizie sulla console portatile Switch", true, 4, 4l));
+                ss_svc.saveSubSection(new SubSectionDto("Generale",
+                                "Possiamo discutere di qualunque cosa", true, 1, 5l));
+                ss_svc.saveSubSection(new SubSectionDto("Consigli e richieste",
+                                "Avete consigli o richieste per il forum? Scrivetelo qui", true, 2, 5l));
         }
 
         private void createPosts(int amount) {
