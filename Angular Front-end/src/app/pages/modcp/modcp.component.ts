@@ -5,7 +5,7 @@ import { Subscription, catchError } from 'rxjs';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
-import { UserService } from 'src/app/services/user.service';
+import { ModerationService } from 'src/app/services/moderation.service';
 
 @Component({
   selector: 'app-modcp',
@@ -37,7 +37,7 @@ export class ModcpComponent {
   constructor(
     private authSvc: AuthService,
     private router: Router,
-    private user_svc: UserService
+    private svc: ModerationService
   ) {}
 
   ngOnInit() {
@@ -88,7 +88,7 @@ export class ModcpComponent {
   }
 
   searchUsers(page: number): void {
-    this.searcUserSub = this.user_svc
+    this.searcUserSub = this.svc
       .getUsersFromName(this.inputSearchUser, page)
       .pipe(
         catchError((err) => {
@@ -205,7 +205,7 @@ export class ModcpComponent {
             : [{ id: 1, roleName: 'ROLE_USER' }],
       };
 
-      this.moderateUserSub = this.user_svc
+      this.moderateUserSub = this.svc
         .moderate(this.user_id, outData)
         .pipe(
           catchError((err) => {

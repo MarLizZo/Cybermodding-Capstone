@@ -8,5 +8,6 @@ export interface ISubSectionData {
   order_number: number;
   posts: IPostData[];
   parent_id: number;
+  parent_section_id?: number;
   parent_title: string;
 }

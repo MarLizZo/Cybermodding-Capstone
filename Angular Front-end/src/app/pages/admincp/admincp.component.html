@@ -14,7 +14,7 @@
             <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0"
                 (click)="switchModeration(1)">Moderazione threads</button>
             <button #sectionMod class="btn moderation-btn px-4 rounded-1 border-0"
-                (click)="switchModeration(2)">Moderazione sections</button>
+                (click)="switchModeration(2)">Moderazione sezioni</button>
             <button #blockMod class="btn moderation-btn px-4 rounded-1 border-0"
                 (click)="switchModeration(3)">Moderazione blocchi</button>
         </div>
@@ -342,12 +342,311 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div *ngIf="isSectionsModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+            <div *ngIf="isSectionsModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <div class="sections-view w-100 d-flex justify-content-evenly pb-3">
+                    <button #sectionViewCreate class="btn moderation-btn btn-sm px-4 rounded-1 border-0 btn-selected"
+                        (click)="switchSectionView(0)">Crea nuova sezione</button>
+                    <button #subSectionViewCreate class="btn btn-sm moderation-btn px-4 rounded-1 border-0"
+                        (click)="switchSectionView(1)">Crea nuova sotto-sezione</button>
+                    <button #sectionViewAll class="btn btn-sm moderation-btn px-4 rounded-1 border-0"
+                        (click)="switchSectionView(2)">Tutte le sezioni</button>
                 </div>
 
-                <div *ngIf="isBlocksModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <div *ngIf="isSectionViewCreate" class="w-100 mt-3 d-flex justify-content-center">
+                    <form #fNewSection="ngForm" class="w-75 pb-2 d-flex flex-column align-items-center">
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'stitle'">Titolo</label>
+                                <p [id]="'err-ti'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'stitle'" type="text" ngModel name="title"
+                                class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="60">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'sdescr'">Descrizione</label>
+                                <p [id]="'err-descr'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'sdescr'" type="text" ngModel name="description"
+                                class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="100">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'sorder'">Ordine visualizzazione</label>
+                                <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'sorder'" type="number" ngModel name="order"
+                                class="form-control form-control-sm px-1 border-0 shadow-none">
+                        </div>
+
+                        <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioOne class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault1" checked>
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Attiva e visibile
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioTwo class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Disattiva e non visibile
+                                </label>
+                            </div>
+                        </div>
+
+                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sezione'"
+                            (click)="doCreateSection(fNewSection)"></app-orange-button>
+                    </form>
                 </div>
+
+                <div *ngIf="isSubSectionViewCreate" class="w-100 mt-3 d-flex justify-content-center">
+                    <form #fNewSubSection="ngForm" class="w-75 pb-2 d-flex flex-column align-items-center">
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <p class="m-0">Sezione Genitore</p>
+                                <p [id]="'err-parent'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <select name="ss-select" [(ngModel)]="newSubSectionParentId"
+                                class="form-control form-control-sm border-0 shadow-none">
+                                <option value="-1">Seleziona Sezione Genitore</option>
+                                <option *ngFor="let s of sectionsArr; let i = index" [value]="s.id">{{ s.title }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'stitle'">Titolo</label>
+                                <p [id]="'err-ti'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'stitle'" type="text" ngModel name="title"
+                                class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="40">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'sdescr'">Descrizione</label>
+                                <p [id]="'err-descr'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'sdescr'" type="text" ngModel name="description"
+                                class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="80">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'sorder'">Ordine visualizzazione</label>
+                                <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'sorder'" type="number" ngModel name="order"
+                                class="form-control form-control-sm px-1 border-0 shadow-none">
+                        </div>
+
+                        <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioOne class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault1" checked>
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Attiva e visibile
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioTwo class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Disattiva e non visibile
+                                </label>
+                            </div>
+                        </div>
+
+                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sotto-Sezione'"
+                            (click)="doCreateSubSection(fNewSubSection)"></app-orange-button>
+                    </form>
+                </div>
+
+                <div *ngIf="isSectionViewAll" class="w-100 mt-3">
+                    <div *ngIf="sectionsArr.length" class="w-100">
+                        <div *ngFor="let s of sectionsArr; let i = index; let first = first" class="single-result"
+                            [ngClass]="{'mt-3' : !first}">
+                            <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                                <div class="flex-grow-1">
+                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ sectionsTitleArr[i] }}</p>
+                                    <p class="m-0" [innerText]="s.active ? 'Attiva' : 'Disattiva'"
+                                        [ngClass]="{'text-danger' : !s.active, 'text-mod' : s.active}"></p>
+                                </div>
+                                <i class="bi bi-arrow-bar-down" (click)="resetSecCollapse(i)"></i>
+                            </div>
+                            <div #collapseSections="ngbCollapse" [(ngbCollapse)]="collapseableSArr[i]"
+                                class="options-container p-3 pb-4">
+
+                                <form #fSection="ngForm" class="d-flex flex-column align-items-center">
+                                    <div class="w-75">
+                                        <label [htmlFor]="'sid-' + i" class="mb-1 align-self-start">ID Sezione</label>
+                                        <input [id]="'sid-' + i" type="text" ngModel name="id"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                            [(ngModel)]="s.id" disabled>
+                                    </div>
+
+                                    <div class="w-75 mt-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'stitle-' + i">Titolo</label>
+                                            <p [id]="'err-ti-' + i" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'stitle-' + i" type="text" ngModel name="title"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            [(ngModel)]="s.title" maxlength="60">
+                                    </div>
+
+                                    <div class="w-75 mt-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'sdescr-' + i">Descrizione</label>
+                                            <p [id]="'err-descr-' + i" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'sdescr-' + i" type="text" ngModel name="description"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            [(ngModel)]="s.description" maxlength="100">
+                                    </div>
+
+                                    <div class="w-75 mt-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'sorder-' + i">Ordine visualizzazione</label>
+                                            <p [id]="'err-order-' + i" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'sorder-' + i" type="number" ngModel name="order"
+                                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            [(ngModel)]="s.order_number">
+                                    </div>
+
+                                    <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                                        <div class="form-check form-check-inline">
+                                            <input #activeRadioOne class="form-check-input shadow-none" type="radio"
+                                                name="active" id="flexRadioDefault1" [checked]="s.active">
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Attiva e visibile
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input #activeRadioTwo class="form-check-input shadow-none" type="radio"
+                                                name="active" id="flexRadioDefault2" [checked]="!s.active">
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Disattiva e non visibile
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-100 d-flex justify-content-evenly">
+                                        <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Elimina Sezione'"
+                                            (click)="deleteSection(s.id!)"></app-orange-button>
+                                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Sezione'"
+                                            (click)="doSectionUpdate(i, fSection)"></app-orange-button>
+                                    </div>
+                                </form>
+
+                                <div class="mx-auto w-75 mt-5">
+                                    <h6 class="mb-2">Sotto-Sezioni</h6>
+                                    <select name="ss-select" [(ngModel)]="selectedSSIndex"
+                                        class="form-control form-control-sm border-0 shadow-none mb-4">
+                                        <option value="-1">Lista sotto-sezioni</option>
+                                        <option *ngFor="let ss of s.sub_sections; let ssi = index" [value]="ssi">{{
+                                            ss.title
+                                            }}
+                                        </option>
+                                    </select>
+
+                                    <div *ngIf="selectedSSIndex >= 0 && s.sub_sections && selectedSSIndex < s.sub_sections.length && s.sub_sections[selectedSSIndex].id != undefined"
+                                        class="mb-4">
+                                        <form #fSS="ngForm" class="w-100 d-flex flex-column align-items-center">
+                                            <div class="w-75">
+                                                <label [htmlFor]="'ssid-' + selectedSSIndex"
+                                                    class="mb-1 align-self-start">ID
+                                                    Sotto-Sezione</label>
+                                                <input [id]="'ssid-' + selectedSSIndex" type="text" ngModel name="ssid"
+                                                    class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                                    [(ngModel)]="s.sub_sections![selectedSSIndex].id" disabled>
+                                            </div>
+
+                                            <div class="w-75 mt-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <label [htmlFor]="'sstitle-' + selectedSSIndex">Titolo</label>
+                                                    <p [id]="'err-ssti-' + selectedSSIndex"
+                                                        class="m-0 text-danger d-none"></p>
+                                                </div>
+                                                <input [id]="'sstitle-' + selectedSSIndex" type="text" ngModel
+                                                    name="sstitle"
+                                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                                    [(ngModel)]="s.sub_sections![selectedSSIndex].title" maxlength="60">
+                                            </div>
+
+                                            <div class="w-75 mt-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <label [htmlFor]="'ssdescr-' + selectedSSIndex">Descrizione</label>
+                                                    <p [id]="'err-ssdescr-' + selectedSSIndex"
+                                                        class="m-0 text-danger d-none"></p>
+                                                </div>
+                                                <input [id]="'ssdescr-' + selectedSSIndex" type="text" ngModel
+                                                    name="ssdescription"
+                                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                                    [(ngModel)]="s.sub_sections![selectedSSIndex].description"
+                                                    maxlength="100">
+                                            </div>
+
+                                            <div class="w-75 mt-3">
+                                                <div class="d-flex justify-content-between mb-1">
+                                                    <label [htmlFor]="'ssorder-' + selectedSSIndex">Ordine
+                                                        visualizzazione</label>
+                                                    <p [id]="'err-ssorder-' + selectedSSIndex"
+                                                        class="m-0 text-danger d-none"></p>
+                                                </div>
+                                                <input [id]="'ssorder-' + selectedSSIndex" type="number" ngModel
+                                                    name="ssorder"
+                                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                                    [(ngModel)]="s.sub_sections![selectedSSIndex].order_number">
+                                            </div>
+
+                                            <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
+                                                <div class="form-check form-check-inline">
+                                                    <input #activeSSRadioOne class="form-check-input shadow-none"
+                                                        type="radio" name="ssactive" id="ssflexRadioDefault1"
+                                                        [checked]="s.sub_sections![selectedSSIndex].active">
+                                                    <label class="form-check-label" for="ssflexRadioDefault1">
+                                                        Attiva e visibile
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input #activeSSRadioTwo class="form-check-input shadow-none"
+                                                        type="radio" name="ssactive" id="ssflexRadioDefault2"
+                                                        [checked]="!s.sub_sections![selectedSSIndex].active">
+                                                    <label class="form-check-label" for="ssflexRadioDefault2">
+                                                        Disattiva e non visibile
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="w-100 d-flex justify-content-evenly">
+                                                <app-orange-button [btnTheme]="'dark'"
+                                                    [btnTitle]="'Elimina Sotto-Sezione'"
+                                                    (click)="deleteSubSection(s.sub_sections[selectedSSIndex].id!)"></app-orange-button>
+                                                <app-orange-button [btnTheme]="'orange'"
+                                                    [btnTitle]="'Aggiorna Sotto-Sezione'"
+                                                    (click)="doSubSectionUpdate(s.id!, fSS)"></app-orange-button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isBlocksModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
             </div>
         </div>
     </div>

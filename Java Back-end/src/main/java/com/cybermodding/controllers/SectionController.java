@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,11 +34,13 @@ public class SectionController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Section>> getAll(@RequestParam(defaultValue = "") String ordered) {
+    public ResponseEntity<List<?>> getAll(@RequestParam(defaultValue = "") String ordered,
+            @RequestParam(defaultValue = "") String sub) {
         if (ordered.isEmpty()) {
-            return new ResponseEntity<List<Section>>(svc.getAll(), HttpStatus.OK);
+            return ResponseEntity.ok(svc.getAll());
         } else {
-            return new ResponseEntity<List<Section>>(svc.getAllActiveOrdered(), HttpStatus.OK);
+            return sub.isEmpty() ? ResponseEntity.ok(svc.getAllActiveOrdered())
+                    : ResponseEntity.ok(svc.getAllOrderedWSub());
         }
     }
 
@@ -52,8 +54,8 @@ public class SectionController {
         return new ResponseEntity<Section>(svc.saveSection(s), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<CustomResponse> updateSection(@PathVariable Long id, @RequestBody Section s) {
-        return new ResponseEntity<CustomResponse>(svc.updateSection(id, s), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Section> updateSection(@PathVariable Long id, @RequestBody Section s) {
+        return new ResponseEntity<Section>(svc.updateSection(id, s), HttpStatus.OK);
     }
 }

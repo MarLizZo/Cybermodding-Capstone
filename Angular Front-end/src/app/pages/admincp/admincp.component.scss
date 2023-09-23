@@ -130,7 +130,8 @@
   pointer-events: none;
 }
 
-.thread-view {
+.thread-view,
+.sections-view {
   border-bottom: 2px solid var(--near-black);
 }
 

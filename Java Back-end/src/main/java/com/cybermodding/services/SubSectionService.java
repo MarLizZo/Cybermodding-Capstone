@@ -60,8 +60,13 @@ public class SubSectionService {
     public SubSection updateSubSection(Long id, SubSection ss) {
         if (repo.existsById(id)) {
             if (id.equals(ss.getId())) {
-                SubSection upd = repo.save(ss);
-                return upd;
+                SubSection fromDB = repo.findById(ss.getId()).get();
+                fromDB.setActive(ss.getActive());
+                fromDB.setDescription(ss.getDescription());
+                fromDB.setOrder_number(ss.getOrder_number());
+                fromDB.setTitle(ss.getTitle());
+                repo.save(fromDB);
+                return fromDB;
             } else {
                 throw new CustomException(HttpStatus.BAD_REQUEST, "** Input ID and Sub Section ID does not match **");
             }

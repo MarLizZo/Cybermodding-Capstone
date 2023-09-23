@@ -1,5 +1,6 @@
 package com.cybermodding.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,7 +51,8 @@ public class SubSection {
     private Section parent_section;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "sub_section", cascade = CascadeType.ALL)
-    private List<Post> posts;
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
 
     @Override
     public String toString() {

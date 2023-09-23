@@ -11,4 +11,7 @@ public interface SectionRepo extends JpaRepository<Section, Long> {
 
     @Query("SELECT s FROM Section s WHERE s.active = true ORDER BY s.order_number")
     List<Section> findByActiveOrdered();
+
+    @Query("SELECT s FROM Section s ORDER BY s.order_number")
+    List<Section> findByOrdered();
 }

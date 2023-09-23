@@ -10,9 +10,9 @@ import { ICustomResponse } from '../interfaces/icustom-response';
 import { ICommentDTO } from '../interfaces/icomment-dto';
 import { ICommentData } from '../interfaces/icomment-data';
 import { IPostDTO } from '../interfaces/ipost-dto';
-import { IPostDataPaged } from '../interfaces/ipost-data-paged';
 import { IPostHomePaged } from '../interfaces/ipost-home-paged';
 import { IUpdatePostDTO } from '../interfaces/iupdate-post-dto';
+import { IPostDataPaged } from '../interfaces/ipost-data-paged';
 
 type paramsPage = {
   size: number;
@@ -54,10 +54,6 @@ export class ForumService {
       : this.http.get<ISubSectionData[]>(this.subsectionsApiUrl);
   }
 
-  public getSubSectionById(id: number): Observable<ISubSectionData> {
-    return this.http.get<ISubSectionData>(this.subsectionsApiUrl + '/' + id);
-  }
-
   public getPost(id: number, params: paramsPage): Observable<IPostDataPaged> {
     return this.http.get<IPostDataPaged>(this.threadsApiUrl + '/' + id, {
       params: {
@@ -65,6 +61,10 @@ export class ForumService {
         page: params.page,
       },
     });
+  }
+
+  public getSubSectionById(id: number): Observable<ISubSectionData> {
+    return this.http.get<ISubSectionData>(this.subsectionsApiUrl + '/' + id);
   }
 
   public getPostPaged(q: string): Observable<IPostHomePaged> {

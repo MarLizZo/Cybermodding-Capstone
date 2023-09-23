@@ -1,5 +1,6 @@
 package com.cybermodding.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.cybermodding.entities.Section;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.SectionDto;
+import com.cybermodding.payload.SectionWithSub;
 import com.cybermodding.repositories.SectionRepo;
 
 @Service
@@ -46,18 +48,16 @@ public class SectionService {
         }
     }
 
-    public CustomResponse updateSection(Long id, Section s) {
-        if (repo.existsById(id)) {
-            if (id.equals(s.getId())) {
-                repo.save(s);
-                return new CustomResponse(new Date(), "** Section updated succesfully **", HttpStatus.OK);
-            } else {
-                return new CustomResponse(new Date(), "** Input ID and Section ID does not match **",
-                        HttpStatus.BAD_REQUEST);
-            }
+    public Section updateSection(Long id, Section s) {
+        if (id.equals(s.getId())) {
+            Section fromDB = getById(s.getId());
+            fromDB.setTitle(s.getTitle());
+            fromDB.setDescription(s.getDescription());
+            fromDB.setActive(s.getActive());
+            fromDB.setOrder_number(s.getOrder_number());
+            return repo.save(fromDB);
         } else {
-            return new CustomResponse(new Date(), "** Section not found **",
-                    HttpStatus.NOT_FOUND);
+            throw new CustomException(HttpStatus.NOT_FOUND, "** IDs does not match **");
         }
     }
 
@@ -67,5 +67,13 @@ public class SectionService {
 
     public List<Section> getAllActiveOrdered() {
         return repo.findByActiveOrdered();
+    }
+
+    public List<SectionWithSub> getAllOrderedWSub() {
+        List<Section> ls = repo.findByOrdered();
+        List<SectionWithSub> outls = new ArrayList<>();
+        ls.forEach(el -> outls.add(new SectionWithSub(el.getId(), el.getTitle(), el.getDescription(), el.getActive(),
+                el.getOrder_number(), el.getSub_sections())));
+        return outls;
     }
 }

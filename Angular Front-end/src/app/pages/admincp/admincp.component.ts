@@ -3,12 +3,12 @@ import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription, catchError } from 'rxjs';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
+import { ISectionData } from 'src/app/interfaces/isection-data';
+import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
-import { ForumService } from 'src/app/services/forum.service';
-import { HomeService } from 'src/app/services/home.service';
-import { UserService } from 'src/app/services/user.service';
+import { ModerationService } from 'src/app/services/moderation.service';
 
 @Component({
   selector: 'app-admincp',
@@ -19,9 +19,7 @@ export class AdmincpComponent {
   constructor(
     private authSvc: AuthService,
     private router: Router,
-    private user_svc: UserService,
-    private f_svc: ForumService,
-    private h_svc: HomeService
+    private svc: ModerationService
   ) {}
 
   isLoadingPage: boolean = true;
@@ -35,6 +33,9 @@ export class AdmincpComponent {
   isBlocksModeration: boolean = false;
   isThreadViewSearch: boolean = true;
   isThreadViewAll: boolean = false;
+  isSectionViewCreate: boolean = true;
+  isSubSectionViewCreate: boolean = false;
+  isSectionViewAll: boolean = false;
 
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
@@ -43,6 +44,10 @@ export class AdmincpComponent {
   moderateUserSub!: Subscription;
   threadSub!: Subscription;
   moderateThreadSub!: Subscription;
+  sectionSub!: Subscription;
+  subSectionSub!: Subscription;
+  subSectionOperationsSub!: Subscription;
+  sectionOperationsSub!: Subscription;
 
   inputSearchUser: string = '';
   usersFound!: IUserDataPageable;
@@ -81,6 +86,21 @@ export class AdmincpComponent {
   threadTitleCustomArr: string[] = [];
   threadPagesCustomArr: number[] = [];
 
+  sectionsArr: ISectionData[] = [];
+  sectionsTitleArr: string[] = [];
+  collapseableSArr: boolean[] = [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  ];
+  selectedSSIndex: number = -1;
+  newSubSectionParentId: number = -1;
+
   @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('sectionMod') sectionsBtn!: ElementRef<HTMLButtonElement>;
@@ -90,6 +110,15 @@ export class AdmincpComponent {
   @ViewChild('threadViewAll') threadViewAllBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('selectCriteria')
   threadCriteriaSelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild('sectionViewCreate')
+  sectionViewCreateBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('subSectionViewCreate')
+  subSectionViewCreateBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('sectionViewAll')
+  sectionViewAllBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('activeRadioOne')
+  radioActiveSection!: ElementRef<HTMLInputElement>;
+  @ViewChild('activeSSRadioOne') radioSSActive!: ElementRef<HTMLInputElement>;
 
   ngOnInit() {
     this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
@@ -119,6 +148,11 @@ export class AdmincpComponent {
     if (this.moderateUserSub) this.moderateUserSub.unsubscribe();
     if (this.threadSub) this.threadSub.unsubscribe();
     if (this.moderateThreadSub) this.moderateThreadSub.unsubscribe();
+    if (this.sectionSub) this.sectionSub.unsubscribe();
+    if (this.sectionOperationsSub) this.sectionOperationsSub.unsubscribe();
+    if (this.subSectionSub) this.subSectionSub.unsubscribe();
+    if (this.subSectionOperationsSub)
+      this.subSectionOperationsSub.unsubscribe();
   }
 
   switchModeration(flag: number): void {
@@ -187,8 +221,53 @@ export class AdmincpComponent {
     }
   }
 
+  switchSectionView(flag: number): void {
+    if (flag == 0) {
+      if (!this.isSectionViewCreate) {
+        this.isSectionViewCreate = true;
+        this.isSubSectionViewCreate = false;
+        this.isSectionViewAll = false;
+        this.sectionViewCreateBtn.nativeElement.classList.add('btn-selected');
+        this.subSectionViewCreateBtn.nativeElement.classList.remove(
+          'btn-selected'
+        );
+        this.sectionViewAllBtn.nativeElement.classList.remove('btn-selected');
+      }
+    } else if (flag == 1) {
+      if (!this.isSubSectionViewCreate) {
+        this.isSectionViewCreate = false;
+        this.isSubSectionViewCreate = true;
+        this.isSectionViewAll = false;
+        this.sectionViewCreateBtn.nativeElement.classList.remove(
+          'btn-selected'
+        );
+        this.subSectionViewCreateBtn.nativeElement.classList.add(
+          'btn-selected'
+        );
+        this.sectionViewAllBtn.nativeElement.classList.remove('btn-selected');
+        this.sectionsArr = [];
+        this.getSections();
+      }
+    } else if (flag == 2) {
+      if (!this.isSectionViewAll) {
+        this.isSectionViewCreate = false;
+        this.isSubSectionViewCreate = false;
+        this.isSectionViewAll = true;
+        this.sectionViewCreateBtn.nativeElement.classList.remove(
+          'btn-selected'
+        );
+        this.subSectionViewCreateBtn.nativeElement.classList.remove(
+          'btn-selected'
+        );
+        this.sectionViewAllBtn.nativeElement.classList.add('btn-selected');
+        this.sectionsArr = [];
+        this.getSections();
+      }
+    }
+  }
+
   searchUsers(page: number): void {
-    this.searcUserSub = this.user_svc
+    this.searcUserSub = this.svc
       .getUsersFromName(this.inputSearchUser, page)
       .pipe(
         catchError((err) => {
@@ -304,7 +383,7 @@ export class AdmincpComponent {
             : [{ id: 1, roleName: 'ROLE_USER' }],
       };
 
-      this.moderateUserSub = this.user_svc
+      this.moderateUserSub = this.svc
         .moderate(this.user_id, outData)
         .pipe(
           catchError((err) => {
@@ -327,7 +406,7 @@ export class AdmincpComponent {
         ? data.controls['title'].value
         : data.controls['titlec'].value,
     };
-    this.moderateThreadSub = this.f_svc
+    this.moderateThreadSub = this.svc
       .updatePost(obj)
       .pipe(
         catchError((err) => {
@@ -346,7 +425,7 @@ export class AdmincpComponent {
     if (this.threadSub) this.threadSub.unsubscribe();
 
     if (this.isThreadViewAll) {
-      this.threadSub = this.h_svc
+      this.threadSub = this.svc
         .getPosts(0, '?size=6' + '&page=' + page, 0)
         .pipe(
           catchError((err) => {
@@ -401,7 +480,7 @@ export class AdmincpComponent {
       }
       let params: string = 'size=6&page=' + page + searchBy;
 
-      this.threadSub = this.f_svc
+      this.threadSub = this.svc
         .getPostPaged(params)
         .pipe(
           catchError((err) => {
@@ -443,5 +522,307 @@ export class AdmincpComponent {
           this.threadsCustomFound = res;
         });
     }
+  }
+
+  resetSecCollapse(index: number) {
+    this.collapseableSArr[index] = !this.collapseableSArr[index];
+    this.selectedSSIndex = -1;
+  }
+
+  getSections() {
+    this.sectionsTitleArr = [];
+    this.sectionsArr = [];
+    this.newSubSectionParentId = -1;
+    this.sectionSub = this.svc
+      .getSections()
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        this.sectionsArr = res;
+        for (let i = 0; i < this.sectionsArr.length; i++) {
+          this.sectionsTitleArr.push(res[i].title);
+        }
+      });
+  }
+
+  doSectionsCheck(form: NgForm): boolean {
+    let bool: boolean = true;
+
+    let titleP: HTMLElement | null = document.getElementById(
+      'err-ti-' + this.selectedSSIndex
+    );
+    let descriptionP: HTMLElement | null = document.getElementById(
+      'err-descr-' + this.selectedSSIndex
+    );
+    let orderP: HTMLElement | null = document.getElementById(
+      'err-order-' + this.selectedSSIndex
+    );
+
+    if (form.controls['title'].value.length < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (form.controls['description'].value.length > 100) {
+      bool = false;
+      descriptionP!.classList.remove('d-none');
+      descriptionP!.innerText = 'Max 100 chars';
+    }
+
+    if (isNaN(Number(form.controls['order'].value))) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  doSectionUpdate(index: number, data: NgForm) {
+    if (this.doSectionsCheck(data)) {
+      let obj: ISectionData = {
+        id: data.controls['id'].value,
+        title: data.controls['title'].value,
+        description: data.controls['description'].value,
+        active: this.radioActiveSection.nativeElement.checked ? true : false,
+        order_number: data.controls['order'].value,
+      };
+
+      this.sectionOperationsSub = this.svc
+        .updateSection(this.sectionsArr[index].id!, obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.sectionsTitleArr[index] = res.title;
+          this.sectionsArr[index] = res;
+        });
+    }
+  }
+
+  doSubSectionsCheck(form: NgForm, num: number): boolean {
+    let bool: boolean = true;
+
+    let titleP: HTMLElement | null = document.getElementById('err-ssti-' + num);
+    let descriptionP: HTMLElement | null = document.getElementById(
+      'err-ssdescr-' + num
+    );
+    let orderP: HTMLElement | null = document.getElementById(
+      'err-ssorder-' + num
+    );
+
+    if (form.controls['sstitle'].value.length < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (form.controls['ssdescription'].value.length > 100) {
+      bool = false;
+      descriptionP!.classList.remove('d-none');
+      descriptionP!.innerText = 'Max 100 chars';
+    }
+
+    if (isNaN(Number(form.controls['ssorder'].value))) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  doSubSectionUpdate(parent_section_id: number, data: NgForm) {
+    if (this.doSubSectionsCheck(data, this.selectedSSIndex)) {
+      let obj: Partial<ISubSectionData> = {
+        id: data.controls['ssid'].value,
+        title: data.controls['sstitle'].value,
+        description: data.controls['ssdescription'].value,
+        active: this.radioSSActive.nativeElement.checked ? true : false,
+        order_number: data.controls['ssorder'].value,
+        parent_id: parent_section_id,
+      };
+
+      this.subSectionOperationsSub = this.svc
+        .updateSubSection(obj.id!, obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+        });
+    }
+  }
+
+  doNewSecChecks(form: NgForm): boolean {
+    let bool: boolean = true;
+
+    let titleP: HTMLElement | null = document.getElementById('err-ti');
+    let descriptionP: HTMLElement | null = document.getElementById('err-descr');
+    let orderP: HTMLElement | null = document.getElementById('err-order');
+
+    if (form.controls['title'].value < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (form.controls['description'].value.length > 100) {
+      bool = false;
+      descriptionP!.classList.remove('d-none');
+      descriptionP!.innerText = 'Max 100 chars';
+    }
+
+    if (isNaN(Number(form.controls['order'].value))) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  doNewSubSecChecks(form: NgForm): boolean {
+    let bool: boolean = true;
+
+    let parentP: HTMLElement | null = document.getElementById('err-parent');
+    let titleP: HTMLElement | null = document.getElementById('err-ti');
+    let descriptionP: HTMLElement | null = document.getElementById('err-descr');
+    let orderP: HTMLElement | null = document.getElementById('err-order');
+
+    if (this.newSubSectionParentId == -1) {
+      bool = false;
+      parentP!.classList.remove('d-none');
+      parentP!.innerText = 'Invalid value';
+    }
+
+    if (form.controls['title'].value < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (form.controls['description'].value.length > 80) {
+      bool = false;
+      descriptionP!.classList.remove('d-none');
+      descriptionP!.innerText = 'Max 80 chars';
+    }
+
+    if (
+      form.controls['order'].value.length == 0 ||
+      isNaN(Number(form.controls['order'].value))
+    ) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  resetSFields() {
+    document.getElementById('err-ti')?.classList.add('d-none');
+    document.getElementById('err-descr')?.classList.add('d-none');
+    document.getElementById('err-order')?.classList.add('d-none');
+  }
+
+  doCreateSection(data: NgForm) {
+    this.resetSFields();
+    if (this.doNewSecChecks(data)) {
+      let obj: Partial<ISectionData> = {
+        title: data.controls['title'].value,
+        description: data.controls['description'].value,
+        order_number: data.controls['order'].value,
+        active: this.radioActiveSection.nativeElement.checked ? true : false,
+      };
+
+      this.sectionOperationsSub = this.svc
+        .createSection(obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+          data.resetForm();
+        });
+    }
+  }
+
+  resetSSFields() {
+    document.getElementById('err-parent')?.classList.add('d-none');
+    document.getElementById('err-ti')?.classList.add('d-none');
+    document.getElementById('err-descr')?.classList.add('d-none');
+    document.getElementById('err-order')?.classList.add('d-none');
+  }
+
+  doCreateSubSection(data: NgForm) {
+    this.resetSSFields();
+    if (this.doNewSubSecChecks(data)) {
+      let obj: Partial<ISubSectionData> = {
+        title: data.controls['title'].value,
+        description: data.controls['description'].value,
+        order_number: data.controls['order'].value,
+        active: this.radioActiveSection.nativeElement.checked ? true : false,
+        parent_section_id: this.newSubSectionParentId,
+      };
+      this.subSectionOperationsSub = this.svc
+        .createSubSection(obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+          data.resetForm();
+        });
+    }
+  }
+
+  deleteSection(id: number) {
+    for (let i = 0; i < this.collapseableSArr.length; i++) {
+      this.collapseableSArr[i] = true;
+    }
+
+    this.sectionOperationsSub = this.svc
+      .deleteSection(id)
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        console.log(res.message);
+        this.getSections();
+      });
+  }
+
+  deleteSubSection(id: number) {
+    console.log(id);
+    this.subSectionOperationsSub = this.svc
+      .deleteSubSection(id)
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        console.log(res.message);
+        this.selectedSSIndex = -1;
+        for (let i = 0; i < this.collapseableSArr.length; i++) {
+          this.collapseableSArr[i] = true;
+        }
+        this.getSections();
+      });
   }
 }
