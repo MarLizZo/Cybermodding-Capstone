@@ -7,6 +7,7 @@ import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { FormsModule } from '@angular/forms';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 
 @NgModule({
   declarations: [AdmincpComponent],
@@ -17,6 +18,7 @@ import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     OrangeButtonComponent,
     NgbCollapseModule,
+    ModalComponent,
   ],
 })
 export class AdmincpModule {}

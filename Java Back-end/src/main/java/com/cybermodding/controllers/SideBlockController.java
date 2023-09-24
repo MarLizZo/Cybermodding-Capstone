@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
+import com.cybermodding.payload.BlockDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.services.SideBlockService;
 
@@ -45,7 +46,7 @@ public class SideBlockController {
 
     @PostMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SideBlock> createBlock(@RequestBody SideBlock body) {
+    public ResponseEntity<SideBlock> createBlock(@RequestBody BlockDTO body) {
         return svc.saveBlock(body);
     }
 

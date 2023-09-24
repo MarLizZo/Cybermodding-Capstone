@@ -56,7 +56,8 @@
   background-color: var(--bg-lighter);
 
   .moderation-body {
-    input {
+    input,
+    textarea {
       background-color: var(--bg);
       color: var(--txt);
     }
@@ -131,7 +132,8 @@
 }
 
 .thread-view,
-.sections-view {
+.sections-view,
+.blocks-view {
   border-bottom: 2px solid var(--near-black);
 }
 

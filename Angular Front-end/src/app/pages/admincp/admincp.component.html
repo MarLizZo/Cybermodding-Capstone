@@ -527,14 +527,16 @@
                                     <div class="w-75 mt-3 mb-4 d-flex justify-content-center">
                                         <div class="form-check form-check-inline">
                                             <input #activeRadioOne class="form-check-input shadow-none" type="radio"
-                                                name="active" id="flexRadioDefault1" [checked]="s.active">
+                                                (change)="activeBoolArr[i] = !activeBoolArr[i]" name="active"
+                                                id="flexRadioDefault1" [checked]="activeBoolArr[i]">
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 Attiva e visibile
                                             </label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input #activeRadioTwo class="form-check-input shadow-none" type="radio"
-                                                name="active" id="flexRadioDefault2" [checked]="!s.active">
+                                                (change)="activeBoolArr[i] = !activeBoolArr[i]" name="active"
+                                                id="flexRadioDefault2" [checked]="!activeBoolArr[i]">
                                             <label class="form-check-label" for="flexRadioDefault2">
                                                 Disattiva e non visibile
                                             </label>
@@ -647,6 +649,172 @@
             </div>
 
             <div *ngIf="isBlocksModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <div class="blocks-view w-100 d-flex justify-content-evenly pb-3">
+                    <button #blockViewCreate class="btn moderation-btn btn-sm px-4 rounded-1 border-0 btn-selected"
+                        (click)="switchBlockView(0)">Crea nuovo blocco</button>
+                    <button #blockViewAll class="btn btn-sm moderation-btn px-4 rounded-1 border-0"
+                        (click)="switchBlockView(1)">Tutti i blocchi</button>
+                </div>
+
+                <div *ngIf="isBlocksViewCreate" class="w-100 mt-3 d-flex justify-content-center">
+                    <form #fNewBlock="ngForm" class="w-75 pb-2 d-flex flex-column align-items-center">
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'btitle'">Titolo</label>
+                                <p [id]="'err-ti'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'btitle'" type="text" ngModel [(ngModel)]="blockTitle" name="title"
+                                class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="60">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'border'">Ordine visualizzazione</label>
+                                <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input [id]="'border'" type="number" ngModel name="order"
+                                class="form-control form-control-sm px-1 border-0 shadow-none">
+                        </div>
+
+                        <div class="w-75 mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label [htmlFor]="'btype'">Tipo</label>
+                                <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <select name="type" id="btype" [(ngModel)]="blockType"
+                                class="form-control form-control-sm border-0 shadow-none">
+                                <option value="BLOCK_ALL">Home + Forum</option>
+                                <option value="BLOCK_HOME">Solo Home</option>
+                                <option value="BLOCK_FORUM">Solo Forum</option>
+                            </select>
+                        </div>
+
+                        <div class="w-75 mt-3 d-flex justify-content-center">
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioOne class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault1" checked>
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                    Attivo e visibile
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input #activeRadioTwo class="form-check-input shadow-none" type="radio" name="active"
+                                    id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                    Disattivo e non visibile
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-floating w-75 mt-3 mb-4 d-flex flex-column align-items-center">
+                            <div class="d-flex w-100 justify-content-between mb-1">
+                                <label [htmlFor]="'bcontent'">Contenuto</label>
+                                <p [id]="'err-content'" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <textarea [id]="'bcontent'" class="form-control shadow-none border-0"
+                                placeholder="Content of the block.." [(ngModel)]="blockContent"
+                                name="content"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-evenly w-100">
+                            <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anteprima Blocco'"
+                                (click)="openModal(false)"></app-orange-button>
+                            <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Nuovo Blocco'"
+                                (click)="doCreateNewBlock(fNewBlock)"></app-orange-button>
+                        </div>
+                    </form>
+                </div>
+
+                <div *ngIf="isBlockViewAll" class="w-100 mt-3 d-flex justify-content-center">
+                    <div *ngIf="blocksArr.length" class="w-100">
+                        <div *ngFor="let b of blocksArr; let i = index; let first = first" class="single-result"
+                            [ngClass]="{'mt-3' : !first}">
+                            <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                                <div class="flex-grow-1">
+                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ b.title }}</p>
+                                    <span [innerText]="b.e_block_type + ' | '"></span><span
+                                        [innerText]="b.active ? 'Attivo' : 'Disattivo'"
+                                        [ngClass]="{'text-danger' : !b.active, 'text-mod' : b.active}"></span>
+                                </div>
+                                <i class="bi bi-arrow-bar-down"
+                                    (click)="collapseableBArr[i] = !collapseableBArr[i]"></i>
+                            </div>
+                            <div #collapseSections="ngbCollapse" [(ngbCollapse)]="collapseableBArr[i]"
+                                class="options-container p-3 pb-4">
+                                <form #fUpdateBlock="ngForm"
+                                    class="w-75 mx-auto pb-2 d-flex flex-column align-items-center">
+                                    <div class="mt-3 w-100">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'btitle'">Titolo</label>
+                                            <p [id]="'err-ti'" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'btitle'" type="text" ngModel [(ngModel)]="blocksTitleArr[i]"
+                                            name="title" class="form-control form-control-sm px-1 border-0 shadow-none"
+                                            maxlength="60">
+                                    </div>
+
+                                    <div class="mt-3 w-100">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'border'">Ordine visualizzazione</label>
+                                            <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <input [id]="'border'" type="number" ngModel [(ngModel)]="b.order_number"
+                                            name="order" class="form-control form-control-sm px-1 border-0 shadow-none">
+                                    </div>
+
+                                    <div class="mt-3 w-100">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <label [htmlFor]="'btype'">Tipo</label>
+                                            <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <select name="type" id="btype" [(ngModel)]="blocksTypeArr[i]"
+                                            class="form-control form-control-sm border-0 shadow-none">
+                                            <option value="BLOCK_ALL">Home + Forum</option>
+                                            <option value="BLOCK_HOME">Solo Home</option>
+                                            <option value="BLOCK_FORUM">Solo Forum</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mt-3 w-100 d-flex justify-content-center">
+                                        <div class="form-check form-check-inline">
+                                            <input #activeRadioOne class="form-check-input shadow-none" type="radio"
+                                                name="active" (change)="activeBoolBArr[i] = !activeBoolBArr[i]"
+                                                id="flexRadioDefault1" [checked]="activeBoolBArr[i]">
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                Attivo e visibile
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input #activeRadioTwo class="form-check-input shadow-none" type="radio"
+                                                name="active" (change)="activeBoolBArr[i] = !activeBoolBArr[i]"
+                                                id="flexRadioDefault2" [checked]="!activeBoolBArr[i]">
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                Disattivo e non visibile
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-floating w-100 mt-3 mb-4 d-flex flex-column align-items-center">
+                                        <div class="d-flex w-100 justify-content-between mb-1">
+                                            <label [htmlFor]="'bcontent'">Contenuto</label>
+                                            <p [id]="'err-content'" class="m-0 text-danger d-none"></p>
+                                        </div>
+                                        <textarea [id]="'bcontent'" class="form-control shadow-none border-0"
+                                            placeholder="Content of the block.." [(ngModel)]="b.content"
+                                            name="content"></textarea>
+                                    </div>
+
+                                    <div class="d-flex justify-content-evenly w-100">
+                                        <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anteprima Blocco'"
+                                            (click)="openModal(true, i, fUpdateBlock)"></app-orange-button>
+                                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Blocco'"
+                                            (click)="doUpdateBlock(fUpdateBlock, i)"></app-orange-button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

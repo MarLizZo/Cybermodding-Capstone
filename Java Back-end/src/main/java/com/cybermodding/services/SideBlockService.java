@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.payload.BlockDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.SideBlockRepo;
 
@@ -37,14 +38,22 @@ public class SideBlockService {
         }
     }
 
-    public ResponseEntity<SideBlock> saveBlock(SideBlock s) {
-        SideBlock createdS = repo.save(s);
+    public ResponseEntity<SideBlock> saveBlock(BlockDTO s) {
+        SideBlock createdS = repo.save(SideBlock.builder().title(s.getTitle()).active(s.getActive())
+                .content(s.getContent()).e_block_type(s.getE_block_type()).order_number(s.getOrder_number()).build());
         return new ResponseEntity<SideBlock>(createdS, HttpStatus.CREATED);
     }
 
     public ResponseEntity<CustomResponse> updateBlock(Long id, SideBlock s) {
         if (repo.existsById(id)) {
             if (id.equals(s.getId())) {
+                SideBlock fromDB = repo.findById(s.getId()).get();
+                fromDB.setActive(s.getActive());
+                fromDB.setContent(s.getContent());
+                fromDB.setE_block_type(s.getE_block_type());
+                fromDB.setOrder_number(s.getOrder_number());
+                fromDB.setTitle(s.getTitle());
+                repo.save(fromDB);
                 CustomResponse cr = new CustomResponse(new Date(), "** Side block updated succesfully **",
                         HttpStatus.OK);
                 return new ResponseEntity<CustomResponse>(cr, HttpStatus.OK);

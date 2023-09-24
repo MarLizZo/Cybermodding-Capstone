@@ -1,9 +1,12 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, catchError } from 'rxjs';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
+import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
@@ -19,7 +22,8 @@ export class AdmincpComponent {
   constructor(
     private authSvc: AuthService,
     private router: Router,
-    private svc: ModerationService
+    private svc: ModerationService,
+    private modalSvc: NgbModal
   ) {}
 
   isLoadingPage: boolean = true;
@@ -36,6 +40,8 @@ export class AdmincpComponent {
   isSectionViewCreate: boolean = true;
   isSubSectionViewCreate: boolean = false;
   isSectionViewAll: boolean = false;
+  isBlocksViewCreate: boolean = true;
+  isBlockViewAll: boolean = false;
 
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
@@ -48,6 +54,7 @@ export class AdmincpComponent {
   subSectionSub!: Subscription;
   subSectionOperationsSub!: Subscription;
   sectionOperationsSub!: Subscription;
+  blockOperationsSub!: Subscription;
 
   inputSearchUser: string = '';
   usersFound!: IUserDataPageable;
@@ -98,8 +105,27 @@ export class AdmincpComponent {
     true,
     true,
   ];
+  activeBoolArr: boolean[] = [];
   selectedSSIndex: number = -1;
   newSubSectionParentId: number = -1;
+
+  blockType: string = 'BLOCK_ALL';
+  blockContent: string = '';
+  blockTitle: string = '';
+  blocksArr: ISideBlockData[] = [];
+  collapseableBArr: boolean[] = [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  ];
+  activeBoolBArr: boolean[] = [];
+  blocksTitleArr: string[] = [];
+  blocksTypeArr: string[] = [];
 
   @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
@@ -116,8 +142,12 @@ export class AdmincpComponent {
   subSectionViewCreateBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('sectionViewAll')
   sectionViewAllBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('blockViewCreate')
+  blockViewCreateBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('blockViewAll')
+  blockViewAllBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('activeRadioOne')
-  radioActiveSection!: ElementRef<HTMLInputElement>;
+  radioActive!: ElementRef<HTMLInputElement>;
   @ViewChild('activeSSRadioOne') radioSSActive!: ElementRef<HTMLInputElement>;
 
   ngOnInit() {
@@ -153,6 +183,7 @@ export class AdmincpComponent {
     if (this.subSectionSub) this.subSectionSub.unsubscribe();
     if (this.subSectionOperationsSub)
       this.subSectionOperationsSub.unsubscribe();
+    if (this.blockOperationsSub) this.blockOperationsSub.unsubscribe();
   }
 
   switchModeration(flag: number): void {
@@ -217,6 +248,50 @@ export class AdmincpComponent {
         this.isThreadViewAll = true;
         this.threadViewSearchBtn.nativeElement.classList.remove('btn-selected');
         this.threadViewAllBtn.nativeElement.classList.add('btn-selected');
+      }
+    }
+  }
+
+  getBlocks() {
+    for (let i = 0; i < this.collapseableBArr.length; i++) {
+      this.collapseableBArr[i] = true;
+    }
+    this.activeBoolBArr = [];
+    this.blocksTitleArr = [];
+    this.blocksArr = [];
+    this.blockOperationsSub = this.svc
+      .getBlocks()
+      .pipe(
+        catchError((err) => {
+          throw err;
+        })
+      )
+      .subscribe((res) => {
+        console.log(res);
+        this.blocksArr = res;
+        for (let i = 0; i < res.length; i++) {
+          this.activeBoolBArr.push(res[i].active);
+          this.blocksTitleArr.push(res[i].title);
+          this.blocksTypeArr.push(res[i].e_block_type.toString());
+        }
+      });
+  }
+
+  switchBlockView(flag: number): void {
+    if (flag == 0) {
+      if (!this.isBlocksViewCreate) {
+        this.isBlocksViewCreate = true;
+        this.isBlockViewAll = false;
+        this.blockViewCreateBtn.nativeElement.classList.add('btn-selected');
+        this.blockViewAllBtn.nativeElement.classList.remove('btn-selected');
+      }
+    } else if (flag == 1) {
+      if (!this.isBlockViewAll) {
+        this.isBlocksViewCreate = false;
+        this.isBlockViewAll = true;
+        this.blockViewCreateBtn.nativeElement.classList.remove('btn-selected');
+        this.blockViewAllBtn.nativeElement.classList.add('btn-selected');
+        this.getBlocks();
       }
     }
   }
@@ -532,6 +607,7 @@ export class AdmincpComponent {
   getSections() {
     this.sectionsTitleArr = [];
     this.sectionsArr = [];
+    this.activeBoolArr = [];
     this.newSubSectionParentId = -1;
     this.sectionSub = this.svc
       .getSections()
@@ -544,6 +620,7 @@ export class AdmincpComponent {
         this.sectionsArr = res;
         for (let i = 0; i < this.sectionsArr.length; i++) {
           this.sectionsTitleArr.push(res[i].title);
+          this.activeBoolArr.push(res[i].active);
         }
       });
   }
@@ -588,9 +665,11 @@ export class AdmincpComponent {
         id: data.controls['id'].value,
         title: data.controls['title'].value,
         description: data.controls['description'].value,
-        active: this.radioActiveSection.nativeElement.checked ? true : false,
+        active: this.activeBoolArr[index],
         order_number: data.controls['order'].value,
       };
+
+      console.log(obj);
 
       this.sectionOperationsSub = this.svc
         .updateSection(this.sectionsArr[index].id!, obj)
@@ -600,8 +679,11 @@ export class AdmincpComponent {
           })
         )
         .subscribe((res) => {
-          this.sectionsTitleArr[index] = res.title;
-          this.sectionsArr[index] = res;
+          this.selectedSSIndex = -1;
+          for (let i = 0; i < this.collapseableSArr.length; i++) {
+            this.collapseableSArr[i] = true;
+          }
+          this.getSections();
         });
     }
   }
@@ -741,7 +823,7 @@ export class AdmincpComponent {
         title: data.controls['title'].value,
         description: data.controls['description'].value,
         order_number: data.controls['order'].value,
-        active: this.radioActiveSection.nativeElement.checked ? true : false,
+        active: this.radioActive.nativeElement.checked ? true : false,
       };
 
       this.sectionOperationsSub = this.svc
@@ -752,7 +834,6 @@ export class AdmincpComponent {
           })
         )
         .subscribe((res) => {
-          console.log(res);
           data.resetForm();
         });
     }
@@ -772,7 +853,7 @@ export class AdmincpComponent {
         title: data.controls['title'].value,
         description: data.controls['description'].value,
         order_number: data.controls['order'].value,
-        active: this.radioActiveSection.nativeElement.checked ? true : false,
+        active: this.radioActive.nativeElement.checked ? true : false,
         parent_section_id: this.newSubSectionParentId,
       };
       this.subSectionOperationsSub = this.svc
@@ -824,5 +905,138 @@ export class AdmincpComponent {
         }
         this.getSections();
       });
+  }
+
+  openModal(update: boolean, index: number = 0, form?: NgForm) {
+    if (!update) {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'l',
+      });
+      modal.componentInstance.title = this.blockTitle;
+      modal.componentInstance.body = this.blockContent;
+    } else {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'l',
+      });
+      modal.componentInstance.title = this.blocksTitleArr[index];
+      modal.componentInstance.body = form!.controls['content'].value;
+    }
+  }
+
+  resetBFields() {
+    document.getElementById('err-ti')?.classList.add('d-none');
+    document.getElementById('err-order')?.classList.add('d-none');
+    document.getElementById('err-content')?.classList.add('d-none');
+  }
+
+  doBlockChecks(form: NgForm): boolean {
+    let bool: boolean = true;
+
+    let titleP: HTMLElement | null = document.getElementById('err-ti');
+    let orderP: HTMLElement | null = document.getElementById('err-order');
+    let contentP: HTMLElement | null = document.getElementById('err-content');
+
+    if (this.blockTitle.length < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (this.blockContent.length < 1) {
+      bool = false;
+      contentP!.classList.remove('d-none');
+      contentP!.innerText = 'Write something';
+    }
+
+    if (
+      isNaN(Number(form.controls['order'].value)) ||
+      form.controls['order'].value == null
+    ) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  doCreateNewBlock(data: NgForm) {
+    this.resetBFields();
+    if (this.doBlockChecks(data)) {
+      let obj: ISideBlockData = {
+        title: this.blockTitle,
+        content: this.blockContent,
+        active: this.radioActive.nativeElement.checked ? true : false,
+        e_block_type: this.blockType,
+        order_number: data.controls['order'].value,
+      };
+      this.blockOperationsSub = this.svc
+        .createBlock(obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+          data.resetForm();
+        });
+    }
+  }
+
+  doUpdateBlockChecks(form: NgForm, index: number): boolean {
+    let bool: boolean = true;
+
+    let titleP: HTMLElement | null = document.getElementById('err-ti');
+    let orderP: HTMLElement | null = document.getElementById('err-order');
+    let contentP: HTMLElement | null = document.getElementById('err-content');
+
+    if (this.blocksTitleArr[index].length < 3) {
+      bool = false;
+      titleP!.classList.remove('d-none');
+      titleP!.innerText = 'Min 3 chars';
+    }
+
+    if (form.controls['content'].value.length < 1) {
+      bool = false;
+      contentP!.classList.remove('d-none');
+      contentP!.innerText = 'Write something';
+    }
+
+    if (
+      isNaN(Number(form.controls['order'].value)) ||
+      form.controls['order'].value == null
+    ) {
+      bool = false;
+      orderP!.classList.remove('d-none');
+      orderP!.innerText = 'Invalid value';
+    }
+
+    return bool;
+  }
+
+  doUpdateBlock(data: NgForm, index: number) {
+    this.resetBFields();
+    if (this.doUpdateBlockChecks(data, index)) {
+      let obj: ISideBlockData = {
+        id: this.blocksArr[index].id,
+        title: data.controls['title'].value,
+        content: data.controls['content'].value,
+        active: this.activeBoolBArr[index] ? true : false,
+        e_block_type: this.blocksTypeArr[index],
+        order_number: data.controls['order'].value,
+      };
+
+      this.blockOperationsSub = this.svc
+        .updateBlock(this.blocksArr[index].id!, obj)
+        .pipe(
+          catchError((err) => {
+            throw err;
+          })
+        )
+        .subscribe((res) => {
+          this.getBlocks();
+        });
+    }
   }
 }

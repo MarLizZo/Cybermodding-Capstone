@@ -126,4 +126,20 @@ export class ModerationService {
       data
     );
   }
+
+  public createBlock(
+    data: Partial<ISideBlockData>
+  ): Observable<ISideBlockData> {
+    {
+      return this.http.post<ISideBlockData>(this.sidesApiUrl + '/new', data);
+    }
+  }
+
+  public getBlocks(): Observable<ISideBlockData[]> {
+    return this.http.get<ISideBlockData[]>(this.sidesApiUrl);
+  }
+
+  public updateBlock(id: number, data: ISideBlockData) {
+    return this.http.put<ISideBlockData>(this.sidesApiUrl + '/' + id, data);
+  }
 }
