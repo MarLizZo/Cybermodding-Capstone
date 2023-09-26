@@ -1,6 +1,7 @@
 package com.cybermodding.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -62,11 +63,23 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Post> posts;
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Comment> comments;
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "recipient_user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @Builder.Default
+    private List<PrivateMessage> received_pms = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "sender_user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @Builder.Default
+    private List<PrivateMessage> sent_pms = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))

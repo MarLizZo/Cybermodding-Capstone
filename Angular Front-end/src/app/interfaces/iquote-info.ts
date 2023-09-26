@@ -4,5 +4,5 @@ export interface IQuoteInfo {
   content: string;
   username: string;
   user_id: number;
-  user_level: UserLevel | string;
+  user_level?: UserLevel | string;
 }

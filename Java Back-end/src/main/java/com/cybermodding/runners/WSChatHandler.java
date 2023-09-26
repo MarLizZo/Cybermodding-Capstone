@@ -20,7 +20,7 @@ import com.cybermodding.services.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class WebSocketHandler extends TextWebSocketHandler {
+public class WSChatHandler extends TextWebSocketHandler {
 
     @Autowired
     private ObjectMapper objectMapper;

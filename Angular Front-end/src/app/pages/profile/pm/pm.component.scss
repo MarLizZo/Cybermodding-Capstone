@@ -1,0 +1,73 @@
+.txt-mod {
+  color: var(--mod-color);
+}
+
+.txt-orange {
+  color: var(--orange);
+}
+
+.img-placeholder {
+  background-color: var(--near-black);
+  border: 2px solid var(--orange);
+}
+
+.profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--orange);
+}
+
+.head {
+  background-color: var(--bg-lighter);
+  border-bottom: 2px solid var(--near-black);
+
+  .custom-btn {
+    background-color: var(--bg);
+    color: var(--txt);
+    transition: 0.2s;
+
+    &:hover,
+    &:active {
+      background-color: var(--near-black);
+    }
+  }
+
+  .btn-selected {
+    color: var(--orange-hover);
+    background-color: var(--near-black);
+  }
+}
+
+.msgs-container {
+  .single-msg {
+    .sm-head {
+      background-color: var(--bg-lighter);
+    }
+
+    .sm-container {
+      border: 1px solid var(--near-black);
+      .date-info {
+        border-bottom: 1px solid var(--orange-hover);
+      }
+
+      .sm-content {
+        border-bottom: 2px solid var(--near-black);
+      }
+    }
+  }
+
+  i.bi-arrow-bar-down {
+    color: var(--orange);
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+}
+
+.title-trunc {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}

@@ -1,6 +1,7 @@
 package com.cybermodding.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.cybermodding.enumerators.EPostType;
@@ -57,10 +58,12 @@ public class Post {
     private SubSection sub_section;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private List<Reaction> reactions;
+    @Builder.Default
+    private List<Reaction> reactions = new ArrayList<Reaction>();
 
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private List<Comment> comments;
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<Comment>();
 
     @Override
     public String toString() {

@@ -6,18 +6,22 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
-import com.cybermodding.runners.WebSocketHandler;
+import com.cybermodding.runners.WSChatHandler;
+import com.cybermodding.runners.WSPMsHandler;
 
 @Configuration
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
-    protected WebSocketHandler webSocketHandler;
+    protected WSChatHandler wsChatHandler;
+    @Autowired
+    protected WSPMsHandler wsPmsHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/ws").setAllowedOriginPatterns("http://localhost:4200");
+        registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns("http://localhost:4200");
+        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns("http://localhost:4200");
     }
 }
 

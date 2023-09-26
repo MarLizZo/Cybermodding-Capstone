@@ -3,8 +3,11 @@ package com.cybermodding.runners;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Component;
 import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
+import com.cybermodding.entities.PrivateMessage;
+import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.entities.User;
@@ -28,11 +33,16 @@ import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.payload.RegisterDto;
 import com.cybermodding.payload.SectionDto;
 import com.cybermodding.payload.SubSectionDto;
+import com.cybermodding.repositories.CommentRepo;
+import com.cybermodding.repositories.PMRepo;
+import com.cybermodding.repositories.PostRepo;
+import com.cybermodding.repositories.ReactionRepo;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.services.AuthService;
 import com.cybermodding.services.ChatService;
 import com.cybermodding.services.CommentService;
+import com.cybermodding.services.PMService;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.SectionService;
 import com.cybermodding.services.SideBlockService;
@@ -65,22 +75,34 @@ public class Runner implements CommandLineRunner {
         SideBlockService sb_repo;
         @Autowired
         CommentService comm_svc;
+        @Autowired
+        PostRepo p_repo;
+        @Autowired
+        ReactionRepo react_repo;
+        @Autowired
+        CommentRepo comm_repo;
+        @Autowired
+        PMService pm_svc;
+        @Autowired
+        PMRepo pm_repo;
 
         @Override
         public void run(String... args) throws Exception {
                 System.out.println("** ..Running.. **");
 
+                // testDeletePost();
+
                 // create roles columns
-                setRoleDefault();
+                // setRoleDefault();
 
                 // create my user and give admin privileges
                 // createAndSetAdmin();
 
-                // set random Moderators and Admin
-                // setPrivileges();
-
                 // faker users
                 // createFakeUsers(80);
+
+                // set random Moderators and Admin
+                // setPrivileges();
 
                 // faker chat test
                 // createFakeChatMsg(50);
@@ -95,20 +117,90 @@ public class Runner implements CommandLineRunner {
                 // createSubSections();
 
                 // create Posts
-                // createPosts(100);
+                // createPosts(150);
 
                 // create Side blocks
                 // createSideBlocks();
 
                 // create Comments
-                // createComments(250);
+                // createComments(350);
 
                 // create Reactions
                 // createReactions(400);
+
+                System.out.println("** ..Ops done.. **");
+        }
+
+        private void testDeletePost() {
+                Post p = p_repo.findById(26l).get();
+                System.out.println(p.getComments().size() + " " + p.getReactions().size());
+
+                if (p.getReactions().size() != 0) {
+                        p.getReactions().forEach(r -> {
+                                Optional<Reaction> re = react_repo.findById(r.getId());
+                                if (re.isPresent()) {
+                                        Reaction react = react_repo.findById(r.getId()).get();
+                                        System.out.println("PRESENT Reaction ID: " + react.getId());
+                                        react.setPost(null);
+                                        react.setUser(null);
+                                        react_repo.save(react);
+                                        System.out.println("Saved Reaction ID: " + react.getId());
+                                        react_repo.delete(react);
+                                } else {
+                                        System.out.println("DIOP NOT PRESENT");
+                                }
+                        });
+                        System.out.println("Surpassed Reaction cycle..");
+                        p.setReactions(List.of());
+                        try {
+                                p_repo.save(p);
+                        } catch (Exception ex) {
+                                System.out.println("DIOP " + ex.getMessage());
+                        }
+
+                        System.out.println("Post saved from Reactions");
+                }
+
+                if (p.getComments().size() != 0) {
+                        p.getComments().forEach(c -> {
+                                Optional<Comment> co = comm_repo.findById(c.getId());
+                                if (co.isPresent()) {
+                                        System.out.println("PRESENT Comment ID: " + co.get().getId());
+                                        co.get().setPost(null);
+                                        co.get().setUser(null);
+                                        comm_repo.save(co.get());
+                                        System.out.println("Saved Comment ID: " + co.get().getId());
+                                        comm_repo.delete(co.get());
+                                } else {
+                                        System.out.println("DIOP NOT PRESENT");
+                                }
+                                System.out.println("Post saved from Comments");
+                        });
+                        System.out.println("Surpassed Comments cycle..");
+                        p.setComments(List.of());
+                        try {
+                                p_repo.save(p);
+                        } catch (Exception ex) {
+                                System.out.println("DIOP " + ex.getMessage());
+                        }
+                }
+                System.out.println(p.getComments().size() + " " + p.getReactions().size());
+                try {
+                        p.setSub_section(null);
+                        p.setAuthor(null);
+                        p_repo.save(p);
+                        p_repo.delete(p);
+                        if (p_repo.existsById(p.getId())) {
+                                p_repo.deleteById(p.getId());
+                        }
+                } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                }
+
         }
 
         private void setPrivileges() {
-                for (int i = 0; i < 4; i++) {
+                for (int i = 0; i < 3; i++) {
                         User u = svc.getRandom();
                         if (u.getId().equals(1l)) {
                                 continue;
@@ -116,7 +208,7 @@ public class Runner implements CommandLineRunner {
                         u.setRoles(Set.of(roleRepository.findById(2l).get()));
                         userRepository.save(u);
                 }
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 2; i++) {
                         User u = svc.getRandom();
                         if (u.getId().equals(1l)) {
                                 continue;
@@ -132,7 +224,7 @@ public class Runner implements CommandLineRunner {
                                 "Ekse..Calibaaaaa", null,
                                 LocalDate.of(1990, 1, 1)));
                 u.setRoles(Set.of(roleRepository.findById(3l).get()));
-                svc.updateUser(u.getId(), u);
+                userRepository.save(u);
         }
 
         private void createFakeUsers(int amount) {
@@ -208,6 +300,8 @@ public class Runner implements CommandLineRunner {
                                 "Possiamo discutere di qualunque cosa", true, 1, 5l));
                 ss_svc.saveSubSection(new SubSectionDto("Consigli e richieste",
                                 "Avete consigli o richieste per il forum? Scrivetelo qui", true, 2, 5l));
+                ss_svc.saveSubSection(new SubSectionDto("Mercatino",
+                                "Il mercatino dell'usato. Non ci prendiamo responsabilità", true, 3, 5l));
         }
 
         private void createPosts(int amount) {
@@ -215,9 +309,12 @@ public class Runner implements CommandLineRunner {
                 Faker fk = Faker.instance();
 
                 for (int i = 0; i < amount; i++) {
+                        String img = "<center><img src='https://picsum.photos/500/250?random=" + String.valueOf(i + 1)
+                                        + "'"
+                                        + "></center><p></p>";
                         p_svc.createNewPost(
                                         new PostDTO(fk.lorem().sentence(5),
-                                                        fk.lorem().paragraph(rand.nextInt(2, 8)),
+                                                        img + fk.lorem().paragraph(rand.nextInt(10, 35)),
                                                         rand.nextInt(1, 10) > 5 ? EPostType.GENERAL : EPostType.NEWS,
                                                         userRepository.getRandomUser().getId(),
                                                         ss_svc.getRandom().getId()));
@@ -226,24 +323,46 @@ public class Runner implements CommandLineRunner {
 
         private void createSideBlocks() {
                 Faker fk = Faker.instance();
-                sb_repo.saveBlock(BlockDTO.builder().title("Block One").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(1).build());
+                sb_repo.saveBlock(BlockDTO.builder().title("Canale YouTube")
+                                .content("<div class=\"d-flex flex-column align-items-center\">\r\n" + //
+                                                "<img src=\"assets/block-yt.png\" class=\"mt-1 w-75\">\r\n" + //
+                                                "<p class=\"mb-3 fs-5 fw-medium text-center\">Canale Youtube</p>\r\n" + //
+                                                "<p class=\"text-center\">Vieni a trovarci sul nostro canale Youtube! Troverai molti podcast, news, recensioni, guide e altro ancora! E se ti piace quello che trovi, iscriviti ed attiva le notifiche, ci farebbe davvero molto piacere!</p>\r\n"
+                                                + //
+                                                "</div>")
+                                .active(true)
+                                .e_block_type(ESideBlock.BLOCK_ALL).order_number(1).build());
 
-                sb_repo.saveBlock(BlockDTO.builder().title("Block Two").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(2).build());
+                sb_repo.saveBlock(BlockDTO.builder().title("Canale Telegram")
+                                .content("<div class=\"d-flex flex-column align-items-center\">\r\n" + //
+                                                "<img src=\"assets/block-tg.png\" class=\"mt-1 w-75\">\r\n" + //
+                                                "<p class=\"mt-2 mb-3 fs-5 fw-medium text-center\">Canale Telegram</p>\r\n"
+                                                + //
+                                                "<p class=\"text-center\">Il nostro gruppo Telegram è sempre attivo e sul pezzo! Resta aggiornato con noi sulle ultime News, recensioni e guide che vengono pubblicate sul forum, e discutine con tutta la community.</p>\r\n"
+                                                + //
+                                                "</div>")
+                                .active(true)
+                                .e_block_type(ESideBlock.BLOCK_ALL).order_number(2).build());
 
-                sb_repo.saveBlock(BlockDTO.builder().title("Block Three").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(3).build());
+                sb_repo.saveBlock(BlockDTO.builder().title("Pubblicità")
+                                .content("<p class=\"fs-5 fw-medium text-center\">Pubblicità</p>\r\n" + //
+                                                "<p class=\"text-center\">Questo è un blocco pubblicitario. Vi si può inserire una qualsiasi pubblicità per generare delle entrate atte a sostenere il costo del mantenimento del forum</p>")
+                                .active(true)
+                                .e_block_type(ESideBlock.BLOCK_ALL).order_number(3).build());
 
-                sb_repo.saveBlock(BlockDTO.builder().title("Block All").content(fk.lorem().paragraph()).active(true)
-                                .e_block_type(ESideBlock.BLOCK_ALL).order_number(4).build());
+                sb_repo.saveBlock(BlockDTO.builder().title("Blocco Home")
+                                .content("<p class=\"fs-5 fw-medium text-center\">Blocco Home</p>\r\n" + //
+                                                "<p class=\"text-center\">Questo blocco appare solo nella Home. Può essere utile per banner pubblicitari che puntano ad un sito esterno, e non avere così lo stesso link ridondanti su più pagine. Dobbiamo essere SEO friendly!</p>")
+                                .active(true)
+                                .e_block_type(ESideBlock.BLOCK_HOME).order_number(4).build());
         }
 
         private void createComments(int amount) {
+                Random rand = new Random();
                 Faker fk = Faker.instance();
                 for (int i = 0; i < amount; i++) {
                         Post p = p_svc.getRandom();
-                        comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(6))
+                        comm_svc.saveComment(Comment.builder().content(fk.lorem().paragraph(rand.nextInt(5, 15)))
                                         .publishedDate(LocalDateTime.now())
                                         .post(p).user(userRepository.getRandomUser()).build());
                 }

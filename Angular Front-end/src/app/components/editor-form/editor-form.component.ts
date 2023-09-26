@@ -33,7 +33,7 @@ export class EditorFormComponent {
 
   ngOnInit() {
     if (!this.type) this.type = 'comment';
-    if (this.type != 'comment') {
+    if (this.type == 'post') {
       this.heightStyle = 'min-height: 85vh';
     }
   }

@@ -13,11 +13,18 @@ import { OrangeButtonComponent } from '../orange-button/orange-button.component'
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modal/modal.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-ckeditor',
   standalone: true,
-  imports: [CKEditorModule, FormsModule, OrangeButtonComponent, ModalComponent],
+  imports: [
+    CKEditorModule,
+    FormsModule,
+    OrangeButtonComponent,
+    ModalComponent,
+    CommonModule,
+  ],
   templateUrl: './ckeditor.component.html',
   styleUrls: ['./ckeditor.component.scss'],
 })
@@ -32,6 +39,7 @@ export class CkeditorComponent {
   finalPlaceholderText: string = '';
   Editor = ClassicEditor;
   editorData: string = '';
+  hasReceivedQuote: boolean = false;
 
   constructor(private modalSvc: NgbModal) {}
 
@@ -63,13 +71,14 @@ export class CkeditorComponent {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['quotedMsg'] && this.quotedMsg != undefined) {
+    if (
+      changes['quotedMsg'] &&
+      this.quotedMsg != undefined &&
+      !this.hasReceivedQuote
+    ) {
       let changedMsg: IQuoteInfo = changes['quotedMsg'].currentValue;
-      this.editorData = `<blockquote>
-      <p class="mb-1">${changedMsg.username}:</p>
-      <p>${changedMsg.content}</p>
-      </blockquote><p></p>
-      `;
+      this.editorData = `<blockquote><p class="mb-1">${changedMsg.username}:</p><p class="mb-1">${changedMsg.content}</p></blockquote><p class="mb-1"></p>`;
+      this.hasReceivedQuote = true;
     }
 
     if (changes['threadTitle']) {
@@ -89,7 +98,7 @@ export class CkeditorComponent {
       scrollable: true,
     });
     modal.componentInstance.title =
-      (this.threadTitle != '' && this.threadTitle) || 'Preview Post';
+      (this.threadTitle != '' && this.threadTitle) || 'Preview';
     modal.componentInstance.body = this.editorData;
   }
 }

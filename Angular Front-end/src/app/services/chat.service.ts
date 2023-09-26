@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IChatMessage } from '../interfaces/ichat-message';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +12,7 @@ export class ChatService {
   private socket$!: WebSocketSubject<IChatMessage>;
 
   constructor(private http: HttpClient) {
-    this.socket$ = webSocket('ws://localhost:8080/ws');
+    this.socket$ = webSocket('ws://localhost:8080/ws/chat');
   }
 
   sendMessage(data: IChatMessage) {

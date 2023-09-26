@@ -77,7 +77,6 @@ export class ProfileComponent {
             this.userObject.description = res.description;
             this.userObject.avatar = res.avatar;
             this.userObject.birthdate = res.birthdate;
-            console.log(res);
           });
       }
     });

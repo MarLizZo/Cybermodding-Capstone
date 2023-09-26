@@ -26,15 +26,19 @@
                         [routerLink]="'/contacts'" (click)="isMenuCollapsed = true">Contatti</a>
                 </li>
             </ul>
-            <div class="ms-md-auto">
+            <div class="ms-md-auto d-flex align-items-center">
+                <span *ngIf="isNewMessage" class="new-pm-banner d-flex px-3 rounded-4 me-2"
+                    [routerLink]="'/profile/pm'"><i class="bi bi-envelope text-danger fs-5"></i></span>
                 <li class="nav-item list-unstyled" ngbDropdown *ngIf="username != undefined">
-                    <span>Benvenuto, </span>
+                    <span>Benvenuto,&nbsp;</span>
                     <a class="nav-link d-inline fw-medium" [class]="usernameColor" tabindex="0" ngbDropdownToggle
                         id="navbarDropdown2" role="button">{{ username }}</a>
                     <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
                         <a ngbDropdownItem [routerLink]="'/profile'" (click)="$event.preventDefault()">Il tuo
                             profilo</a>
-                        <a ngbDropdownItem [routerLink]="'/profile/pm'" (click)="$event.preventDefault()">Messaggi
+                        <a ngbDropdownItem [routerLink]="'/profile/pm'" (click)="$event.preventDefault()"><span
+                                *ngIf="isNewMessage"><i
+                                    class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>Messaggi
                             privati</a>
                         <a ngbDropdownItem [routerLink]="'/auth/logout'" (click)="$event.preventDefault()">Logout</a>
                     </div>

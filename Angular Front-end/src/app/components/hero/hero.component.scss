@@ -1,19 +1,6 @@
 .main-container {
-  height: 30vh;
+  height: 224px;
   background-color: var(--near-black);
-  background-size: cover;
   background-repeat: no-repeat;
   background-image: url("../../../assets/bg-hero-alt.jpeg");
-
-  @media screen and (min-width: 1024px) {
-    background-size: 1200px 224px;
-  }
-
-  @media screen and (min-width: 1200px) {
-    background-size: 1500px 224px;
-  }
-
-  img {
-    max-height: 75%;
-  }
 }

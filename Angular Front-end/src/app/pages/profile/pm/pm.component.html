@@ -1,1 +1,80 @@
-<p>pm works!</p>
+<div *ngIf="!isLoadingPage" class="h-100 pb-4">
+    <app-hero></app-hero>
+    <div class="container-fluid mt-4">
+        <div class="d-flex align-items-center">
+            <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
+                class="img-placeholder profile-img me-3"></div>
+            <div *ngIf="profileData?.avatar">
+                <img [src]="profileData?.avatar" class="profile-img me-3">
+            </div>
+            <div>
+                <h1 class="mb-0 pb-1" [innerText]="profileData ? profileData.username : ''"
+                    [class]="profileData ? getClassColor() : ''"></h1>
+                <h6 class="m-0">{{ profileData?.description }}</h6>
+            </div>
+        </div>
+        <div class="d-flex justify-content-evenly head mt-4 py-3">
+            <button #sentBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0 btn-selected"
+                (click)="switchView(0)">Messaggi
+                Ricevuti</button>
+            <button #receivedBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0"
+                (click)="switchView(1)">Messaggi Inviati</button>
+        </div>
+        <div *ngIf="isReceivedView" class="msgs-container p-3 pb-4">
+            <div *ngIf="receivedMessages.length == 0" class="d-flex justify-content-center">Nessun messaggio ricevuto..
+            </div>
+            <div *ngFor="let msg of receivedMessages; let i = index; let first = first" class="single-msg shadow"
+                [ngClass]="{'new-msg' : !msg.viewed, 'mt-4' : !first}">
+                <div class="sm-head px-3 py-2 d-flex justify-content-between align-items-center">
+                    <div class="info">
+                        <p class="m-0 fw-medium fs-5 title-trunc"><span *ngIf="!msg.viewed"><i
+                                    class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>{{ msg.title }}
+                        </p>
+                        <p class="m-0">Da:&nbsp;<span class="fw-medium">{{ msg.sender_user!.username
+                                }}</span>&nbsp;il:&nbsp;{{ msg.date | date : 'dd-MM-YY' }}</p>
+                    </div>
+                    <i class="bi bi-arrow-bar-down" (click)="collapseMark(i)"></i>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableRArr[i]" class="sm-container p-3 pb-4">
+                    <div *ngIf="!replyArr[i]">
+                        <div class="mb-2 fs-5 fw-medium">{{ msg.title }}</div>
+                        <div class="mb-3 pb-2 date-info">Messaggio Inviato il: {{ msg.date | date : 'dd-MM-YY' }} alle
+                            ore
+                            {{ msg.date | date :
+                            'HH:mm' }}</div>
+                        <div class="sm-content pb-4" [innerHTML]="msg.content"></div>
+                        <div *ngIf="!replyArr[i]" class="d-flex justify-content-center mt-4">
+                            <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Rispondi'"
+                                (click)="replyClick(i)"></app-orange-button>
+                        </div>
+                    </div>
+                    <div *ngIf="replyArr[i]" class="mt-5">
+                        <app-editor-form [type]="'pm'" [quoted]="getQuoteMsg(i)"
+                            (submitPost)="doReply($event, i)"></app-editor-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isSentView" class="msgs-container p-3 pb-4">
+            <div *ngIf="sentMessages.length == 0" class="d-flex justify-content-center">Nessun messaggio inviato..</div>
+            <div *ngFor="let msg of sentMessages; let i = index; let first = first" class="single-msg shadow"
+                [ngClass]="{'mt-4' : !first}">
+                <div class="sm-head px-3 py-2 d-flex justify-content-between align-items-center">
+                    <div class="info">
+                        <p class="m-0 fw-medium fs-5 title-trunc">{{ msg.title }}</p>
+                        <p class="m-0">Inviato a:&nbsp;<span class="fw-medium">{{ msg.recipient_user!.username }}</span>
+                        </p>
+                    </div>
+                    <i class="bi bi-arrow-bar-down" (click)="collapseableSArr[i] = !collapseableSArr[i]"></i>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableSArr[i]" class="sm-container p-3 pb-4">
+                    <div class="mb-2 fs-5 fw-medium">{{ msg.title }}</div>
+                    <div class="mb-3 pb-2 date-info">Messaggio Inviato il: {{ msg.date | date : 'dd-MM-YY' }} alle ore
+                        {{ msg.date | date :
+                        'HH:mm' }}</div>
+                    <div class="sm-content pb-4" [innerHTML]="msg.content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
