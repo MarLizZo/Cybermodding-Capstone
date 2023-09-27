@@ -1,5 +1,7 @@
 package com.cybermodding.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +40,6 @@ public class UserController {
     ModerationService m_svc;
 
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return new ResponseEntity<User>(u_svc.getById(id), HttpStatus.OK);
     }
@@ -47,6 +48,12 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<UserModerationData>> getFromUsername(@RequestParam String u, Pageable page) {
         return ResponseEntity.ok(u_svc.getFromUsername(u, page));
+    }
+
+    @GetMapping("/names")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<User>> getUserLimitSix(@RequestParam String u) {
+        return ResponseEntity.ok(u_svc.getLimitSix(u));
     }
 
     @PatchMapping("/{id}")

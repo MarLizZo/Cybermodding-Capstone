@@ -14,6 +14,8 @@
             </div>
         </div>
         <div class="d-flex justify-content-evenly head mt-4 py-3">
+            <button class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0" [routerLink]="'/profile/pm/newpm'">Nuovo
+                Messaggio</button>
             <button #sentBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0 btn-selected"
                 (click)="switchView(0)">Messaggi
                 Ricevuti</button>
@@ -62,8 +64,8 @@
                 <div class="sm-head px-3 py-2 d-flex justify-content-between align-items-center">
                     <div class="info">
                         <p class="m-0 fw-medium fs-5 title-trunc">{{ msg.title }}</p>
-                        <p class="m-0">Inviato a:&nbsp;<span class="fw-medium">{{ msg.recipient_user!.username }}</span>
-                        </p>
+                        <p class="m-0">Inviato a:&nbsp;<span class="fw-medium">{{ msg.recipient_user!.username
+                                }}</span>&nbsp;il:&nbsp;{{ msg.date | date : 'dd-MM-YY' }}</p>
                     </div>
                     <i class="bi bi-arrow-bar-down" (click)="collapseableSArr[i] = !collapseableSArr[i]"></i>
                 </div>

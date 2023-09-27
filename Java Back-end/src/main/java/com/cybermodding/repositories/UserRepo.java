@@ -1,5 +1,6 @@
 package com.cybermodding.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u ORDER BY RANDOM() LIMIT 1")
     User getRandomUser();
+
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :uname, '%')) ORDER BY u.id ASC LIMIT 6")
+    List<User> getFromNameLimit(String uname);
 }

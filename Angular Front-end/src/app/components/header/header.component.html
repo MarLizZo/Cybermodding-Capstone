@@ -21,6 +21,11 @@
                     <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isCommunity()}"
                         [routerLink]="'/users'" (click)="isMenuCollapsed = true">Community</a>
                 </li>
+                <li *ngIf="username != undefined"
+                    class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
+                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isProfile()}"
+                        [routerLink]="'/profile'" (click)="isMenuCollapsed = true">Profilo</a>
+                </li>
                 <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                     <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isContacts()}"
                         [routerLink]="'/contacts'" (click)="isMenuCollapsed = true">Contatti</a>

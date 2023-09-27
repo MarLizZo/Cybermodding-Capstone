@@ -78,6 +78,9 @@ export class HeaderComponent {
   isContacts(): boolean {
     return this.router.url.includes('/contacts');
   }
+  isProfile(): boolean {
+    return this.router.url.includes('/profile');
+  }
   navigate(url: string) {
     this.router.navigateByUrl(url);
   }

@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Subscription, catchError, last } from 'rxjs';
+import { Subscription, catchError } from 'rxjs';
 import { IPMInformer } from 'src/app/interfaces/ipminformer';
 import { IPrivateMessageData } from 'src/app/interfaces/iprivate-message-data';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';

@@ -1,0 +1,32 @@
+.container-fluid {
+  input,
+  span {
+    background-color: var(--bg-lighter);
+    color: var(--txt);
+  }
+  ::placeholder {
+    color: var(--txt-muted);
+  }
+
+  .users-found-container {
+    position: absolute;
+    z-index: 10;
+    border: 1px solid var(--near-black);
+    .single-user {
+      cursor: pointer;
+      background-color: var(--bg-lighter);
+      transition: all 0.2s;
+      &:hover {
+        background-color: var(--bg-tert);
+      }
+    }
+
+    .bb {
+      border-bottom: 1px solid var(--near-black);
+    }
+  }
+
+  .editor-container {
+    border: 1px solid var(--near-black);
+  }
+}

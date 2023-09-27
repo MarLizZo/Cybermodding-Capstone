@@ -45,8 +45,7 @@ public class WSPMsHandler extends TextWebSocketHandler {
             pm_svc.saveNewPM(pm);
             System.out.println("Ricevuto e salvato - ID:" + pm.getId() + " Title: " + pm.getTitle());
 
-            TextMessage stringifiedMsg = new TextMessage(objectMapper
-                    .writeValueAsString(pm));
+            TextMessage stringifiedMsg = new TextMessage(objectMapper.writeValueAsString(pm));
             session.sendMessage(stringifiedMsg);
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Sender or recipient not found **");

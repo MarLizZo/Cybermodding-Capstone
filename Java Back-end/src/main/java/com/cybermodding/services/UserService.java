@@ -55,6 +55,10 @@ public class UserService {
         return u_page_repo.findAll(pageable);
     }
 
+    public List<User> getLimitSix(String uname) {
+        return u_repo.getFromNameLimit(uname);
+    }
+
     public AdminModsDTO getAdminMods() {
         List<User> ls = u_repo.findAll();
         List<User> admins = ls.stream().filter(u -> getRank(u.getId()).equals(EUserLevel.BOSS))

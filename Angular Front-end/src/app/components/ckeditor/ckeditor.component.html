@@ -3,9 +3,10 @@
         class="d-flex flex-column flex-grow-1">
     </ckeditor>
     <div class="d-flex justify-content-end align-items-center align-self-end mt-3 px-3">
-        <app-orange-button *ngIf="type != 'pm'" [btnTitle]="'Anteprima'" [btnTheme]="'dark'" (click)="previewPost()"
-            class="me-3"></app-orange-button>
-        <app-orange-button [btnTitle]="type == 'comment' ? 'Rispondi' : type == 'post' ? 'Posta Thread' : 'Rispondi'"
+        <app-orange-button *ngIf="type != 'pm' && type != 'newpm'" [btnTitle]="'Anteprima'" [btnTheme]="'dark'"
+            (click)="previewPost()" class="me-3"></app-orange-button>
+        <app-orange-button
+            [btnTitle]="type == 'newpm' ? 'Invia' : type == 'comment' ? 'Rispondi' : type == 'post' ? 'Posta Thread' : 'Rispondi'"
             [btnTheme]="'orange'" (click)="emitData()"></app-orange-button>
     </div>
 </div>

@@ -14,6 +14,14 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  public getById(id: number): Observable<IUserData> {
+    return this.http.get<IUserData>(this.apiUrl + '/' + id);
+  }
+
+  public getByUsername(username: string): Observable<IUserData[]> {
+    return this.http.get<IUserData[]>(this.apiUrl + '/names?u=' + username);
+  }
+
   public getProfileData(id: number): Observable<IUserData> {
     return this.http.get<IUserData>(this.apiUrl + '/profile/' + id);
   }
