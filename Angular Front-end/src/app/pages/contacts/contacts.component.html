@@ -1,0 +1,37 @@
+<div class="h-100 pb-5">
+    <app-hero></app-hero>
+    <div *ngIf="!isLoadingPage" class="container-fluid mt-4">
+        <h2 class="m-0">Contattaci</h2>
+        <div class="mt-5">
+            <div *ngIf="isUserLogged" class="bg-container">
+                <p class="m-0 p-2 fs-4 bb-nb-2 rounded-top-1 text-center">Contatta un Admin tramite messaggistica
+                    privata</p>
+                <div *ngIf="bossArr != null">
+                    <div *ngFor="let a of bossArr.admins; let last = last; let first = first"
+                        class="single-container d-flex justify-content-center p-1"
+                        [ngClass]="{'rounded-bottom-1' : last, 'mt-2' : first, 'pb-2' : last}">
+                        <p class="m-0 text-danger fs-5 fw-medium" (click)="true">{{ a.username }}</p>
+                    </div>
+                </div>
+            </div>
+            <div [ngClass]="{'mt-5' : isUserLogged}"
+                class="bg-container rounded-1 w-100 d-flex flex-column align-items-center pb-3">
+                <p class="m-0 p-2 fs-4 bb-nb-2 text-center w-100">Contattaci tramite il form sottostante</p>
+                <div class="w-100 d-flex flex-column align-items-center">
+                    <div class="mt-4 w-50">
+                        <p #reasonP class="mb-1 text-danger d-none">Seleziona una delle opzioni</p>
+                        <select id="reason" [(ngModel)]="reason"
+                            class="form-control form-control-sm border-0 shadow-none">
+                            <option value="-1">Seleziona Motivo del messaggio</option>
+                            <option *ngFor="let s of reasonsArr; let i = index" [value]="s">{{ s }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mt-5 w-75 shadow">
+                        <app-editor-form [type]="'newpm'" (submitPost)="sendFormMessage($event)"></app-editor-form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

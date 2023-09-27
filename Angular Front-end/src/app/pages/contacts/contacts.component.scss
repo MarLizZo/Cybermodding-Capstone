@@ -1,0 +1,35 @@
+.bg-container {
+  background-color: var(--bg-lighter);
+}
+
+.single-container {
+  p {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.bb-nb {
+  border-bottom: 1px solid var(--near-black);
+}
+
+.bb-nb-2 {
+  border-bottom: 2px solid var(--near-black);
+}
+
+select {
+  background-color: var(--bg);
+  color: var(--txt);
+  &:active,
+  &:focus {
+    background-color: var(--bg) !important;
+    color: var(--txt) !important;
+  }
+
+  option {
+    background-color: var(--bg-lighter);
+    color: var(--txt);
+  }
+}

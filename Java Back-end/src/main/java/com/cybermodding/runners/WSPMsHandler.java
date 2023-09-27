@@ -43,7 +43,6 @@ public class WSPMsHandler extends TextWebSocketHandler {
                     .recipient_user(u_repo.findById(obj.getRecipient_id()).get()).build();
 
             pm_svc.saveNewPM(pm);
-            System.out.println("Ricevuto e salvato - ID:" + pm.getId() + " Title: " + pm.getTitle());
 
             TextMessage stringifiedMsg = new TextMessage(objectMapper.writeValueAsString(pm));
             session.sendMessage(stringifiedMsg);
