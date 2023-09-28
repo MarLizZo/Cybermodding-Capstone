@@ -1,11 +1,11 @@
 <div class="main-container p-3" [ngClass]="{'mt-3' : margin}">
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="selectable"
+    <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+        <div class="selectable d-flex flex-column align-items-md-start"
             [routerLink]="'/forum/subsection/' + subSection.id + '-' + subSection.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
             <h6 class="m-0 fw-bold">{{ subSection.title }}</h6>
             <p class="m-0">{{ subSection.description }}</p>
         </div>
-        <div>
+        <div class="mt-2 mt-md-0">
             <p class="m-0">Post totali: {{ subSection.posts.length }}</p>
         </div>
     </div>

@@ -12,7 +12,7 @@
             [routerLink]="newThreadPath"></app-orange-button>
         <div class="posts-container mt-4 d-flex justify-content-center">
             <div class="row w-100">
-                <div class="col-12 d-flex p-2">
+                <div class="col-12 p-2 d-none d-lg-flex">
                     <div class="col-8">
                         <p class="m-0 fw-medium">Threads Aperti</p>
                     </div>
@@ -24,8 +24,8 @@
                     </div>
                 </div>
                 <div *ngFor="let post of postsArr; let i = index"
-                    class="col-12 d-flex justify-content-between align-items-center p-2">
-                    <div class="col-8 d-flex align-items-center">
+                    class="col-12 d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center p-3 p-lg-2">
+                    <div class="col-11 col-lg-8 d-flex align-items-center mb-3 mb-lg-0">
                         <div class="d-flex">
                             <div *ngIf="post.author.avatar == null || post.author.avatar == ''" class="placeholder-img">
                             </div>
@@ -36,17 +36,22 @@
                             <h6 class="m-0 selectable"
                                 [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
                                 {{ post.type.toString() + ' > ' + post.title }}</h6>
-                            <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)"
-                                    class="selectable" (click)="goToProfile(post.author)">{{
-                                    post.author.username }}</span>, il {{
-                                post.publishedDate | date : ' dd-MM-Y' }}</p>
+                            <div class="d-flex flex-column flex-lg-row">
+                                <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)"
+                                        class="selectable" (click)="goToProfile(post.author)">{{
+                                        post.author.username }}</span></p>
+                                <p class="m-0 small-f"><span class="d-none d-lg-inline small-f">&nbsp;•&nbsp;</span>il
+                                    {{
+                                    post.publishedDate | date : ' dd-MM-Y' }}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-12 no-b col-lg-2 mb-2 mb-lg-0 d-flex d-lg-block">
                         <p class="m-0 small-f">{{ post.comments_count }} Commenti</p>
+                        <span class="small-f d-block d-lg-none">&nbsp;&nbsp;•&nbsp;&nbsp;</span>
                         <p class="m-0 small-f">{{ post.reactions.length }} Reazioni</p>
                     </div>
-                    <div class="col-2">
+                    <div class="col-8 col-md-6 col-lg-2">
                         <p class="m-0 small-f">Ultimo commento</p>
                         <p class="m-0 small-f par-truncate" (click)="getCommentLink(i)">
                             {{ post.comments_count != 0 ? removeTags(post.last_comment!.content) : post.title }}

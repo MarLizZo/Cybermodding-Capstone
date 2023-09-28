@@ -7,26 +7,26 @@
         <div [ngbCollapse]="isMenuCollapsed" class="order-1 collapse navbar-collapse mt-2">
             <div class="d-flex flex-column flex-md-row align-items-center w-100">
                 <ul class="navbar-nav d-flex order-1 order-md-0 w-100">
-                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                         <a class="nav-link pt-md-1 fw-medium w-100 text-center" [ngClass]="{'active-link' : isHome()}"
                             [routerLink]="''" (click)="isMenuCollapsed = true">Home</a>
                     </li>
-                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                         <a class="nav-link pt-md-1 fw-medium w-100 text-center" [ngClass]="{'active-link' : isForum()}"
                             [routerLink]="'/forum'" (click)="isMenuCollapsed = true">Forum</a>
                     </li>
-                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                         <a class="nav-link pt-md-1 fw-medium w-100 text-center"
                             [ngClass]="{'active-link' : isCommunity()}" [routerLink]="'/users'"
                             (click)="isMenuCollapsed = true">Community</a>
                     </li>
                     <li *ngIf="username != undefined"
-                        class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                         <a class="nav-link pt-md-1 fw-medium w-100 text-center"
                             [ngClass]="{'active-link' : isProfile()}" [routerLink]="'/profile'"
                             (click)="isMenuCollapsed = true">Profilo</a>
                     </li>
-                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
                         <a class="nav-link pt-md-1 fw-medium w-100 text-center"
                             [ngClass]="{'active-link' : isContacts()}" [routerLink]="'/contacts'"
                             (click)="isMenuCollapsed = true">Contatti</a>
