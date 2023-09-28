@@ -13,6 +13,13 @@ nav {
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       align-self: center;
+      display: flex;
+      justify-content: center;
+      width: 50%;
+    }
+
+    @media screen and (max-width: 576px) {
+      width: 75%;
     }
 
     .text-green {
@@ -52,6 +59,14 @@ div.dropdown-menu {
   border-bottom: 2px solid var(--near-black);
   .search-container {
     width: 25%;
+
+    @media screen and (max-width: 768px) {
+      width: 70%;
+    }
+
+    @media screen and (max-width: 576px) {
+      width: 90%;
+    }
 
     .form-control {
       background-color: var(--bg-lighter) !important;

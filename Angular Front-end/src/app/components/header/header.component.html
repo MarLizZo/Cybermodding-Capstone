@@ -1,61 +1,68 @@
 <nav class="navbar navbar-expand-md navbar-dark pt-2 pb-2 pb-md-0">
-    <div class="container-fluid ps-3 pe-4">
+    <div class="container-fluid ps-3 pe-4 d-flex align-items-center">
 
-        <!-- Step 3: Toggle the value of the property when the toggler button is clicked. -->
         <button class="navbar-toggler shadow-none" type="button"
             (click)="isMenuCollapsed = !isMenuCollapsed">&#9776;</button>
 
-        <!-- Step 2: Add the ngbCollapse directive to the element below. -->
-        <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse h-100">
-            <ul class="navbar-nav d-flex">
-                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
-                    <!-- Step 4: Close the menu when a link is clicked. -->
-                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isHome()}" [routerLink]="''"
-                        (click)="isMenuCollapsed = true">Home</a>
-                </li>
-                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
-                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isForum()}"
-                        [routerLink]="'/forum'" (click)="isMenuCollapsed = true">Forum</a>
-                </li>
-                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
-                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isCommunity()}"
-                        [routerLink]="'/users'" (click)="isMenuCollapsed = true">Community</a>
-                </li>
-                <li *ngIf="username != undefined"
-                    class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
-                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isProfile()}"
-                        [routerLink]="'/profile'" (click)="isMenuCollapsed = true">Profilo</a>
-                </li>
-                <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0">
-                    <a class="nav-link pt-md-1 fw-medium" [ngClass]="{'active-link' : isContacts()}"
-                        [routerLink]="'/contacts'" (click)="isMenuCollapsed = true">Contatti</a>
-                </li>
-            </ul>
-            <div class="ms-md-auto d-flex align-items-center">
-                <span *ngIf="isNewMessage" class="new-pm-banner d-flex px-3 rounded-4 me-2"
-                    [routerLink]="'/profile/pm'"><i class="bi bi-envelope text-danger fs-5"></i></span>
-                <li class="nav-item list-unstyled" ngbDropdown *ngIf="username != undefined">
-                    <span>Benvenuto,&nbsp;</span>
-                    <a class="nav-link d-inline fw-medium" [class]="usernameColor" tabindex="0" ngbDropdownToggle
-                        id="navbarDropdown2" role="button">{{ username }}</a>
-                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
-                        <a ngbDropdownItem [routerLink]="'/profile'" (click)="$event.preventDefault()">Il tuo
-                            profilo</a>
-                        <a ngbDropdownItem [routerLink]="'/profile/pm'" (click)="$event.preventDefault()"><span
-                                *ngIf="isNewMessage"><i
-                                    class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>Messaggi
-                            privati</a>
-                        <a ngbDropdownItem [routerLink]="'/auth/logout'" (click)="$event.preventDefault()">Logout</a>
-                    </div>
-                </li>
-                <p class="m-0" *ngIf="username == undefined">Benvenuto, <a
-                        class="nav-link d-inline fw-medium active-link" [routerLink]="'/auth/login'">accedi</a></p>
+        <div [ngbCollapse]="isMenuCollapsed" class="order-1 collapse navbar-collapse mt-2">
+            <div class="d-flex flex-column flex-md-row align-items-center w-100">
+                <ul class="navbar-nav d-flex order-1 order-md-0 w-100">
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        <a class="nav-link pt-md-1 fw-medium w-100 text-center" [ngClass]="{'active-link' : isHome()}"
+                            [routerLink]="''" (click)="isMenuCollapsed = true">Home</a>
+                    </li>
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        <a class="nav-link pt-md-1 fw-medium w-100 text-center" [ngClass]="{'active-link' : isForum()}"
+                            [routerLink]="'/forum'" (click)="isMenuCollapsed = true">Forum</a>
+                    </li>
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        <a class="nav-link pt-md-1 fw-medium w-100 text-center"
+                            [ngClass]="{'active-link' : isCommunity()}" [routerLink]="'/users'"
+                            (click)="isMenuCollapsed = true">Community</a>
+                    </li>
+                    <li *ngIf="username != undefined"
+                        class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        <a class="nav-link pt-md-1 fw-medium w-100 text-center"
+                            [ngClass]="{'active-link' : isProfile()}" [routerLink]="'/profile'"
+                            (click)="isMenuCollapsed = true">Profilo</a>
+                    </li>
+                    <li class="nav-item link-container align-self-md-end px-4 px-md-2 me-md-2 mb-1 mb-md-0 rounded-1">
+                        <a class="nav-link pt-md-1 fw-medium w-100 text-center"
+                            [ngClass]="{'active-link' : isContacts()}" [routerLink]="'/contacts'"
+                            (click)="isMenuCollapsed = true">Contatti</a>
+                    </li>
+                </ul>
+
+
             </div>
+        </div>
+
+
+        <div class="order-0 order-md-1 ms-md-auto d-flex align-items-center">
+            <span *ngIf="isNewMessage" class="new-pm-banner d-flex px-3 rounded-4 me-2" [routerLink]="'/profile/pm'"><i
+                    class="bi bi-envelope text-danger fs-5"></i></span>
+            <li class="nav-item list-unstyled" ngbDropdown *ngIf="username != undefined">
+                <span>Benvenuto,&nbsp;</span>
+                <a class="nav-link d-inline fw-medium" [class]="usernameColor" tabindex="0" ngbDropdownToggle
+                    id="navbarDropdown2" role="button">{{ username }}</a>
+                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
+                    <a ngbDropdownItem [routerLink]="'/profile'" (click)="$event.preventDefault()">Il tuo
+                        profilo</a>
+                    <a ngbDropdownItem [routerLink]="'/profile/pm'" (click)="$event.preventDefault()"><span
+                            *ngIf="isNewMessage"><i
+                                class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>Messaggi
+                        privati</a>
+                    <a ngbDropdownItem [routerLink]="'/auth/logout'" (click)="$event.preventDefault()">Logout</a>
+                </div>
+            </li>
+            <p class="m-0" *ngIf="username == undefined">Benvenuto, <a class="nav-link d-inline fw-medium active-link"
+                    [routerLink]="'/auth/login'">accedi</a></p>
         </div>
     </div>
 </nav>
-<div class="sub-header d-flex justify-content-between align-items-end px-3 py-2">
-    <div class="d-flex">
+
+<div class="sub-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center px-3 py-2">
+    <div class="d-flex mb-2 mb-md-0">
         <div *ngIf="isMod || isAdmin" class="py-1 border-end border-2 border-black pe-3 me-3">
             <a [routerLink]="'/moderator'" class="text-decoration-none active-link me-3">Moderator CP</a>
             <a *ngIf="isAdmin" [routerLink]="'/admin'" class="text-decoration-none active-link">Admin CP</a>
@@ -79,7 +86,7 @@
             </li>
         </div>
     </div>
-    <div class="search-container">
+    <div class="search-container align-self-center align-self-md-auto">
         <input id="searchInput" type="text" class="form-control form-control-sm border-0"
             placeholder="Ricerca nel sito..">
     </div>

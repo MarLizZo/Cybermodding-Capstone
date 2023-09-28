@@ -9,6 +9,15 @@ h1 {
 .sections-container {
   background-color: var(--bg-lighter);
 
+  .group-cont {
+    @media screen and (max-width: 768px) {
+      width: 75%;
+    }
+    @media screen and (max-width: 576px) {
+      width: 100%;
+    }
+  }
+
   .custom-btn {
     background-color: var(--bg);
     border: 1px solid var(--orange-hover);

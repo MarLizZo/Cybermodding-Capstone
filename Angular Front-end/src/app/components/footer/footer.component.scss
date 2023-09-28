@@ -1,11 +1,23 @@
-div {
+div:not(.icons-c) {
   border-top: 1px solid var(--orange);
 
-  i {
+  i.bi-heart-fill {
     color: var(--bs-danger);
   }
 
   span {
     color: var(--orange);
+  }
+}
+
+.icons-c {
+  a {
+    i {
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+    &:hover {
+      color: var(--orange);
+    }
   }
 }

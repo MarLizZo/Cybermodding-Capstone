@@ -5,10 +5,18 @@
     <app-hero></app-hero>
     <div class="container-fluid">
         <h1 class="mt-4 mb-4 pb-2">Cybermodding Homepage</h1>
-        <div class="row">
-            <div class="col-9">
-                <div id="home-head" class="sections-container d-flex justify-content-between p-3 rounded-1">
-                    <div class="btn-group">
+        <div class="row w-100 m-0">
+            <div class="col-12 w-100 p-0 d-block d-lg-none">
+                <div class="row w-100 m-0 p-0">
+                    <div *ngFor="let side of sidesArr" class="col-12 col-sm-6">
+                        <app-sideblock [sideBlockData]="side" [collapseDefault]="true"></app-sideblock>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-9">
+                <div id="home-head"
+                    class="sections-container d-flex flex-column align-items-center flex-md-row justify-content-md-between p-3 rounded-1">
+                    <div class="btn-group group-cont mb-3 mb-md-0">
                         <button id="sec-btn" type="button" class="btn custom-btn"
                             [innerText]="btnSectionsText"></button>
                         <div class="btn-group" ngbDropdown role="group">
@@ -25,7 +33,7 @@
                         </div>
                     </div>
 
-                    <div class="btn-group">
+                    <div class="btn-group group-cont">
                         <button type="button" class="btn custom-btn">{{ btnSectionsOrderText }}</button>
                         <div class="btn-group" ngbDropdown role="group">
                             <button type="button" class="btn custom-btn rounded-end-1 dropdown-toggle-split"
@@ -65,15 +73,15 @@
                     </div>
                 </div>
 
-                <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
-                    <div class="col-3">
+                <div class="row w-100 pageable-container mx-0 py-2 px-1 my-5 d-flex align-items-center">
+                    <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
                         <div class="previous rounded-1 px-2 d-flex" *ngIf="!postsData.first"
                             (click)="doPostsCall(selectedSectionIndex, postsData.number - 1, false)">
                             <i class="bi bi-arrow-bar-left"></i>
                             <p class="m-0 ms-2">Indietro</p>
                         </div>
                     </div>
-                    <div class="col-6 d-flex justify-content-center">
+                    <div class="col-12 col-md-6 d-flex justify-content-center">
                         <div class="pages d-flex rounded-1">
                             <div *ngFor="let p of pagesArr; let first = first;"
                                 [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == postsData.number}"
@@ -82,7 +90,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-3 d-flex justify-content-end">
+                    <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
                         <div class="next rounded-1 px-2 d-flex" *ngIf="!postsData.last"
                             (click)="doPostsCall(selectedSectionIndex, postsData.number + 1, false)">
                             <p class="m-0 me-2">Avanti</p>
@@ -91,7 +99,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-3">
+            <div class="col d-none d-md-block">
                 <div *ngFor="let side of sidesArr">
                     <app-sideblock [sideBlockData]="side"></app-sideblock>
                 </div>

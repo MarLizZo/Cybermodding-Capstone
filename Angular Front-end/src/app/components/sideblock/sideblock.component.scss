@@ -8,4 +8,10 @@
   .body {
     background-color: var(--bg-lighter);
   }
+
+  i {
+    color: var(--orange-hover);
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
 }
