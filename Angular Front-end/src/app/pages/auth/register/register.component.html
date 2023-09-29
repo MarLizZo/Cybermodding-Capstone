@@ -63,7 +63,7 @@
 
                 <div class="d-flex flex-column align-items-center">
                     <button [disabled]="f.invalid" type="button" [ngClass]="{'txt-orange' : true}"
-                        class="btn btn-dark w-50 mt-3 fw-medium py-2" (click)="doRegister()">Registrati</button>
+                        class="btn btn-dark btn-resp mt-3 fw-medium py-2" (click)="doRegister()">Registrati</button>
                     <div class="mt-2">
                         <app-inline-loader *ngIf="isRegistering"></app-inline-loader>
                         <p *ngIf="!isRegistering && isRegisterOperationSuccess" class="m-0 fw-medium">Registrato con

@@ -44,6 +44,11 @@ export class HeaderComponent {
             this.isNewMessage = false;
           }
         });
+      } else {
+        this.username = undefined;
+        this.isAdmin = undefined;
+        this.isMod = undefined;
+        if (this.newPmSub) this.newPmSub.unsubscribe();
       }
     });
 

@@ -20,24 +20,24 @@
         </div>
         <div #collapseStats="ngbCollapse" [(ngbCollapse)]="isQuickStatsCollapsed"
             class="row w-100 px-3 border-bottom border-1 border-black">
-            <div class="col-6 my-2">
+            <div class="col-8 col-sm-6 my-2">
                 <p class="m-0">Numero totale di Post avviati</p>
             </div>
-            <div class="col-2 my-2">
+            <div class="col-4 col-sm-2 my-2">
                 <p class="m-0" [innerText]="profileData ? profileData.posts_count : 0"></p>
             </div>
-            <div class="col-4 d-flex my-2"><span>Ultimo:&nbsp;</span>
+            <div class="col-8 col-sm-4 d-flex my-2"><span>Ultimo:&nbsp;</span>
                 <p class="m-0 trunc" [class]="profileData?.last_post ? 'selectable' : ''" (click)="goToPost()">{{
                     profileData?.last_post ? profileData?.last_post!.title : 'Nessun Post..' }}</p>
             </div>
 
-            <div class="col-6 my-2">
+            <div class="col-8 col-sm-6 my-2 mt-4 mt-sm-2">
                 <p class="m-0">Numero totale di Commenti</p>
             </div>
-            <div class="col-2 my-2">
+            <div class="col-4 col-sm-2 my-2 mt-4 mt-sm-2">
                 <p class="m-0" [innerText]="profileData ? profileData.comments_count : 0"></p>
             </div>
-            <div class="col-4 my-2 d-flex">
+            <div class="col-8 col-sm-4 my-2 d-flex">
                 <span>Ultimo:&nbsp;</span>
                 <p class="m-0 trunc" [class]="profileData?.last_comment ? 'selectable' : ''" (click)="goToComment()">{{
                     profileData?.last_comment ? removeTags(profileData?.last_comment!.content) : 'Nessun commento..' }}
@@ -53,7 +53,7 @@
         <div #collapseInfo="ngbCollapse" [(ngbCollapse)]="isInfoCollapsed"
             class="row w-100 pb-4 px-3 border-bottom border-1 border-black">
             <form #fInfo="ngForm" class="d-flex flex-column align-items-center">
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="usernameInput">Username</label>
                         <p class="m-0 text-danger d-none" #usernameP>Min 3 chars</p>
@@ -61,7 +61,7 @@
                     <input id="usernameInput" [(ngModel)]="userObject.username" name="username" type="text"
                         class="form-control form-control-sm border-0" [minlength]="3">
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="emailInput">Email</label>
                         <p class="m-0 text-danger d-none" #emailP>Invalida</p>
@@ -69,7 +69,7 @@
                     <input id="emailInput" [(ngModel)]="userObject.email" name="email" type="email"
                         class="form-control form-control-sm border-0">
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="descrInput">Descrizione - Max 20 char</label>
                         <p class="m-0 text-danger d-none" #descriptionP>Max 20 chars</p>
@@ -77,7 +77,7 @@
                     <input id="descrInput" [(ngModel)]="userObject.description" name="descr" type="text"
                         class="form-control form-control-sm border-0" [maxLength]="20">
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="avatarInput">Avatar - Link diretto</label>
                         <p class="m-0 text-danger d-none" #avatarP>Invalid link</p>
@@ -85,7 +85,7 @@
                     <input id="avatarInput" [(ngModel)]="userObject.avatar" name="avatar" type="text"
                         class="form-control form-control-sm border-0">
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="birthdateInput">Data di nascita</label>
                         <p class="m-0 text-danger d-none" #birthdateP>Invalid date</p>
@@ -112,7 +112,7 @@
         <div #collapsePass="ngbCollapse" [(ngbCollapse)]="isPassCollapsed"
             class="row w-100 pb-4 px-3 border-bottom border-1 border-black">
             <form #fPass="ngForm" class="d-flex flex-column align-items-center">
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="pOne">Password Attuale</label>
                         <p class="m-0 text-danger d-none" #actualP>Min 8 chars</p>
@@ -120,7 +120,7 @@
                     <input id="pOne" [(ngModel)]="userPassObject.actual" name="pass-1" type="password"
                         class="form-control form-control-sm border-0" required>
                 </div>
-                <div class="col-9 mt-3">
+                <div class="col-11 col-md-9 mt-3">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="pTwo">Ripeti Password Attuale</label>
                         <p class="m-0 text-danger d-none" #repeatActualP>Min 8 chars</p>
@@ -128,7 +128,7 @@
                     <input id="pTwo" [(ngModel)]="userPassObject.repeatActual" name="pass-2" type="password"
                         class="form-control form-control-sm border-0" required>
                 </div>
-                <div class="col-9 mt-4">
+                <div class="col-11 col-md-9 mt-4">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="newOne">Nuova Password</label>
                         <p class="m-0 text-danger d-none" #newP>Min 8 chars</p>
@@ -136,7 +136,7 @@
                     <input id="newOne" [(ngModel)]="userPassObject.newPassword" name="newpass-1" type="password"
                         class="form-control form-control-sm border-0" required>
                 </div>
-                <div class="col-9 mt-4">
+                <div class="col-11 col-md-9 mt-4">
                     <div class="d-flex justify-content-between mb-1">
                         <label for="newTwo">Ripeti Nuova Password</label>
                         <p class="m-0 text-danger d-none" #repeatNewP>Min 8 chars</p>

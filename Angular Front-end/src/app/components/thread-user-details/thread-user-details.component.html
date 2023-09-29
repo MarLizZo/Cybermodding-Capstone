@@ -1,16 +1,34 @@
-<div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
-    class="placeholder-img"></div>
-<div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
-    <!-- link all'img -->
+<div class="d-none d-lg-flex flex-column align-items-center">
+    <div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
+        class="placeholder-img"></div>
+    <div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
+        <!-- link all'img -->
+    </div>
+
+    <p class="mt-2 mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"
+        [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
+    <img [src]="getImgLink()">
+    <p class="my-3 text-center" [innerHTML]="getDescr()">
+        <i></i>
+    </p>
+    <div class="d-flex">
+        <p class="m-0">Utente dal:&nbsp;</p>
+        <p class="m-0">{{ getRegDate() | date : 'dd-MM-Y'}}</p>
+    </div>
 </div>
 
-<p class="mt-2 mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"
-    [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
-<img [src]="getImgLink()">
-<p class="my-3" [innerHTML]="getDescr()">
-    <i></i>
-</p>
-<div class="d-flex">
-    <p class="m-0">Utente dal:&nbsp;</p>
-    <p class="m-0">{{ getRegDate() | date : 'dd-MM-Y'}}</p>
+<div class="d-flex d-lg-none flex-column align-items-center">
+    <div class="d-flex align-items-center">
+        <div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
+            class="placeholder-img"></div>
+        <div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
+            <!-- link all'img -->
+        </div>
+        <div class="d-flex flex-column ms-3">
+            <p class="mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"
+                [innerHTML]="postData != null ? postData.author.username : commentData!.user.username"></p>
+            <p class="m-0" [innerHTML]="getDescr()"></p>
+        </div>
+    </div>
+    <img [src]="getImgLink()" class="mt-3">
 </div>

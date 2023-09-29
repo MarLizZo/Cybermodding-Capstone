@@ -31,6 +31,18 @@
     &:active {
       background-color: var(--near-black);
     }
+
+    @media screen and (max-width: 576px) {
+      width: 90%;
+    }
+
+    @media screen and (min-width: 576px) {
+      width: 50%;
+    }
+
+    @media screen and (min-width: 768px) {
+      width: auto;
+    }
   }
 
   .btn-selected {

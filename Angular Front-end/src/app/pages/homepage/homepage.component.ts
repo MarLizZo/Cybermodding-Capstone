@@ -165,6 +165,7 @@ export class HomepageComponent {
     this.router.navigateByUrl(
       `/forum/showthread/${post.id}-${post.title
         .replaceAll(' ', '-')
+        .replaceAll('.', '-')
         .replaceAll('/', '-')}`
     );
   }

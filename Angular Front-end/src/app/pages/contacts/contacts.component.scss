@@ -19,6 +19,22 @@
   border-bottom: 2px solid var(--near-black);
 }
 
+.editor-cont {
+  width: 90%;
+
+  @media screen and (min-width: 768px) {
+    width: 75%;
+  }
+}
+
+.select-cont {
+  width: 90%;
+
+  @media screen and (min-width: 768px) {
+    width: 65%;
+  }
+}
+
 select {
   background-color: var(--bg);
   color: var(--txt);

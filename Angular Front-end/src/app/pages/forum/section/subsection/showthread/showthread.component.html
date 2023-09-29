@@ -8,15 +8,15 @@
         <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
     <div class="container-fluid mt-5 d-flex flex-column align-items-center">
-        <div class="row w-100 mb-5 rounded-1">
-            <div class="col-3 col-xxl-2 py-3 px-2">
+        <div class="row w-100 mb-5 rounded-1 flex-column flex-md-row">
+            <div class="col-12 col-lg-3 side-user-info col-xxl-2 py-3 px-2">
                 <app-thread-user-details [postData]="postData" [commentData]="null"
                     class="d-flex flex-column align-items-center"></app-thread-user-details>
             </div>
-            <div class="col-9 col-xxl-10 d-flex flex-column pt-2 px-0">
+            <div class="col-12 col-lg-9 col-xxl-10 d-flex flex-column pt-2 px-0">
                 <div class="flex-grow-1 px-2 pb-5">
                     <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
-                    <p class="m-0 mt-3" [innerHTML]="postData.body"></p>
+                    <div class="m-0 mt-3 post-content" [innerHTML]="postData.body"></div>
                 </div>
                 <div class="subpost-container p-2 d-flex justify-content-between align-items-center mt-5">
                     <div class="d-flex">
@@ -41,7 +41,7 @@
             </div>
         </div>
         <app-comment *ngFor="let comment of postData.comments.content; let i = index" [commentData]="comment"
-            [commentIndex]="getCommentNumber(i + 1)" class="row w-100 mt-2 rounded-1"
+            [commentIndex]="getCommentNumber(i + 1)" class="row w-100 mt-3 rounded-1"
             (onReply)="goToReply($event)"></app-comment>
         <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
             <div *ngIf="!postData.comments.content.length" class="d-flex justify-content-center">

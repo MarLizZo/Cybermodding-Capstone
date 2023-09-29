@@ -28,6 +28,19 @@
       color: var(--txt);
     }
 
+    .resp-input,
+    .resp-div {
+      width: 90%;
+
+      @media screen and (min-width: 576px) {
+        width: 75%;
+      }
+
+      @media screen and (min-width: 992px) {
+        width: 50%;
+      }
+    }
+
     .user-container {
       .single-user {
         background-color: var(--bg);

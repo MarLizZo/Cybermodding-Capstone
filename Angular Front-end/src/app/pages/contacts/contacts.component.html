@@ -18,7 +18,7 @@
                 class="bg-container rounded-1 w-100 d-flex flex-column align-items-center pb-3">
                 <p class="m-0 p-2 fs-4 bb-nb-2 text-center w-100">Contattaci tramite il form sottostante</p>
                 <div class="w-100 d-flex flex-column align-items-center">
-                    <div class="mt-4 w-50">
+                    <div class="mt-4 select-cont">
                         <p #reasonP class="mb-1 text-danger d-none">Seleziona una delle opzioni</p>
                         <select id="reason" [(ngModel)]="reason"
                             class="form-control form-control-sm border-0 shadow-none">
@@ -27,7 +27,7 @@
                             </option>
                         </select>
                     </div>
-                    <div class="mt-5 w-75 shadow">
+                    <div class="mt-4 editor-cont shadow">
                         <app-editor-form [type]="'newpm'" (submitPost)="sendFormMessage($event)"></app-editor-form>
                     </div>
                 </div>

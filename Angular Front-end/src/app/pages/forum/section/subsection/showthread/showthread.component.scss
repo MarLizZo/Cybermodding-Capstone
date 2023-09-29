@@ -2,7 +2,7 @@
   border-top: 2px solid var(--near-black);
   border-bottom: 2px solid var(--near-black);
 
-  .col-3 {
+  .side-user-info {
     border-right: 1px solid var(--near-black);
     background-color: var(--bg-lighter);
   }
@@ -21,6 +21,12 @@
         }
       }
     }
+  }
+}
+
+app-comment {
+  @media screen and (max-width: 992px) {
+    border-bottom: 3px solid var(--orange-hover);
   }
 }
 

@@ -3,12 +3,24 @@
   background-color: var(--bg-lighter);
   border: 1px solid var(--orange);
 
-  @media screen and (min-width: 678px) {
-    width: 75%;
+  @media screen and (min-width: 768px) {
+    width: 80%;
+  }
+
+  @media screen and (min-width: 992px) {
+    width: 70%;
   }
 
   @media screen and (min-width: 1200px) {
-    width: 50%;
+    width: 60%;
+  }
+
+  .btn-resp {
+    width: 80%;
+
+    @media screen and (min-width: 768px) {
+      width: 50%;
+    }
   }
 
   input {
