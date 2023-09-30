@@ -3,7 +3,7 @@
 EPICODE Capstone Project. A complete forum platform supporting chat, threads, comments, likes, Moderators and Admin panels etc.
 
 <p>The Front-end side is developed with Angular, SASS and Bootstrap</p>
-<p>The Back-end side is developer with Java, Springboot and PostgreSQL</p>
+<p>The Back-end side is developed with Java, Springboot and PostgreSQL</p>
 
 <br>
 <img src="Repo assets/cybm.png" style="width: 100%">
