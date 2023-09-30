@@ -33,7 +33,6 @@ export class AuthService {
   isLogged$ = this.user$.pipe(map((l) => !!l));
   private privilegeSubj = new BehaviorSubject<privObj | null>(null);
   privileges$ = this.privilegeSubj.asObservable();
-  hasPrivileges$ = this.privileges$.pipe(map((l) => !!l));
   private checkValSub!: Subscription;
   public user_id: number = 0;
 

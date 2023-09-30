@@ -42,10 +42,12 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <p></p>
 
 <h4>Database:</h4>
+
 I'm using pgAdmin to manage my PostgreSQL DB.
-Create a DB named Cybermodding in order to correctly run and store the data from the Back-end project.
+Create a DB named `Cybermodding-db` in order to correctly run and store the data from the Back-end project.
 
 <h4>Back-end</h4>
+
 Open the Back-end project with either Eclipse or VS Code. Open the `runners/Runner.java` file.
 Here you'll find the method called 'run'. There are some commented calls as you will see, and they need to be executed once. This will initialize the Database by creating the entities and saving some datas into it.
 So.. uncomment all the calls inside the run method.

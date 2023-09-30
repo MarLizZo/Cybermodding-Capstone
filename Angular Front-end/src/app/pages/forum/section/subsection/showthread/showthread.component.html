@@ -36,7 +36,8 @@
                         </div>
                     </div>
                     <div class="d-flex">
-                        <button class="mod-btn px-4 fw-medium rounded-4 me-3" (click)="goToEdit()">Modifica
+                        <button *ngIf="canEdit || userID == postData.author.id"
+                            class="mod-btn px-4 fw-medium rounded-4 me-3" (click)="goToEdit()">Modifica
                             Post</button>
                         <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
                     </div>

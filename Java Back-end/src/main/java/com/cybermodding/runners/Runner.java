@@ -90,10 +90,6 @@ public class Runner implements CommandLineRunner {
         public void run(String... args) throws Exception {
                 System.out.println("** ..Running.. **");
 
-                // createMyPost();
-
-                // testDeletePost();
-
                 // create roles columns
                 // setRoleDefault();
 

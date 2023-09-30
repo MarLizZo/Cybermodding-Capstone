@@ -21,6 +21,7 @@ export class ShowthreadComponent {
   mainSectionTitle: string = '';
   subSectionTitle: string = '';
   authSub!: Subscription;
+  privSub!: Subscription;
   postSub!: Subscription;
   reactSub!: Subscription;
   postData!: IPostDataPaged;
@@ -39,6 +40,7 @@ export class ShowthreadComponent {
   pagesArr: number[] = [];
   postId: number = 0;
   topBObj: any = [];
+  canEdit: boolean | undefined = false;
 
   @ViewChild('editorForm') editorForm!: ElementRef<HTMLElement>;
 
@@ -186,6 +188,10 @@ export class ShowthreadComponent {
 
       this.authSub = this.auth.user$.subscribe((res) => {
         this.userID = res?.user_id;
+      });
+
+      this.privSub = this.auth.privileges$.subscribe((res) => {
+        this.canEdit = res?.isAdmin || res?.isMod;
       });
     }
     setTimeout(() => {
