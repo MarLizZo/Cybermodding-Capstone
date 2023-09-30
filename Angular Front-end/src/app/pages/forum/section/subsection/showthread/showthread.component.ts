@@ -394,4 +394,11 @@ export class ShowthreadComponent {
       return 8 * this.postData.comments.number + index;
     }
   }
+
+  goToEdit(): void {
+    localStorage.setItem('post-id', this.postData.id.toString());
+    this.router.navigateByUrl(
+      '/forum/newthread/' + this.postData.subsection_id
+    );
+  }
 }

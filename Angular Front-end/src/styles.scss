@@ -35,9 +35,23 @@ body {
   }
 }
 
-.post-content {
+.post-content,
+.post-body,
+.modal-body {
   img {
     max-width: 90% !important;
+
+    @media screen and (min-width: 992px) {
+      max-width: 75% !important;
+    }
+    @media screen and (min-width: 1200px) {
+      max-width: 65% !important;
+    }
+  }
+
+  figure.image {
+    display: flex;
+    justify-content: center;
   }
 }
 

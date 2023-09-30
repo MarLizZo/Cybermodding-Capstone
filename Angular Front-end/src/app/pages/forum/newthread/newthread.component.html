@@ -21,7 +21,8 @@
                 </div>
             </div>
         </div>
-        <app-editor-form class="w-100 flex-grow-1" [type]="'post'" (submitPost)="postThread($event)"
-            [postTitle]="threadTitle"></app-editor-form>
+        <app-editor-form class="d-block shadow-lg align-self-center" [type]="'post'" (submitPost)="postThread($event)"
+            [postTitle]="threadTitle"
+            [postBody]="editPostInitBody != '' ? editPostInitBody : undefined"></app-editor-form>
     </div>
 </div>

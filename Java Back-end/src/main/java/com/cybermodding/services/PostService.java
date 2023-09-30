@@ -22,6 +22,7 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
@@ -61,13 +62,27 @@ public class PostService {
         }
     }
 
+    public PostDTOWithID getByIdPout(Long id) {
+        if (repo.existsById(id)) {
+            Post p = repo.findById(id).get();
+            return new PostDTOWithID(p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+                    p.getSub_section().getId(), p.getComments().size());
+        } else {
+            throw new CustomException(HttpStatus.NOT_FOUND, "** Post not found **");
+        }
+    }
+
     public List<Post> getAllBySSId(Long ss_id) {
         return repo.findAllBySubSId(ss_id);
     }
 
-    public Post updatePost(UpdatePostDTO p) {
+    public Post updatePost(Long user_id, String mod, UpdatePostDTO p) {
         if (repo.existsById(p.getId())) {
             Post fromDB = repo.findById(p.getId()).get();
+            if (mod.equals("false")) {
+                fromDB.setType(EPostType.valueOf(p.getType()));
+                fromDB.setBody(p.getBody());
+            }
             fromDB.setTitle(p.getTitle());
             repo.save(fromDB);
             return fromDB;

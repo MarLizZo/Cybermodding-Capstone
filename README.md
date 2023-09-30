@@ -6,7 +6,7 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <p>The Back-end side is developer with Java, Springboot and PostgreSQL</p>
 
 <br>
-<center><img src="Repo assets/cybm.png" style="width: 90%"></center>
+<img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
 <h4>Current Version: 1.1</h4>
@@ -41,9 +41,20 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 
 <p></p>
 
-When everything is ready, run the Back-end project with either Eclipse or VS Code and wait until you see `** Ops Done **` on the console.
+<h4>Database:</h4>
+I'm using pgAdmin to manage my PostgreSQL DB.
+Create a DB named Cybermodding in order to correctly run and store the data from the Back-end project.
 
-<p></p>
+<h4>Back-end</h4>
+Open the Back-end project with either Eclipse or VS Code. Open the `runners/Runner.java` file.
+Here you'll find the method called 'run'. There are some commented calls as you will see, and they need to be executed once. This will initialize the Database by creating the entities and saving some datas into it.
+So.. uncomment all the calls inside the run method.
+
+Now launch and wait until you see `** Ops Done **` on the console.
+
+You can now comment again all the calls of the run method. This is important because if you run again/refresh the project then all the methods will be executed again. It's not needed!
+
+<h4>Front-end</h4>
 
 Then, open the Front-end project with VS Code and open an istance of the integrated terminal (Terminal - New Terminal).
 

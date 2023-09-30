@@ -90,6 +90,8 @@ public class Runner implements CommandLineRunner {
         public void run(String... args) throws Exception {
                 System.out.println("** ..Running.. **");
 
+                // createMyPost();
+
                 // testDeletePost();
 
                 // create roles columns
@@ -132,7 +134,7 @@ public class Runner implements CommandLineRunner {
         }
 
         private void testDeletePost() {
-                Post p = p_repo.findById(26l).get();
+                Post p = p_repo.findById(151l).get();
                 System.out.println(p.getComments().size() + " " + p.getReactions().size());
 
                 if (p.getReactions().size() != 0) {
@@ -319,6 +321,31 @@ public class Runner implements CommandLineRunner {
                                                         userRepository.getRandomUser().getId(),
                                                         ss_svc.getRandom().getId()));
                 }
+        }
+
+        private void createMyPost() {
+                String img = "<center><img src='https://www.lizsrv.altervista.org/image.php?di=XMUZ'></center><p></p>";
+                p_svc.createNewPost(new PostDTO("Windows 12 in arrivo",
+                                img + "L'evoluzione dei sistemi operativi è un momento atteso da milioni di utenti in tutto il mondo. Quando si tratta di Windows, il gigante del software Microsoft ha costantemente cercato di innovare e migliorare l'esperienza degli utenti. Con l'annuncio di Windows 12, gli appassionati di tecnologia e gli utenti di PC stanno anticipando con entusiasmo quali nuove funzionalità e miglioramenti potrebbero essere in arrivo.<p></p>"
+                                                +
+                                                "<h3>Nuove funzionalità</h3>" +
+                                                "Interfaccia Utente Modernizzata: Microsoft potrebbe continuare a lavorare su un'interfaccia utente pulita e moderna, con maggiore flessibilità e personalizzazione per gli utenti.\r\n"
+                                                + //
+                                                "\r\n" + //
+                                                "Miglioramenti alla sicurezza: Con la crescente minaccia delle attività cybercriminali, ci si può aspettare che Windows 12 includa nuove funzionalità di sicurezza avanzate per proteggere gli utenti.\r\n"
+                                                + //
+                                                "\r\n" + //
+                                                "Integrazione Cloud: La sincronizzazione e l'accesso ai dati su diversi dispositivi potrebbero essere ulteriormente semplificati attraverso un'ampia integrazione con servizi cloud.\r\n"
+                                                + //
+                                                "\r\n" + //
+                                                "Miglioramento delle prestazioni: Microsoft è sempre alla ricerca di modi per ottimizzare le prestazioni del sistema operativo, rendendo il sistema più reattivo e veloce.\r\n"
+                                                + //
+                                                "\r\n" + //
+                                                "Applicazioni Universal Windows Platform (UWP): Con un maggiore focus sullo sviluppo di applicazioni UWP, gli utenti potrebbero beneficiare di una maggiore coerenza tra le applicazioni su diverse piattaforme.\r\n"
+                                                + //
+                                                "\r\n" + //
+                                                "Assistente Virtuale Avanzato: Una versione migliorata di Cortana o un nuovo assistente virtuale potrebbero essere inclusi per semplificare le attività quotidiane.",
+                                EPostType.NEWS, 1l, 9l));
         }
 
         private void createSideBlocks() {

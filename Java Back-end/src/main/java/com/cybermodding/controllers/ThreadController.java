@@ -23,6 +23,7 @@ import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.CommentOutDTO;
 import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
+import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
@@ -45,6 +46,11 @@ public class ThreadController {
         return ResponseEntity.ok(svc.getPostOut(id, page));
     }
 
+    @GetMapping("/single/{id}")
+    public ResponseEntity<PostDTOWithID> getSinglePost(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.getByIdPout(id));
+    }
+
     @GetMapping("/paged")
     public ResponseEntity<Page<PostHome>> getPagedPosts(@RequestParam String by,
             @RequestParam(defaultValue = "") String param,
@@ -63,9 +69,10 @@ public class ThreadController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@RequestBody UpdatePostDTO data) {
-        return ResponseEntity.ok(svc.updatePost(data));
+    @PutMapping("/{u_id}")
+    public ResponseEntity<Post> updatePost(@PathVariable Long u_id, @RequestParam(defaultValue = "false") String mod,
+            @RequestBody UpdatePostDTO data) {
+        return ResponseEntity.ok(svc.updatePost(u_id, mod, data));
     }
 
     @DeleteMapping("/{id}")

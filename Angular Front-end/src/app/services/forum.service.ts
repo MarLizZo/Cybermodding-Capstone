@@ -30,6 +30,10 @@ export class ForumService {
 
   constructor(private http: HttpClient) {}
 
+  public getSinglePost(id: number): Observable<IPostData> {
+    return this.http.get<IPostData>(this.threadsApiUrl + '/single/' + id);
+  }
+
   public getForumSideBlocks(): Observable<ISideBlockData[]> {
     return this.http.get<ISideBlockData[]>(
       this.sidesApiUrl + '?type=BLOCK_FORUM'
@@ -71,8 +75,11 @@ export class ForumService {
     return this.http.get<IPostHomePaged>(this.threadsApiUrl + '/paged?' + q);
   }
 
-  public updatePost(data: IUpdatePostDTO): Observable<IPostData> {
-    return this.http.put<IPostData>(this.threadsApiUrl + '/' + data.id, data);
+  public updatePost(
+    user_id: number,
+    data: IUpdatePostDTO
+  ): Observable<IPostData> {
+    return this.http.put<IPostData>(this.threadsApiUrl + '/' + user_id, data);
   }
 
   public postReaction(reaction: Ireaction): Observable<Ireaction> {

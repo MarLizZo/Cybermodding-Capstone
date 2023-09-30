@@ -64,7 +64,7 @@
                             <span>, il {{ post.publishedDate | date : 'dd-MM-YY' }}</span>
                         </div>
                         <div class="post-body d-flex flex-column px-2 pt-3 rounded-1">
-                            <div class="flex-grow-1 body-trunc pb-4" [innerHTML]="post.body"></div>
+                            <div class="flex-grow-1 body-trunc mb-4" [innerHTML]="post.body"></div>
                             <div class="py-4 align-self-center">
                                 <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Leggi nel Forum'"
                                     (click)="goToForumPost(post)"></app-orange-button>

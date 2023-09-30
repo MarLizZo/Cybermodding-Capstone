@@ -24,6 +24,14 @@
   }
 }
 
+.mod-btn {
+  background-color: var(--near-black);
+  border: 1px solid var(--bg);
+  padding-top: 3px;
+  padding-bottom: 3px;
+  color: var(--txt);
+}
+
 app-comment {
   @media screen and (max-width: 992px) {
     border-bottom: 3px solid var(--orange-hover);

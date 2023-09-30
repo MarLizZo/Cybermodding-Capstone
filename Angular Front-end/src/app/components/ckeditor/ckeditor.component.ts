@@ -34,12 +34,14 @@ export class CkeditorComponent {
   @Input() quotedMsg!: IQuoteInfo | undefined;
   @Input() heightIn!: string;
   @Input() threadTitle!: string | undefined;
+  @Input() postBody!: string | undefined;
   @Output() onSubmit = new EventEmitter();
   @ViewChild('editor') editorComponent!: CKEditorComponent;
   finalPlaceholderText: string = '';
   Editor = ClassicEditor;
   editorData: string = '';
   hasReceivedQuote: boolean = false;
+  hasReceivedBody: boolean = false;
 
   constructor(private modalSvc: NgbModal) {}
 
@@ -68,6 +70,7 @@ export class CkeditorComponent {
 
   ngOnInit() {
     if (this.placeholderText) this.config.placeholder = this.placeholderText;
+    if (this.postBody) this.editorData = this.postBody;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -83,6 +86,15 @@ export class CkeditorComponent {
 
     if (changes['threadTitle']) {
       this.threadTitle = changes['threadTitle'].currentValue;
+    }
+
+    if (
+      changes['postBody'] &&
+      this.postBody != undefined &&
+      !this.hasReceivedBody
+    ) {
+      this.editorData = changes['postBody'].currentValue;
+      this.hasReceivedBody = true;
     }
   }
 

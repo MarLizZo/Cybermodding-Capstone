@@ -18,8 +18,9 @@
                     <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
                     <div class="m-0 mt-3 post-content" [innerHTML]="postData.body"></div>
                 </div>
-                <div class="subpost-container p-2 d-flex justify-content-between align-items-center mt-5">
-                    <div class="d-flex">
+                <div
+                    class="subpost-container p-2 d-flex flex-column flex-md-row align-items-center justify-content-md-between mt-5">
+                    <div class="d-flex mb-3 mb-md-0">
                         <div #likeField class="single-react-container py-1 px-3 rounded-4" (click)="addReaction(0)"
                             [ngClass]="{'reaction-sel' : hasUserLike}">
                             <span class="me-2" [innerHTML]="thumbUp"></span><span>{{ likeCount }}</span>
@@ -35,6 +36,8 @@
                         </div>
                     </div>
                     <div class="d-flex">
+                        <button class="mod-btn px-4 fw-medium rounded-4 me-3" (click)="goToEdit()">Modifica
+                            Post</button>
                         <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
                     </div>
                 </div>

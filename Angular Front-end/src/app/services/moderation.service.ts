@@ -43,8 +43,14 @@ export class ModerationService {
     );
   }
 
-  public updatePost(data: IUpdatePostDTO): Observable<IPostData> {
-    return this.http.put<IPostData>(this.threadsApiUrl + '/' + data.id, data);
+  public updatePost(
+    user_id: number,
+    data: Partial<IUpdatePostDTO>
+  ): Observable<IPostData> {
+    return this.http.put<IPostData>(
+      this.threadsApiUrl + '/' + user_id + '?mod=true',
+      data
+    );
   }
 
   public getPosts(

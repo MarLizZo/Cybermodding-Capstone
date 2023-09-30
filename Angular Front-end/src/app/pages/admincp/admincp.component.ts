@@ -8,6 +8,7 @@ import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
+import { IUpdatePostDTO } from 'src/app/interfaces/iupdate-post-dto';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
@@ -473,7 +474,7 @@ export class AdmincpComponent {
   }
 
   doPostModerate(data: NgForm, index: number): void {
-    let obj = {
+    let obj: Partial<IUpdatePostDTO> = {
       id: this.isThreadViewAll
         ? data.controls['tid'].value
         : data.controls['tidc'].value,
@@ -482,7 +483,7 @@ export class AdmincpComponent {
         : data.controls['titlec'].value,
     };
     this.moderateThreadSub = this.svc
-      .updatePost(obj)
+      .updatePost(this.user_id, obj)
       .pipe(
         catchError((err) => {
           throw err;

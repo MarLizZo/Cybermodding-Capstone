@@ -39,4 +39,12 @@ export class AppComponent {
   ngOnDestroy() {
     if (this.routeSub) this.routeSub.unsubscribe();
   }
+
+  toTop(): void {
+    window.scrollTo(0, 0);
+  }
+
+  toBottom(): void {
+    window.scrollTo(0, document.querySelector('body')!.scrollHeight);
+  }
 }

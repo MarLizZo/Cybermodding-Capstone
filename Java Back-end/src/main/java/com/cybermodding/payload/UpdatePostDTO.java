@@ -14,4 +14,5 @@ public class UpdatePostDTO {
     private String title;
     private String body;
     private Boolean active;
+    private String type;
 }

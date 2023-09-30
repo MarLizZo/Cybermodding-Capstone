@@ -24,6 +24,7 @@ export class EditorFormComponent {
   @Input() userID!: number;
   @Input() postTitle!: string | undefined;
   @Input() quoted!: IQuoteInfo | undefined;
+  @Input() postBody!: string | undefined;
   @Output() submitData = new EventEmitter();
   @Output() submitPost = new EventEmitter();
 
@@ -44,6 +45,9 @@ export class EditorFormComponent {
     }
     if (changes['postTitle']) {
       this.postTitle = changes['postTitle'].currentValue;
+    }
+    if (changes['postBody']) {
+      this.postBody = changes['postBody'].currentValue;
     }
   }
 

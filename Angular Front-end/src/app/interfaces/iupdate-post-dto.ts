@@ -3,4 +3,5 @@ export interface IUpdatePostDTO {
   title: string;
   body?: string;
   active?: boolean;
+  type: string;
 }

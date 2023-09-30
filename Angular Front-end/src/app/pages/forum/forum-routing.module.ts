@@ -24,7 +24,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'newthread/:ssid',
+    path: 'newthread/:id',
     loadChildren: () =>
       import('./newthread/newthread.module').then((m) => m.NewthreadModule),
   },
