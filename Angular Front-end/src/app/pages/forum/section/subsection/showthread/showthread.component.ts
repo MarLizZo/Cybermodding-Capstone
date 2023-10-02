@@ -403,6 +403,50 @@ export class ShowthreadComponent {
 
   goToEdit(): void {
     localStorage.setItem('post-id', this.postData.id.toString());
+    let tb = [
+      {
+        name: 'FORUM',
+        url: '/forum',
+      },
+      {
+        name: this.mainSectionTitle,
+        url:
+          '/forum/section/' +
+          this.postData.main_section_id +
+          '-' +
+          this.mainSectionTitle
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+      {
+        name: this.subSectionTitle,
+        url:
+          '/forum/subsection/' +
+          this.postData.subsection_id +
+          '-' +
+          this.subSectionTitle
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+      {
+        name: this.postData.title,
+        url:
+          '/forum/showthread/' +
+          this.postData.id +
+          '-' +
+          this.postData.title
+            .replaceAll(' ', '-')
+            .replaceAll('/', '-')
+            .toLowerCase(),
+      },
+      {
+        name: 'Modifica post',
+        url: '/forum/newthread/' + this.postData.subsection_id,
+      },
+    ];
+    localStorage.setItem('topbar-editp', JSON.stringify(tb));
     this.router.navigateByUrl(
       '/forum/newthread/' + this.postData.subsection_id
     );

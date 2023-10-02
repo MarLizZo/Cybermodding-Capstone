@@ -70,7 +70,6 @@ export class HomepageComponent {
 
     setTimeout(() => {
       this.isWaitingPage = false;
-      this.isLoadingPage = false;
     }, 1000);
   }
 
@@ -91,6 +90,7 @@ export class HomepageComponent {
       )
       .pipe(
         catchError((err) => {
+          this.isLoadingPage = false;
           throw err;
         })
       )
@@ -112,7 +112,13 @@ export class HomepageComponent {
           }
           this.pagesArr.push(res.totalPages);
         }
-        if (!init) document.querySelector('#home-head')?.scrollIntoView();
+        this.isLoadingPage = false;
+
+        if (!init) {
+          setTimeout(() => {
+            document.querySelector('#home-head')?.scrollIntoView();
+          }, 100);
+        }
       });
   }
 

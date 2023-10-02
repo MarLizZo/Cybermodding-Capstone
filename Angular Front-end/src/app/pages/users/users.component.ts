@@ -19,7 +19,9 @@ export class UsersComponent {
   paramSub!: Subscription;
   authSub!: Subscription;
   profileData!: IUserData;
+  isWaitingPage: boolean = true;
   isLoadingPage: boolean = true;
+  isLoadingPageTwo: boolean = true;
   isSingleUser: boolean = false;
   isQuickStatsCollapsed: boolean = false;
   isInfosCollapsed: boolean = false;
@@ -74,9 +76,13 @@ export class UsersComponent {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 350);
     this.paramSub = this.route.paramMap.subscribe((res) => {
       if (res.get('hash')) {
         this.isSingleUser = true;
+        this.isLoadingPageTwo = false;
         let userId: number = parseInt(res.get('hash')!.split('-')[0]);
         if (!isNaN(userId) && userId != null) {
           this.authSub = this.auth_svc.user$.subscribe((res) => {
@@ -89,6 +95,7 @@ export class UsersComponent {
             .getProfileData(userId)
             .pipe(
               catchError((err) => {
+                this.isLoadingPage = false;
                 throw err;
               })
             )
@@ -98,16 +105,17 @@ export class UsersComponent {
             });
         }
       } else {
-        this.isLoadingPage = false;
         this.isSingleUser = false;
         this.bossSub = this.u_svc
           .getBosses()
           .pipe(
             catchError((err) => {
+              this.isLoadingPage = false;
               throw err;
             })
           )
           .subscribe((res) => {
+            this.isLoadingPage = false;
             this.bossesArr = res;
           });
 
@@ -115,6 +123,7 @@ export class UsersComponent {
           .getUsersPaged(8, 0)
           .pipe(
             catchError((err) => {
+              this.isLoadingPageTwo = false;
               throw err;
             })
           )
@@ -132,7 +141,7 @@ export class UsersComponent {
             }
 
             this.usersArr = res;
-            console.log(res);
+            this.isLoadingPageTwo = false;
           });
       }
     });

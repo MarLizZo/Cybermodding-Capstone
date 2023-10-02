@@ -42,40 +42,47 @@ export class NewthreadComponent {
   ) {}
 
   setTopBarObj() {
-    this.topBObj = [
-      {
-        name: 'FORUM',
-        url: '/forum',
-      },
-      {
-        name: this.ssParentTitle,
-        url:
-          '/forum/section/' +
-          this.ssParentId +
-          '-' +
-          this.ssParentTitle
-            .replaceAll(' ', '-')
-            .replaceAll('/', '')
-            .toLowerCase(),
-      },
-      {
-        name: this.ssTitle,
-        url:
-          '/forum/subsection/' +
-          this.ssId +
-          '-' +
-          this.ssTitle.replaceAll(' ', '-').replaceAll('/', '').toLowerCase(),
-      },
-      {
-        name: 'Nuovo Post',
-        url: '/forum/newthread/' + this.ssId,
-      },
-    ];
+    if (this.editPostId == 0) {
+      this.topBObj = [
+        {
+          name: 'FORUM',
+          url: '/forum',
+        },
+        {
+          name: this.ssParentTitle,
+          url:
+            '/forum/section/' +
+            this.ssParentId +
+            '-' +
+            this.ssParentTitle
+              .replaceAll(' ', '-')
+              .replaceAll('/', '')
+              .toLowerCase(),
+        },
+        {
+          name: this.ssTitle,
+          url:
+            '/forum/subsection/' +
+            this.ssId +
+            '-' +
+            this.ssTitle.replaceAll(' ', '-').replaceAll('/', '').toLowerCase(),
+        },
+        {
+          name: 'Nuovo Post',
+          url: '/forum/newthread/' + this.ssId,
+        },
+      ];
+    } else {
+      if (localStorage.getItem('topbar-editp')) {
+        this.topBObj = JSON.parse(localStorage.getItem('topbar-editp')!);
+      }
+    }
   }
 
   ngOnInit() {
     if (localStorage.getItem('post-id')) {
       this.editPostId = Number(localStorage.getItem('post-id'));
+      this.setTopBarObj();
       this.getPostSub = this.svc
         .getSinglePost(this.editPostId)
         .pipe(
@@ -115,6 +122,7 @@ export class NewthreadComponent {
     if (this.ssInfoSub) this.ssInfoSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
     localStorage.removeItem('post-id');
+    localStorage.removeItem('topbar-editp');
   }
 
   switchType(type: string) {

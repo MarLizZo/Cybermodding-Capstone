@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,8 +6,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './inline-loader.component.html',
-  styleUrls: ['./inline-loader.component.scss']
+  styleUrls: ['./inline-loader.component.scss'],
 })
 export class InlineLoaderComponent {
+  @Input() bg!: string;
 
+  ngOnInit() {
+    if (this.bg) {
+      //
+    }
+  }
 }

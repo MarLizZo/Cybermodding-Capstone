@@ -94,6 +94,13 @@
                                 <app-orange-button *ngIf="u.roles![0].id != 3" [btnTheme]="'orange'"
                                     [btnTitle]="'Modera utente'" (click)="doUserModerate(f, i)"
                                     [ngClass]="{'disabled' : u.roles![0].id == 3}"></app-orange-button>
+                                <div class="mt-3">
+                                    <app-inline-loader *ngIf="isOpUsers"></app-inline-loader>
+                                </div>
+                                <p [id]="'userParagMod' + i" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
+                                    con
+                                    successo!
+                                </p>
                             </form>
                         </div>
                     </div>

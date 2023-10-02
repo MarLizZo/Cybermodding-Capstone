@@ -65,11 +65,11 @@
                     <button [disabled]="f.invalid" type="button" [ngClass]="{'txt-orange' : true}"
                         class="btn btn-dark btn-resp mt-3 fw-medium py-2" (click)="doRegister()">Registrati</button>
                     <div class="mt-2">
-                        <app-inline-loader *ngIf="isRegistering"></app-inline-loader>
-                        <p *ngIf="!isRegistering && isRegisterOperationSuccess" class="m-0 fw-medium">Registrato con
-                            successo! Attendi 2 secondi..</p>
-                        <p *ngIf="!isRegistering && isRegisterOperationError" class="m-0 fw-medium"><span
-                                class="text-danger">Errore: </span>{{ errorMessage }}</p>
+                        <app-inline-loader *ngIf="isRegistering || isWaitingRegistering"></app-inline-loader>
+                        <p *ngIf="!isRegistering && isRegisterOperationSuccess && !isWaitingRegistering"
+                            class="m-0 fw-medium">Account registrato con successo!</p>
+                        <p *ngIf="!isRegistering && isRegisterOperationError && !isWaitingRegistering"
+                            class="m-0 fw-medium"><span class="text-danger">Errore: </span>{{ errorMessage }}</p>
                     </div>
                 </div>
             </form>

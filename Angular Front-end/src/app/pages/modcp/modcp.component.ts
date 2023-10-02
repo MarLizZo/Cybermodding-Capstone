@@ -14,6 +14,7 @@ import { ModerationService } from 'src/app/services/moderation.service';
 })
 export class ModcpComponent {
   isLoadingPage: boolean = true;
+  isOpUsers: boolean = false;
   username: string = '';
   user_id: number = 0;
   classColor: string = '';
@@ -192,6 +193,7 @@ export class ModcpComponent {
     this.resetFields(index);
 
     if (this.doChecksUser(data, index)) {
+      this.isOpUsers = true;
       let outData: Partial<IUserData> = {
         id: data.controls['uid'].value,
         username: data.controls['username'].value,
@@ -209,12 +211,23 @@ export class ModcpComponent {
         .moderate(this.user_id, outData)
         .pipe(
           catchError((err) => {
+            this.isOpUsers = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          console.log(res);
-          this.namesArr[index] = res.username!;
+          setTimeout(() => {
+            this.namesArr[index] = res.username!;
+            this.isOpUsers = false;
+            document
+              .querySelector('#userParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#userParagMod' + index)
+                ?.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
         });
     }
   }

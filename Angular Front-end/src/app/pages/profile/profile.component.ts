@@ -18,6 +18,8 @@ export class ProfileComponent {
   updateSub!: Subscription;
   updatePassSub!: Subscription;
   profileData: IUserData | null = null;
+  isLoadingPage: boolean = true;
+  isWaitingPage: boolean = true;
   isSendingData: boolean = false;
   isSendingDataPass: boolean = false;
   isQuickStatsCollapsed: boolean = false;
@@ -35,6 +37,9 @@ export class ProfileComponent {
   @ViewChild('repeatActualP') repeatActualP!: ElementRef<HTMLElement>;
   @ViewChild('newP') newP!: ElementRef<HTMLElement>;
   @ViewChild('repeatNewP') repeatNewP!: ElementRef<HTMLElement>;
+
+  @ViewChild('accountUpd') accountUpd!: ElementRef<HTMLElement>;
+  @ViewChild('passUpd') passUpd!: ElementRef<HTMLElement>;
 
   userObject: Partial<IUserData> = {
     id: 0,
@@ -60,6 +65,10 @@ export class ProfileComponent {
   ) {}
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 250);
+
     this.userSub = this.authSvc.user$.subscribe((res) => {
       if (res != null) {
         this.profileSub = this.uSvc
@@ -77,6 +86,7 @@ export class ProfileComponent {
             this.userObject.description = res.description;
             this.userObject.avatar = res.avatar;
             this.userObject.birthdate = res.birthdate;
+            this.isLoadingPage = false;
           });
       }
     });
@@ -179,7 +189,7 @@ export class ProfileComponent {
       bool = false;
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
-    if (this.formInfo.controls['avatar'].value != '') {
+    if (this.formInfo.controls['avatar'].value != null) {
       if (
         !RegExp('/.(jpeg|jpg|png|gif|bmp)$/i').test(
           this.formInfo.controls['avatar'].value
@@ -241,8 +251,13 @@ export class ProfileComponent {
           })
         )
         .subscribe((res) => {
-          console.log(res);
-          this.isSendingData = false;
+          setTimeout(() => {
+            this.isSendingData = false;
+            this.accountUpd.nativeElement.classList.remove('opacity-0');
+            setTimeout(() => {
+              this.accountUpd.nativeElement.classList.add('opacity-0');
+            }, 3500);
+          }, 500);
         });
     }
   }
@@ -263,7 +278,13 @@ export class ProfileComponent {
         )
         .subscribe((res) => {
           this.isSendingDataPass = false;
-          console.log(res);
+          setTimeout(() => {
+            this.isSendingData = false;
+            this.passUpd.nativeElement.classList.remove('opacity-0');
+            setTimeout(() => {
+              this.passUpd.nativeElement.classList.add('opacity-0');
+            }, 3500);
+          }, 500);
         });
     }
   }

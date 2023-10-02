@@ -95,6 +95,13 @@
                                 <app-orange-button *ngIf="u.roles![0].id != 3" [btnTheme]="'orange'"
                                     [btnTitle]="'Modera utente'" (click)="doUserModerate(f, i)"
                                     [ngClass]="{'disabled' : u.roles![0].id == 3}"></app-orange-button>
+                                <div class="mt-3">
+                                    <app-inline-loader *ngIf="isOpUsers"></app-inline-loader>
+                                </div>
+                                <p [id]="'userParagMod' + i" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
+                                    con
+                                    successo!
+                                </p>
                             </form>
                         </div>
                     </div>
@@ -222,6 +229,12 @@
 
                                     <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera Thread'"
                                         (click)="doPostModerate(f, i)"></app-orange-button>
+                                    <div *ngIf="isOpThread" class="mt-3">
+                                        <app-inline-loader></app-inline-loader>
+                                    </div>
+                                    <p [id]="'threadParagMod' + i" #threadParagMod
+                                        class="mt-3 mb-0 fs-5 fw-medium opacity-0">Thread moderato con
+                                        successo!</p>
                                 </form>
 
                             </div>
@@ -314,6 +327,12 @@
 
                                     <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera Thread'"
                                         (click)="doPostModerate(f, i)"></app-orange-button>
+                                    <div *ngIf="isOpThread" class="mt-3">
+                                        <app-inline-loader></app-inline-loader>
+                                    </div>
+                                    <p [id]="'threadAllParagMod' + i" #threadAllParagMod
+                                        class="mt-3 mb-0 fs-5 fw-medium opacity-0">Thread moderato con
+                                        successo!</p>
                                 </form>
                             </div>
                         </div>
@@ -408,6 +427,11 @@
 
                         <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sezione'"
                             (click)="doCreateSection(fNewSection)"></app-orange-button>
+                        <div *ngIf="isOpSection" class="mt-3">
+                            <app-inline-loader></app-inline-loader>
+                        </div>
+                        <p #sectionCParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione Creata con
+                            successo!</p>
                     </form>
                 </div>
 
@@ -474,6 +498,11 @@
 
                         <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sotto-Sezione'"
                             (click)="doCreateSubSection(fNewSubSection)"></app-orange-button>
+                        <div *ngIf="isOpSection" class="mt-3">
+                            <app-inline-loader></app-inline-loader>
+                        </div>
+                        <p #subsectionCParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione Creata con
+                            successo!</p>
                     </form>
                 </div>
 
@@ -557,6 +586,13 @@
                                         <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Sezione'"
                                             (click)="doSectionUpdate(i, fSection)"></app-orange-button>
                                     </div>
+                                    <div *ngIf="isOpSection" class="mt-3">
+                                        <app-inline-loader></app-inline-loader>
+                                    </div>
+                                    <p [id]="'sectionUParagMod' + i" #sectionUParagMod
+                                        class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione aggiornata
+                                        con
+                                        successo!</p>
                                 </form>
 
                                 <div class="w-100 mt-5">
@@ -652,6 +688,14 @@
                                                     [btnTitle]="'Aggiorna Sotto-Sezione'"
                                                     (click)="doSubSectionUpdate(s.id!, fSS)"></app-orange-button>
                                             </div>
+                                            <div *ngIf="isOpSection" class="mt-3">
+                                                <app-inline-loader></app-inline-loader>
+                                            </div>
+                                            <p [id]="'subsectionUParagMod' + selectedSSIndex + s.id"
+                                                #subsectionUParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">
+                                                Sotto-Sezione aggiornata
+                                                con
+                                                successo!</p>
                                         </form>
                                     </div>
                                 </div>
@@ -737,6 +781,12 @@
                             <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Nuovo Blocco'"
                                 (click)="doCreateNewBlock(fNewBlock)"></app-orange-button>
                         </div>
+                        <div *ngIf="isOpBlock" class="mt-3">
+                            <app-inline-loader></app-inline-loader>
+                        </div>
+                        <p #blockParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Blocco creato
+                            con
+                            successo!</p>
                     </form>
                 </div>
 
@@ -828,6 +878,13 @@
                                         <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Blocco'"
                                             (click)="doUpdateBlock(fUpdateBlock, i)"></app-orange-button>
                                     </div>
+                                    <div *ngIf="isOpBlock" class="mt-3">
+                                        <app-inline-loader></app-inline-loader>
+                                    </div>
+                                    <p [id]="'blockUParagMod' + i" #blockUParagMod
+                                        class="mt-3 mb-0 fs-5 fw-medium opacity-0">Blocco aggiornato
+                                        con
+                                        successo!</p>
                                 </form>
                             </div>
                         </div>

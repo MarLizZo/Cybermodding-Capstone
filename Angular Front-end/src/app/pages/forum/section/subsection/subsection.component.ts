@@ -14,6 +14,8 @@ import { ForumService } from 'src/app/services/forum.service';
   styleUrls: ['./subsection.component.scss'],
 })
 export class SubsectionComponent {
+  isWaitingPage: boolean = true;
+  isLoadingPage: boolean = true;
   ssSub!: Subscription;
   authSub!: Subscription;
   routeSub!: Subscription;
@@ -62,6 +64,9 @@ export class SubsectionComponent {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 350);
     this.routeSub = this.route.paramMap.subscribe((res) => {
       let ssId: number = parseInt(res.get('hash')!.split('-')[0]);
       this.newThreadPath = '/forum/newthread/' + ssId;
@@ -81,6 +86,7 @@ export class SubsectionComponent {
             this.ssTitle = res.title;
             this.postsArr = res.posts;
             this.setTopBarObj();
+            this.isLoadingPage = false;
           });
       }
 

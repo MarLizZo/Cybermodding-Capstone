@@ -17,6 +17,7 @@ export class RegisterComponent {
   isRegistering: boolean = false;
   isRegisterOperationSuccess: boolean = false;
   isRegisterOperationError: boolean = false;
+  isWaitingRegistering: boolean = false;
   errorMessage: string = '';
   regSub!: Subscription;
   regData: IRegisterData = {
@@ -106,6 +107,7 @@ export class RegisterComponent {
     if (this.doChecks()) {
       this.isRegisterOperationSuccess = false;
       this.isRegisterOperationError = false;
+      this.isWaitingRegistering = true;
       this.isRegistering = true;
 
       this.regSub = this.svc
@@ -114,6 +116,7 @@ export class RegisterComponent {
           catchError((err: IErrorResponse) => {
             this.isRegistering = false;
             this.isRegisterOperationError = true;
+            this.isWaitingRegistering = false;
             this.errorMessage = err.error.message;
             throw err;
           })
@@ -121,6 +124,9 @@ export class RegisterComponent {
         .subscribe((res) => {
           this.isRegistering = false;
           this.isRegisterOperationSuccess = true;
+          setTimeout(() => {
+            this.isWaitingRegistering = false;
+          }, 800);
           setTimeout(() => {
             this.router.navigate(['/auth/login']);
           }, 2500);

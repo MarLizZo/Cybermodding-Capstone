@@ -11,6 +11,9 @@ import { ForumService } from 'src/app/services/forum.service';
   styleUrls: ['./section.component.scss'],
 })
 export class SectionComponent {
+  isWaitingPage: boolean = true;
+  isLoadingPage: boolean = true;
+  isLoadingPageTwo: boolean = true;
   sectionData!: ISectionData;
   subsData: ISubSectionData[] = [];
   sectionId: number = 0;
@@ -42,6 +45,9 @@ export class SectionComponent {
   }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 350);
     this.sectionId = parseInt(
       this.route.snapshot.paramMap.get('hash')!.split('-')[0]
     );
@@ -49,6 +55,7 @@ export class SectionComponent {
       .getSectionById(this.sectionId)
       .pipe(
         catchError((err) => {
+          this.isLoadingPage = false;
           throw err;
         })
       )
@@ -56,17 +63,20 @@ export class SectionComponent {
         this.sectionData = res;
         this.sectionName = res.title;
         this.setTopBarObject();
+        this.isLoadingPage = false;
       });
 
     this.subsSuscription = this.svc
       .getSubSectionsPerSection(this.sectionId)
       .pipe(
         catchError((err) => {
+          this.isLoadingPageTwo = false;
           throw err;
         })
       )
       .subscribe((res) => {
         this.subsData = res;
+        this.isLoadingPageTwo = false;
       });
   }
 

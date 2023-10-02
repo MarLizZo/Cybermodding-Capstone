@@ -19,6 +19,7 @@ export class LoginComponent {
 
   isLoadingPage: boolean = true;
   isLoggingIn: boolean = false;
+  isWaitingLoggingIn: boolean = false;
   isLoginOperationSuccess: boolean = false;
   isLoginOperationError: boolean = false;
   errorMessage: string = '';
@@ -68,6 +69,7 @@ export class LoginComponent {
 
     if (this.doChecks()) {
       this.isLoggingIn = true;
+      this.isWaitingLoggingIn = true;
 
       this.logSub = this.svc
         .login(this.loginData)
@@ -76,12 +78,15 @@ export class LoginComponent {
             this.isLoggingIn = false;
             this.isLoginOperationError = true;
             this.errorMessage = err.error.message;
-            throw err; // Assicurati di ritornare l'errore in modo che possa essere gestito successivamente
+            throw err;
           })
         )
         .subscribe((res) => {
           this.isLoggingIn = false;
           this.isLoginOperationSuccess = true;
+          setTimeout(() => {
+            this.isWaitingLoggingIn = false;
+          }, 800);
           setTimeout(() => {
             this.router.navigate(['/forum']);
           }, 2500);

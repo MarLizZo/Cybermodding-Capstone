@@ -15,6 +15,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class NewpmComponent {
   isLoadingPage: boolean = true;
+  isWaitingPage: boolean = true;
   isAllDataLoaded: boolean = false;
   authSub!: Subscription;
   routeSub!: Subscription;
@@ -41,6 +42,9 @@ export class NewpmComponent {
   ) {}
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 250);
     this.authSub = this.authSvc.user$.subscribe((res) => {
       if (res) {
         this.sender_id = res.user_id;

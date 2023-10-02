@@ -44,6 +44,11 @@ export class AdmincpComponent {
   isBlocksViewCreate: boolean = true;
   isBlockViewAll: boolean = false;
 
+  isOpUsers: boolean = false;
+  isOpThread: boolean = false;
+  isOpSection: boolean = false;
+  isOpBlock: boolean = false;
+
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
   usersSub!: Subscription;
@@ -150,6 +155,10 @@ export class AdmincpComponent {
   @ViewChild('activeRadioOne')
   radioActive!: ElementRef<HTMLInputElement>;
   @ViewChild('activeSSRadioOne') radioSSActive!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('sectionCParagMod') sectionCMod!: ElementRef<HTMLElement>;
+  @ViewChild('subsectionCParagMod') subSectionCMod!: ElementRef<HTMLElement>;
+  @ViewChild('blockParagMod') blockMod!: ElementRef<HTMLElement>;
 
   ngOnInit() {
     this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
@@ -444,6 +453,7 @@ export class AdmincpComponent {
     this.resetUsersFields(index);
 
     if (this.doChecksUser(data, index)) {
+      this.isOpUsers = true;
       let outData: Partial<IUserData> = {
         id: data.controls['uid'].value,
         username: data.controls['username'].value,
@@ -463,17 +473,29 @@ export class AdmincpComponent {
         .moderate(this.user_id, outData)
         .pipe(
           catchError((err) => {
+            this.isOpUsers = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          console.log(res);
           this.userNamesArr[index] = res.username!;
+          setTimeout(() => {
+            this.isOpUsers = false;
+            document
+              .querySelector('#userParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#userParagMod' + index)
+                ?.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
         });
     }
   }
 
   doPostModerate(data: NgForm, index: number): void {
+    this.isOpThread = true;
     let obj: Partial<IUpdatePostDTO> = {
       id: this.isThreadViewAll
         ? data.controls['tid'].value
@@ -486,14 +508,38 @@ export class AdmincpComponent {
       .updatePost(this.user_id, obj)
       .pipe(
         catchError((err) => {
+          this.isOpThread = false;
           throw err;
         })
       )
       .subscribe((res) => {
-        console.log(res);
-        this.isThreadViewAll
-          ? (this.threadTitleArr[index] = res.title)
-          : (this.threadTitleCustomArr[index] = res.title);
+        if (this.isThreadViewAll) {
+          this.threadTitleArr[index] = res.title;
+          setTimeout(() => {
+            this.isOpThread = false;
+            document
+              .querySelector('#threadAllParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#threadAllParagMod' + index)
+                ?.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
+        } else {
+          this.threadTitleCustomArr[index] = res.title;
+          setTimeout(() => {
+            this.isOpThread = false;
+            document
+              .querySelector('#threadParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#threadParagMod' + index)
+                ?.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
+        }
       });
   }
 
@@ -662,6 +708,7 @@ export class AdmincpComponent {
 
   doSectionUpdate(index: number, data: NgForm) {
     if (this.doSectionsCheck(data)) {
+      this.isOpSection = true;
       let obj: ISectionData = {
         id: data.controls['id'].value,
         title: data.controls['title'].value,
@@ -670,21 +717,31 @@ export class AdmincpComponent {
         order_number: data.controls['order'].value,
       };
 
-      console.log(obj);
-
       this.sectionOperationsSub = this.svc
         .updateSection(this.sectionsArr[index].id!, obj)
         .pipe(
           catchError((err) => {
+            this.isOpSection = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          this.selectedSSIndex = -1;
-          for (let i = 0; i < this.collapseableSArr.length; i++) {
-            this.collapseableSArr[i] = true;
-          }
-          this.getSections();
+          setTimeout(() => {
+            this.isOpSection = false;
+            document
+              .querySelector('#sectionUParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#sectionUParagMod' + index)
+                ?.classList.add('opacity-0');
+              this.selectedSSIndex = -1;
+              for (let i = 0; i < this.collapseableSArr.length; i++) {
+                this.collapseableSArr[i] = true;
+              }
+              this.getSections();
+            }, 2000);
+          }, 1000);
         });
     }
   }
@@ -723,6 +780,7 @@ export class AdmincpComponent {
 
   doSubSectionUpdate(parent_section_id: number, data: NgForm) {
     if (this.doSubSectionsCheck(data, this.selectedSSIndex)) {
+      this.isOpSection = true;
       let obj: Partial<ISubSectionData> = {
         id: data.controls['ssid'].value,
         title: data.controls['sstitle'].value,
@@ -736,11 +794,30 @@ export class AdmincpComponent {
         .updateSubSection(obj.id!, obj)
         .pipe(
           catchError((err) => {
+            this.isOpSection = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          console.log(res);
+          setTimeout(() => {
+            this.isOpSection = false;
+            document
+              .querySelector(
+                '#subsectionUParagMod' +
+                  this.selectedSSIndex +
+                  parent_section_id
+              )
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector(
+                  '#subsectionUParagMod' +
+                    this.selectedSSIndex +
+                    parent_section_id
+                )
+                ?.classList.add('opacity-0');
+            }, 2000);
+          }, 1000);
         });
     }
   }
@@ -820,6 +897,7 @@ export class AdmincpComponent {
   doCreateSection(data: NgForm) {
     this.resetSFields();
     if (this.doNewSecChecks(data)) {
+      this.isOpSection = true;
       let obj: Partial<ISectionData> = {
         title: data.controls['title'].value,
         description: data.controls['description'].value,
@@ -831,11 +909,19 @@ export class AdmincpComponent {
         .createSection(obj)
         .pipe(
           catchError((err) => {
+            this.isOpSection = false;
             throw err;
           })
         )
         .subscribe((res) => {
           data.resetForm();
+          setTimeout(() => {
+            this.isOpSection = false;
+            this.sectionCMod.nativeElement.classList.remove('opacity-0');
+            setTimeout(() => {
+              this.sectionCMod.nativeElement.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
         });
     }
   }
@@ -850,6 +936,7 @@ export class AdmincpComponent {
   doCreateSubSection(data: NgForm) {
     this.resetSSFields();
     if (this.doNewSubSecChecks(data)) {
+      this.isOpSection = true;
       let obj: Partial<ISubSectionData> = {
         title: data.controls['title'].value,
         description: data.controls['description'].value,
@@ -861,12 +948,19 @@ export class AdmincpComponent {
         .createSubSection(obj)
         .pipe(
           catchError((err) => {
+            this.isOpSection = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          console.log(res);
           data.resetForm();
+          setTimeout(() => {
+            this.isOpSection = false;
+            this.subSectionCMod.nativeElement.classList.remove('opacity-0');
+            setTimeout(() => {
+              this.subSectionCMod.nativeElement.classList.add('opacity-0');
+            }, 3000);
+          }, 1000);
         });
     }
   }
@@ -964,6 +1058,7 @@ export class AdmincpComponent {
   doCreateNewBlock(data: NgForm) {
     this.resetBFields();
     if (this.doBlockChecks(data)) {
+      this.isOpBlock = true;
       let obj: ISideBlockData = {
         title: this.blockTitle,
         content: this.blockContent,
@@ -975,12 +1070,19 @@ export class AdmincpComponent {
         .createBlock(obj)
         .pipe(
           catchError((err) => {
+            this.isOpBlock = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          console.log(res);
           data.resetForm();
+          setTimeout(() => {
+            this.isOpBlock = true;
+            this.blockMod.nativeElement.classList.remove('opacity-0');
+            setTimeout(() => {
+              this.blockMod.nativeElement.classList.add('opacity-0');
+            }, 2000);
+          }, 1000);
         });
     }
   }
@@ -1019,6 +1121,7 @@ export class AdmincpComponent {
   doUpdateBlock(data: NgForm, index: number) {
     this.resetBFields();
     if (this.doUpdateBlockChecks(data, index)) {
+      this.isOpBlock = true;
       let obj: ISideBlockData = {
         id: this.blocksArr[index].id,
         title: data.controls['title'].value,
@@ -1032,11 +1135,23 @@ export class AdmincpComponent {
         .updateBlock(this.blocksArr[index].id!, obj)
         .pipe(
           catchError((err) => {
+            this.isOpBlock = false;
             throw err;
           })
         )
         .subscribe((res) => {
-          this.getBlocks();
+          setTimeout(() => {
+            this.isOpBlock = false;
+            document
+              .querySelector('#blockUParagMod' + index)
+              ?.classList.remove('opacity-0');
+            setTimeout(() => {
+              document
+                .querySelector('#blockUParagMod' + index)
+                ?.classList.add('opacity-0');
+              this.getBlocks();
+            }, 2000);
+          }, 1000);
         });
     }
   }

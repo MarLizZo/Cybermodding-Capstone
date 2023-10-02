@@ -13,6 +13,7 @@ import { ForumService } from 'src/app/services/forum.service';
 })
 export class ForumComponent {
   isLoadingPage: boolean = true;
+  isWaitingPage: boolean = true;
   fetchErrors: boolean = false;
   username: string | undefined;
   user_id: number | undefined;
@@ -57,12 +58,14 @@ export class ForumComponent {
       .pipe(
         catchError((err) => {
           this.fetchErrors = true;
+          this.isLoadingPage = false;
           console.log('Error fetching sections data');
           return EMPTY;
         })
       )
       .subscribe((res) => {
         this.sectionsArr = res;
+        this.isLoadingPage = false;
       });
 
     this.sidesSub = this.fSvc
@@ -79,8 +82,8 @@ export class ForumComponent {
       });
 
     setTimeout(() => {
-      this.isLoadingPage = false;
-    }, 1500);
+      this.isWaitingPage = false;
+    }, 1000);
   }
 
   ngOnDestroy() {

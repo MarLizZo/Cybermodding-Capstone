@@ -1,6 +1,6 @@
-<div *ngIf="!isLoadingPage" class="h-100 pb-4">
+<div class="h-100 pb-4">
     <app-hero></app-hero>
-    <div class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-4">
         <div class="d-flex align-items-center">
             <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
                 class="img-placeholder profile-img me-3"></div>
@@ -27,11 +27,14 @@
             </div>
             <div *ngFor="let msg of receivedMessages; let i = index; let first = first" class="single-msg shadow"
                 [ngClass]="{'new-msg' : !msg.viewed, 'mt-4' : !first}">
-                <div class="sm-head px-3 py-2 d-flex justify-content-between align-items-center">
+                <div class="sm-head px-3 pb-1 d-flex justify-content-between align-items-center rounded-1">
                     <div class="info">
-                        <p class="m-0 fw-medium fs-5 title-trunc"><span *ngIf="!msg.viewed"><i
-                                    class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>{{ msg.title }}
-                        </p>
+                        <div class="tit d-flex align-items-center">
+                            <span *ngIf="msg.viewed" class="txt-orange fs-5 fw-medium">>&nbsp;</span>
+                            <span *ngIf="!msg.viewed"><i
+                                    class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>
+                            <p class="m-0 fw-medium fs-5 title-trunc">{{ msg.title }}</p>
+                        </div>
                         <p class="m-0">Da:&nbsp;<span class="fw-medium">{{ msg.sender_user!.username
                                 }}</span>&nbsp;il:&nbsp;{{ msg.date | date : 'dd-MM-YY' }}</p>
                     </div>
@@ -61,7 +64,7 @@
             <div *ngIf="sentMessages.length == 0" class="d-flex justify-content-center">Nessun messaggio inviato..</div>
             <div *ngFor="let msg of sentMessages; let i = index; let first = first" class="single-msg shadow"
                 [ngClass]="{'mt-4' : !first}">
-                <div class="sm-head px-3 py-2 d-flex justify-content-between align-items-center">
+                <div class="sm-head px-3 py-0 pb-1 d-flex justify-content-between align-items-center rounded-1">
                     <div class="info">
                         <p class="m-0 fw-medium fs-5 title-trunc">{{ msg.title }}</p>
                         <p class="m-0">Inviato a:&nbsp;<span class="fw-medium">{{ msg.recipient_user!.username

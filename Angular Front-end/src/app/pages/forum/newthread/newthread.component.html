@@ -4,7 +4,7 @@
         <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
     <div class="container-fluid px-3 d-flex flex-column">
-        <h2 class="mb-4">Scrivi nuovo Thread</h2>
+        <h2 class="mb-4" [innerText]="editPostId == 0 ? 'Scrivi nuovo Thread' : 'Modifica il Thread'"></h2>
         <p class="m-0">Titolo</p>
         <div id="thread-info" class="input-group mt-1 mb-5">
             <input #titleInput [(ngModel)]="threadTitle" name="ttitlee" type="text"

@@ -1,13 +1,13 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="my-4">
-        <app-topbar [pathObject]="topBObj"></app-topbar>
+        <app-topbar *ngIf="!isLoadingPage && !isWaitingPage" [pathObject]="topBObj"></app-topbar>
     </div>
-    <div class="px-3 py-2 head-w-title">
+    <div *ngIf="!isLoadingPage && !isWaitingPage" class="px-3 py-2 head-w-title">
         <p class="mb-1 fs-5" [innerText]="subSData != undefined ? subSData.title : ''"></p>
         <p class="mb-1" [innerText]="subSData != undefined ? subSData.description : ''"></p>
     </div>
-    <div class="container-fluid mt-5">
+    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-5">
         <app-orange-button *ngIf="isAuthenticated" [btnTitle]="'Scrivi Nuovo Post'" [btnTheme]="'orange'"
             [routerLink]="newThreadPath"></app-orange-button>
         <div class="posts-container mt-4 d-flex justify-content-center">

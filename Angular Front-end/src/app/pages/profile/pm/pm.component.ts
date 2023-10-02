@@ -21,6 +21,7 @@ export class PmComponent {
   pmSocket!: Subscription;
   retrievePmSub!: Subscription;
   isOpPending: boolean = false;
+  isWaitingPage: boolean = true;
   isLoadingPage: boolean = true;
   isReceivedView: boolean = true;
   isSentView: boolean = false;
@@ -42,6 +43,9 @@ export class PmComponent {
   ) {}
 
   ngOnInit() {
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 250);
     this.authSub = this.authSvc.user$.subscribe((res) => {
       if (res) {
         this.userSub = this.userSvc
@@ -54,13 +58,13 @@ export class PmComponent {
           )
           .subscribe((res) => {
             this.profileData = res;
-            this.isLoadingPage = false;
           });
 
         this.pmSub = this.pmSvc
           .getInitMessages(res.user_id)
           .pipe(
             catchError((err) => {
+              this.isLoadingPage = false;
               throw err;
             })
           )
@@ -80,6 +84,8 @@ export class PmComponent {
             for (let i = 0; i < this.sentMessages.length; i++) {
               this.collapseableSArr.push(true);
             }
+
+            this.isLoadingPage = false;
           });
 
         this.pmSocket = this.pmSvc.getMessages().subscribe((newpm) => {
@@ -117,6 +123,8 @@ export class PmComponent {
             this.sentMessages.unshift(ms);
           }
         });
+      } else {
+        this.isLoadingPage = false;
       }
     });
   }

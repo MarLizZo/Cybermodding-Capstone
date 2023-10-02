@@ -36,6 +36,17 @@
 .circle-core {
   width: 100%;
   height: 100%;
-  background-color: var(--bg-lighter);
   border-radius: 50%;
+}
+
+.lighter {
+  background-color: var(--bg-lighter);
+}
+
+.darker {
+  background-color: var(--bg);
+}
+
+.near-black {
+  background-color: var(--near-black);
 }

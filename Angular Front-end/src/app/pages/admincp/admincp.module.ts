@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from 'src/app/components/modal/modal.component';
+import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-loader.component';
 
 @NgModule({
   declarations: [AdmincpComponent],
@@ -19,6 +20,7 @@ import { ModalComponent } from 'src/app/components/modal/modal.component';
     OrangeButtonComponent,
     NgbCollapseModule,
     ModalComponent,
+    InlineLoaderComponent,
   ],
 })
 export class AdmincpModule {}
