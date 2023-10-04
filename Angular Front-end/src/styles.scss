@@ -55,6 +55,11 @@ body {
   }
 }
 
+.ck-editor .image img {
+  max-width: 90% !important;
+  min-width: auto !important;
+}
+
 p,
 span,
 h1,

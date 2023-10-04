@@ -67,7 +67,7 @@
             <a [routerLink]="'/moderator'" class="text-decoration-none active-link me-3">Moderator CP</a>
             <a *ngIf="isAdmin" [routerLink]="'/admin'" class="text-decoration-none active-link">Admin CP</a>
         </div>
-        <div class="d-flex align-items-center">
+        <div class="d-none d-md-flex align-items-center">
             <li class="nav-item list-unstyled" ngbDropdown>
                 <a class="nav-link d-inline fw-medium" tabindex="0" ngbDropdownToggle id="navbarDropdownSections"
                     role="button">Sezioni Principali</a>
