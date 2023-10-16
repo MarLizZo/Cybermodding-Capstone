@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-circle-fill text-danger fs-3 me-2"></i>
+        <h4 class="modal-title">Errore</h4>
+    </div>
+</div>
+<div class="modal-body">
+    <ul>
+        <li *ngFor="let msg of messages">{{ msg }}</li>
+    </ul>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn custom-btn shadow-none border-0 px-4"
+        (click)="activeModal.close('Close click')">Chiudi</button>
+</div>

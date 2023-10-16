@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.User;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.ModerateUserInDTO;
 import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.repositories.RoleRepo;
+import com.cybermodding.responses.CustomResponse;
 
 @Service
 public class ModerationService {

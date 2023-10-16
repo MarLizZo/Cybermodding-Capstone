@@ -1,6 +1,7 @@
 package com.cybermodding.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Comment;
 import com.cybermodding.exception.CustomException;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.UserRepo;
+import com.cybermodding.responses.CommentResponse;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.ResponseBase;
 
 @Service
 public class CommentService {
@@ -21,11 +24,14 @@ public class CommentService {
     @Autowired
     UserRepo u_repo;
 
-    public Comment getById(Long id) {
+    public CommentResponse getById(Long id) {
         if (repo.existsById(id)) {
-            return repo.findById(id).get();
+            Comment c = repo.findById(id).get();
+            return new CommentResponse(new ResponseBase(true, "", LocalDateTime.now()), c.getId(), c.getContent(),
+                    c.getUser(), c.getPost(), c.getPublishedDate());
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            return new CommentResponse(new ResponseBase(false, "** Comment not found **", LocalDateTime.now()), null,
+                    null, null, null, null);
         }
     }
 
@@ -53,22 +59,32 @@ public class CommentService {
         return repo.findByPublishedDateBetween(start, end);
     }
 
-    public Comment saveComment(Comment c) {
+    public CommentResponse saveComment(Comment c) {
         Comment savedC = repo.save(c);
-        return savedC;
+        if (savedC.getId() != null) {
+            return new CommentResponse(new ResponseBase(true, "", LocalDateTime.now()), savedC.getId(),
+                    savedC.getContent(), savedC.getUser(), savedC.getPost(), savedC.getPublishedDate());
+        } else {
+            return new CommentResponse(new ResponseBase(false, "** Unexpected error **", LocalDateTime.now()), null,
+                    null, null, null, null);
+        }
     }
 
-    public CustomResponse updateComment(Long id, Comment c) {
+    public CommentResponse updateComment(Long id, Comment c) {
         if (repo.existsById(id)) {
             if (id.equals(c.getId())) {
-                repo.save(c);
-                return new CustomResponse(new Date(), "** Comment updated succesfully **", HttpStatus.OK);
+                Comment com = repo.save(c);
+                return new CommentResponse(
+                        new ResponseBase(true, "** Comment updated correctly **", LocalDateTime.now()), com.getId(),
+                        com.getContent(), com.getUser(), com.getPost(), com.getPublishedDate());
             } else {
-                return new CustomResponse(new Date(), "** Input ID and Comment ID does not match **",
-                        HttpStatus.BAD_REQUEST);
+                return new CommentResponse(
+                        new ResponseBase(true, "** Input ID and Comment ID does not match **", LocalDateTime.now()),
+                        null, null, null, null, null);
             }
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            return new CommentResponse(new ResponseBase(true, "** Comment not found **", LocalDateTime.now()), null,
+                    null, null, null, null);
         }
     }
 
@@ -77,7 +93,7 @@ public class CommentService {
             repo.deleteById(id);
             return new CustomResponse(new Date(), "** Comment deleted succesfully **", HttpStatus.OK);
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");
+            return new CustomResponse(new Date(), "** Comment not found **", HttpStatus.NOT_FOUND);
         }
     }
 }

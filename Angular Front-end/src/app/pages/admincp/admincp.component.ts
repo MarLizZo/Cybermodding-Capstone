@@ -718,7 +718,7 @@ export class AdmincpComponent {
       };
 
       this.sectionOperationsSub = this.svc
-        .updateSection(this.sectionsArr[index].id!, obj)
+        .updateSection(this.user_id, obj)
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
@@ -791,7 +791,7 @@ export class AdmincpComponent {
       };
 
       this.subSectionOperationsSub = this.svc
-        .updateSubSection(obj.id!, obj)
+        .updateSubSection(this.user_id, obj)
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
@@ -1132,7 +1132,7 @@ export class AdmincpComponent {
       };
 
       this.blockOperationsSub = this.svc
-        .updateBlock(this.blocksArr[index].id!, obj)
+        .updateBlock(this.user_id, obj)
         .pipe(
           catchError((err) => {
             this.isOpBlock = false;

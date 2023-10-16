@@ -30,6 +30,7 @@ export class UsersComponent {
   isBossesCollapsed: boolean = true;
   isCommunityCollapsed: boolean = true;
   bossesArr: IBosses = {
+    response: undefined,
     admins: [],
     mods: [],
   };

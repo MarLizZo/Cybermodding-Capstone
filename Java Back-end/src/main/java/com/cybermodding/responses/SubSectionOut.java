@@ -1,23 +1,24 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class SubSectionOutDTO {
+@Setter
+public class SubSectionOut {
+    private ResponseBase response;
     private Long id;
     private String title;
     private String description;
     private Boolean active;
     private Integer order_number;
-    private List<PostOutDTO> posts;
+    private List<PostOut> posts;
     private Long parent_id;
     private String parent_title;
 }

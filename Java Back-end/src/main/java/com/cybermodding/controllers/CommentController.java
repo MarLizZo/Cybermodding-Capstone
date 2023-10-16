@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.Comment;
 import com.cybermodding.exception.CustomException;
-import com.cybermodding.payload.CustomResponse;
+import com.cybermodding.responses.CommentResponse;
+import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.services.CommentService;
 
 @RestController
@@ -30,8 +31,8 @@ public class CommentController {
     CommentService svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Comment> getById(@PathVariable Long id) {
-        return new ResponseEntity<Comment>(svc.getById(id), HttpStatus.OK);
+    public ResponseEntity<CommentResponse> getById(@PathVariable Long id) {
+        return new ResponseEntity<CommentResponse>(svc.getById(id), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -52,14 +53,14 @@ public class CommentController {
 
     @PostMapping("/new")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Comment> createNewComment(@RequestBody Comment c) {
-        return new ResponseEntity<Comment>(svc.saveComment(c), HttpStatus.CREATED);
+    public ResponseEntity<CommentResponse> createNewComment(@RequestBody Comment c) {
+        return new ResponseEntity<CommentResponse>(svc.saveComment(c), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<CustomResponse> updateComment(@PathVariable Long id, @RequestBody Comment c) {
-        return new ResponseEntity<CustomResponse>(svc.updateComment(id, c), HttpStatus.OK);
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable Long id, @RequestBody Comment c) {
+        return new ResponseEntity<CommentResponse>(svc.updateComment(id, c), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

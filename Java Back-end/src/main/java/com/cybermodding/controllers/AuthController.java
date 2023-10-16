@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.User;
-import com.cybermodding.payload.JWTAuthResponse;
 import com.cybermodding.payload.LoginDto;
 import com.cybermodding.payload.PingDto;
 import com.cybermodding.payload.RegisterDto;
+import com.cybermodding.responses.JWTAuthResponse;
 import com.cybermodding.services.AuthService;
 
 @RestController

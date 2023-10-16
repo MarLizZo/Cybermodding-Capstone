@@ -19,12 +19,8 @@ import com.cybermodding.enumerators.EPostType;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.CommentInDTO;
-import com.cybermodding.payload.CommentOutDTO;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
-import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.payload.PostHome;
-import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.payload.UpdatePostDTO;
 import com.cybermodding.repositories.CommentRepo;
@@ -34,6 +30,13 @@ import com.cybermodding.repositories.PostRepo;
 import com.cybermodding.repositories.ReactionRepo;
 import com.cybermodding.repositories.SubSectionRepo;
 import com.cybermodding.repositories.UserRepo;
+import com.cybermodding.responses.CommentOut;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.PostWithID;
+import com.cybermodding.responses.ReactionResponse;
+import com.cybermodding.responses.ResponseBase;
+import com.cybermodding.responses.PostOutCPaged;
+import com.cybermodding.responses.PostResponse;
 
 @Service
 public class PostService {
@@ -62,13 +65,15 @@ public class PostService {
         }
     }
 
-    public PostDTOWithID getByIdPout(Long id) {
+    public PostWithID getByIdPout(Long id) {
         if (repo.existsById(id)) {
             Post p = repo.findById(id).get();
-            return new PostDTOWithID(p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+            return new PostWithID(new ResponseBase(true, "", LocalDateTime.now()), p.getId(), p.getTitle(), p.getBody(),
+                    p.getType(), p.getAuthor().getId(),
                     p.getSub_section().getId(), p.getComments().size());
         } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** Post not found **");
+            return new PostWithID(new ResponseBase(false, "** Post not found **", LocalDateTime.now()), null, null,
+                    null, null, null, null, null);
         }
     }
 
@@ -76,18 +81,35 @@ public class PostService {
         return repo.findAllBySubSId(ss_id);
     }
 
-    public Post updatePost(Long user_id, String mod, UpdatePostDTO p) {
-        if (repo.existsById(p.getId())) {
-            Post fromDB = repo.findById(p.getId()).get();
-            if (mod.equals("false")) {
-                fromDB.setType(EPostType.valueOf(p.getType()));
-                fromDB.setBody(p.getBody());
+    public PostResponse updatePost(Long user_id, String mod, UpdatePostDTO p) {
+        if (u_repo.existsById(user_id)) {
+            if (repo.existsById(p.getId())) {
+                Post fromDB = repo.findById(p.getId()).get();
+                if (user_id.equals(fromDB.getAuthor().getId()) || u_svc.getRank(user_id).equals(EUserLevel.BOSS)
+                        || u_svc.getRank(user_id).equals(EUserLevel.BOSS)) {
+                    if (mod.equals("false")) {
+                        fromDB.setType(EPostType.valueOf(p.getType()));
+                        fromDB.setBody(p.getBody());
+                    }
+                    fromDB.setTitle(p.getTitle());
+                    repo.save(fromDB);
+                    return new PostResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                            fromDB.getTitle(),
+                            fromDB.getBody(), fromDB.getPublishedDate(), fromDB.getType(), fromDB.getAuthor(),
+                            fromDB.getReactions(), fromDB.getComments());
+                } else {
+                    return new PostResponse(new ResponseBase(false, "** User not authorized **", LocalDateTime.now()),
+                            null, null,
+                            null, null, null, null, null, null);
+                }
+            } else {
+                return new PostResponse(new ResponseBase(false, "** Post not found **", LocalDateTime.now()), null,
+                        null,
+                        null, null, null, null, null, null);
             }
-            fromDB.setTitle(p.getTitle());
-            repo.save(fromDB);
-            return fromDB;
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Post not found **");
+            return new PostResponse(new ResponseBase(false, "** User not found **", LocalDateTime.now()), null, null,
+                    null, null, null, null, null, null);
         }
     }
 
@@ -100,7 +122,7 @@ public class PostService {
         }
     }
 
-    public Post createNewPost(PostDTO pd) {
+    public PostResponse createNewPost(PostDTO pd) {
         SubSection ss = ss_repo.existsById(pd.getSubSection_id()) ? ss_repo.findById(pd.getSubSection_id()).get()
                 : null;
         User u = u_repo.existsById(pd.getUser_id()) ? u_repo.findById(pd.getUser_id()).get() : null;
@@ -109,26 +131,45 @@ public class PostService {
             EPostType ept = pd.getType() == null ? EPostType.GENERAL : pd.getType();
             Post post = Post.builder().title(pd.getTitle()).body(pd.getBody()).type(ept).author(u)
                     .sub_section(ss).publishedDate(LocalDateTime.now()).build();
-            return repo.save(post);
+            try {
+                repo.save(post);
+                return new PostResponse(new ResponseBase(true, "", LocalDateTime.now()), post.getId(),
+                        post.getTitle(),
+                        post.getBody(), post.getPublishedDate(), post.getType(), post.getAuthor(),
+                        post.getReactions(), post.getComments());
+            } catch (Exception ex) {
+                return new PostResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
+                        null, null,
+                        null, null, null, null, null, null);
+            }
+
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** User or SubSection not found **");
+            return new PostResponse(new ResponseBase(false, "** User or Sub section not found **", LocalDateTime.now()),
+                    null, null,
+                    null, null, null, null, null, null);
         }
     }
 
-    public Reaction updateReaction(Long id, Reaction react) {
-        if (react_repo.existsById(id)) {
+    public ReactionResponse updateReaction(Long id, Reaction react) {
+        if (react_repo.existsById(react.getId())) {
+            Reaction fromDB = react_repo.findById(react.getId()).get();
+            if (fromDB.getUser().getId().equals(react.getUser().getId())) {
+                //
+            }
             if (id.equals(react.getId())) {
                 react_repo.save(react);
-                return react;
+                return new ReactionResponse(new ResponseBase(true, "", LocalDateTime.now()), react.getId(),
+                        react.getUser(), react.getType());
             } else {
                 throw new CustomException(HttpStatus.BAD_REQUEST, "** ID and Reaction ID does not match **");
             }
         } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Reaction not found **");
+            return new ReactionResponse(new ResponseBase(true, "** Reaction not found **", LocalDateTime.now()), null,
+                    null, null);
         }
     }
 
-    public Reaction addReaction(ReactionDTO r) {
+    public ReactionResponse addReaction(ReactionDTO r) {
         Post post = repo.existsById(r.getPost_id()) ? repo.findById(r.getPost_id()).get() : null;
         User u = u_repo.existsById(r.getUser_id()) ? u_repo.findById(r.getUser_id()).get() : null;
 
@@ -139,9 +180,11 @@ public class PostService {
             }
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
             react_repo.save(reaction);
-            return reaction;
+            return new ReactionResponse(new ResponseBase(true, "", LocalDateTime.now()), reaction.getId(),
+                    reaction.getUser(), reaction.getType());
         } else {
-            return null;
+            return new ReactionResponse(new ResponseBase(true, "** Unexpected error **", LocalDateTime.now()), null,
+                    null, null);
         }
     }
 
@@ -154,14 +197,14 @@ public class PostService {
         }
     }
 
-    public CommentOutDTO addComment(CommentInDTO comment) {
+    public CommentOut addComment(CommentInDTO comment) {
         Post post = getById(comment.getPost_id());
         User user = u_svc.getById(comment.getUser_id());
 
         if (post != null && user != null) {
             Comment comm = comm_repo.save(Comment.builder().content(comment.getContent()).user(user).post(post)
                     .publishedDate(LocalDateTime.now()).build());
-            return CommentOutDTO.builder().content(comm.getContent()).id(comm.getId())
+            return CommentOut.builder().content(comm.getContent()).id(comm.getId())
                     .publishedDate(comm.getPublishedDate()).user(comm.getUser())
                     .user_level(u_svc.getRank(comm.getUser().getId())).build();
         } else {
@@ -182,16 +225,17 @@ public class PostService {
         return repo.getRandom();
     }
 
-    public PostOutDTOCPaged getPostOut(Long id, Pageable page) {
+    public PostOutCPaged getPostOut(Long id, Pageable page) {
         Post p = getById(id);
         EUserLevel level = u_svc.getRank(p.getAuthor().getId());
         Page<Comment> comments_page = comm_page.findAllByPostId(id, page);
 
-        Page<CommentOutDTO> comments_page_out = comments_page
-                .map(c -> CommentOutDTO.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
+        Page<CommentOut> comments_page_out = comments_page
+                .map(c -> CommentOut.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
                         .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
 
-        return new PostOutDTOCPaged(p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(),
+        return new PostOutCPaged(new ResponseBase(true, "", LocalDateTime.now()), p.getId(), p.getTitle(), p.getBody(),
+                p.getPublishedDate(), p.getType(),
                 p.getAuthor(),
                 p.getReactions(), comments_page_out, level, p.getSub_section().getParent_section().getTitle(),
                 p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),

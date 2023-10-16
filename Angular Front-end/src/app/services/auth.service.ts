@@ -50,7 +50,7 @@ export class AuthService {
       )
         .pipe(
           catchError((err) => {
-            console.log('Mio log custom', err);
+            //console.log('Mio log custom', err);
             return EMPTY;
           })
         )

@@ -1,5 +1,6 @@
 package com.cybermodding.services;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -10,21 +11,31 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
-import com.cybermodding.exception.CustomException;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.BlockDTO;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.SideBlockRepo;
+import com.cybermodding.repositories.UserRepo;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.ResponseBase;
+import com.cybermodding.responses.SideBlockResponse;
 
 @Service
 public class SideBlockService {
     @Autowired
     SideBlockRepo repo;
+    @Autowired
+    UserRepo u_repo;
+    @Autowired
+    UserService u_svc;
 
-    public SideBlock getById(Long id) {
+    public SideBlockResponse getById(Long id) {
         if (repo.existsById(id)) {
-            return repo.findById(id).get();
+            SideBlock s = repo.findById(id).get();
+            return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), s.getId(), s.getTitle(),
+                    s.getContent(), s.getActive(), s.getE_block_type(), s.getOrder_number());
         } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** Side Block not found **");
+            return new SideBlockResponse(new ResponseBase(false, "** Side block not found **", LocalDateTime.now()),
+                    null, null, null, null, null, null);
         }
     }
 
@@ -34,19 +45,29 @@ public class SideBlockService {
             CustomResponse cr = new CustomResponse(new Date(), "** Side Block deleted succesfully **", HttpStatus.OK);
             return new ResponseEntity<CustomResponse>(cr, HttpStatus.OK);
         } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** Side Block not found **");
+            CustomResponse cr = new CustomResponse(new Date(), "** Side Block not found **", HttpStatus.BAD_GATEWAY);
+            return new ResponseEntity<CustomResponse>(cr, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public ResponseEntity<SideBlock> saveBlock(BlockDTO s) {
-        SideBlock createdS = repo.save(SideBlock.builder().title(s.getTitle()).active(s.getActive())
-                .content(s.getContent()).e_block_type(s.getE_block_type()).order_number(s.getOrder_number()).build());
-        return new ResponseEntity<SideBlock>(createdS, HttpStatus.CREATED);
+    public SideBlockResponse saveBlock(BlockDTO s) {
+        try {
+            SideBlock createdS = repo.save(SideBlock.builder().title(s.getTitle()).active(s.getActive())
+                    .content(s.getContent()).e_block_type(s.getE_block_type()).order_number(s.getOrder_number())
+                    .build());
+            return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), createdS.getId(),
+                    createdS.getTitle(),
+                    createdS.getContent(), createdS.getActive(), createdS.getE_block_type(),
+                    createdS.getOrder_number());
+        } catch (Exception ex) {
+            return new SideBlockResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
+                    null, null, null, null, null, null);
+        }
     }
 
-    public ResponseEntity<CustomResponse> updateBlock(Long id, SideBlock s) {
-        if (repo.existsById(id)) {
-            if (id.equals(s.getId())) {
+    public SideBlockResponse updateBlock(Long id, SideBlock s) {
+        if (repo.existsById(s.getId())) {
+            if (u_repo.existsById(id) && u_svc.getRank(id).equals(EUserLevel.BOSS)) {
                 SideBlock fromDB = repo.findById(s.getId()).get();
                 fromDB.setActive(s.getActive());
                 fromDB.setContent(s.getContent());
@@ -54,18 +75,19 @@ public class SideBlockService {
                 fromDB.setOrder_number(s.getOrder_number());
                 fromDB.setTitle(s.getTitle());
                 repo.save(fromDB);
-                CustomResponse cr = new CustomResponse(new Date(), "** Side block updated succesfully **",
-                        HttpStatus.OK);
-                return new ResponseEntity<CustomResponse>(cr, HttpStatus.OK);
+
+                return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                        fromDB.getTitle(),
+                        fromDB.getContent(), fromDB.getActive(), fromDB.getE_block_type(),
+                        fromDB.getOrder_number());
             } else {
-                CustomResponse cr = new CustomResponse(new Date(), "** Input ID and Block ID does not match **",
-                        HttpStatus.BAD_REQUEST);
-                return new ResponseEntity<CustomResponse>(cr, HttpStatus.BAD_REQUEST);
+                return new SideBlockResponse(
+                        new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
+                        null, null, null, null, null, null);
             }
         } else {
-            CustomResponse cr = new CustomResponse(new Date(), "** Block not found **",
-                    HttpStatus.NOT_FOUND);
-            return new ResponseEntity<CustomResponse>(cr, HttpStatus.NOT_FOUND);
+            return new SideBlockResponse(new ResponseBase(false, "** Block not found **", LocalDateTime.now()),
+                    null, null, null, null, null, null);
         }
     }
 

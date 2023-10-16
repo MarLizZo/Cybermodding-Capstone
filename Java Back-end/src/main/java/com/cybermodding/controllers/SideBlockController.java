@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.payload.BlockDTO;
-import com.cybermodding.payload.CustomResponse;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.SideBlockResponse;
 import com.cybermodding.services.SideBlockService;
 
 @RestController
@@ -40,14 +41,14 @@ public class SideBlockController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SideBlock> getSingleBlock(@PathVariable Long id) {
-        return new ResponseEntity<SideBlock>(svc.getById(id), HttpStatus.OK);
+    public ResponseEntity<SideBlockResponse> getSingleBlock(@PathVariable Long id) {
+        return new ResponseEntity<SideBlockResponse>(svc.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("/new")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SideBlock> createBlock(@RequestBody BlockDTO body) {
-        return svc.saveBlock(body);
+    public ResponseEntity<SideBlockResponse> createBlock(@RequestBody BlockDTO body) {
+        return new ResponseEntity<SideBlockResponse>(svc.saveBlock(body), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -58,7 +59,7 @@ public class SideBlockController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateBlock(@PathVariable Long id, @RequestBody SideBlock body) {
-        return svc.updateBlock(id, body);
+    public ResponseEntity<SideBlockResponse> updateBlock(@PathVariable Long id, @RequestBody SideBlock body) {
+        return new ResponseEntity<SideBlockResponse>(svc.updateBlock(id, body), HttpStatus.OK);
     }
 }

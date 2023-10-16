@@ -2,10 +2,12 @@ import { PostType } from '../enums/post-type';
 import { UserLevel } from '../enums/user-level';
 import { ICommentData } from './icomment-data';
 import { Ireaction } from './ireaction';
+import { IResponseBase } from './iresponse-base';
 import { ISubSectionData } from './isub-section-data';
 import { IUserData } from './iuser-data';
 
 export interface IPostData {
+  response?: IResponseBase;
   id?: number;
   title: string;
   body: string;

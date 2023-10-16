@@ -5,7 +5,10 @@
     <app-hero></app-hero>
     <div class="container-fluid">
         <h1 class="mt-4 mb-4 pb-2">Cybermodding Homepage</h1>
-        <div class="row w-100 m-0">
+        <div *ngIf="errorsMsgs.length" class="w-100 m-0 d-flex justify-content-center">
+            <h4 class="mt-3 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+        </div>
+        <div *ngIf="errorsMsgs.length == 0" class="row w-100 m-0">
             <div class="col-12 w-100 p-0 d-block d-lg-none">
                 <div class="row w-100 m-0 p-0 justify-content-center">
                     <div *ngFor="let side of sidesArr" class="col-12 col-sm-6">

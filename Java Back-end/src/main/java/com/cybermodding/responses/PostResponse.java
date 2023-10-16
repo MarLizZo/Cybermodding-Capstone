@@ -1,21 +1,24 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
-import com.cybermodding.enumerators.EUserLevel;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
-@Data
-public class PostOutDTO {
+public class PostResponse {
+    private ResponseBase response;
     private Long id;
     private String title;
     private String body;
@@ -23,11 +26,5 @@ public class PostOutDTO {
     private EPostType type;
     private User author;
     private List<Reaction> reactions;
-    private EUserLevel user_level;
-    private String main_section_title;
-    private Long main_section_id;
-    private String subsection_title;
-    private Long subsection_id;
-    private Integer comments_count;
-    private CommentOutDTO last_comment;
+    private List<Comment> comments;
 }

@@ -1,11 +1,11 @@
 package com.cybermodding.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,15 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.SubSection;
-import com.cybermodding.payload.CommentOutDTO;
-import com.cybermodding.payload.CustomResponse;
-import com.cybermodding.payload.PostOutDTO;
 import com.cybermodding.payload.SubSectionDto;
-import com.cybermodding.payload.SubSectionOutDTO;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.SubSectionOut;
+import com.cybermodding.responses.SubSectionResponse;
 import com.cybermodding.services.SubSectionService;
-import com.cybermodding.services.UserService;
 
 @RestController
 @RequestMapping("/api/subsections")
@@ -33,48 +30,10 @@ import com.cybermodding.services.UserService;
 public class SubSectionController {
     @Autowired
     SubSectionService svc;
-    @Autowired
-    UserService u_svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<SubSectionOutDTO> getById(@PathVariable Long id) {
-        SubSection sub = svc.getById(id);
-        List<PostOutDTO> pout = new ArrayList<>();
-
-        if (sub.getPosts().size() != 0) {
-            sub.getPosts().forEach(post -> {
-                if (post.getComments().size() != 0) {
-                    Comment last = post.getComments().get(0);
-                    CommentOutDTO cmOut = CommentOutDTO.builder().id(last.getId()).content(last.getContent())
-                            .user(last.getUser()).publishedDate(last.getPublishedDate())
-                            .user_level(u_svc.getRank(last.getUser().getId())).build();
-
-                    pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
-                            post.getType(),
-                            post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
-                            post.getSub_section().getParent_section().getTitle(),
-                            post.getSub_section().getParent_section().getId(),
-                            post.getSub_section().getTitle(), post.getSub_section().getId(), post.getComments().size(),
-                            cmOut));
-                } else {
-                    pout.add(new PostOutDTO(post.getId(), post.getTitle(), post.getBody(), post.getPublishedDate(),
-                            post.getType(),
-                            post.getAuthor(), post.getReactions(), u_svc.getRank(post.getAuthor().getId()),
-                            post.getSub_section().getParent_section().getTitle(),
-                            post.getSub_section().getParent_section().getId(),
-                            post.getSub_section().getTitle(), post.getSub_section().getId(), 0,
-                            null));
-                }
-            });
-        }
-
-        SubSectionOutDTO ss = SubSectionOutDTO.builder().id(sub.getId()).title(sub.getTitle())
-                .active(sub.getActive()).description(sub.getDescription()).order_number(sub.getOrder_number())
-                .posts(pout)
-                .parent_id(sub.getParent_section().getId()).parent_title(sub.getParent_section().getTitle())
-                .build();
-
-        return new ResponseEntity<SubSectionOutDTO>(ss, HttpStatus.OK);
+    public ResponseEntity<SubSectionOut> getById(@PathVariable Long id) {
+        return new ResponseEntity<SubSectionOut>(svc.getSSOut(id), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -87,16 +46,19 @@ public class SubSectionController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<SubSection> createNewSubSection(@RequestBody SubSectionDto s) {
-        return new ResponseEntity<SubSection>(svc.saveSubSection(s), HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SubSectionResponse> createNewSubSection(@RequestBody SubSectionDto s) {
+        return new ResponseEntity<SubSectionResponse>(svc.saveSubSection(s), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubSection> updateSubSection(@PathVariable Long id, @RequestBody SubSection s) {
-        return new ResponseEntity<SubSection>(svc.updateSubSection(id, s), HttpStatus.OK);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SubSectionResponse> updateSubSection(@PathVariable Long id, @RequestBody SubSection s) {
+        return new ResponseEntity<SubSectionResponse>(svc.updateSubSection(id, s), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomResponse> deleteSubSection(@PathVariable Long id) {
         return new ResponseEntity<CustomResponse>(svc.deleteById(id), HttpStatus.OK);
     }

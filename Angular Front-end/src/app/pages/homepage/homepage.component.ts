@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
@@ -19,7 +21,8 @@ export class HomepageComponent {
   constructor(
     private svc: HomeService,
     private auth_svc: AuthService,
-    private router: Router
+    private router: Router,
+    private modalSvc: NgbModal
   ) {}
 
   newsSub!: Subscription;
@@ -38,13 +41,16 @@ export class HomepageComponent {
   selectedSectionData!: ISubSectionData;
   postsData!: IPostHomePaged;
   pagesArr: number[] = [];
+  errorsMsgs: string[] = [];
 
   ngOnInit() {
     this.sidesSub = this.svc
       .getForumSideBlocks()
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorsMsgs.push(err.message);
+          this.showModal();
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -55,7 +61,8 @@ export class HomepageComponent {
       .getSections()
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorsMsgs.push(err.message);
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -71,6 +78,15 @@ export class HomepageComponent {
     setTimeout(() => {
       this.isWaitingPage = false;
     }, 1000);
+  }
+
+  showModal() {
+    if (!this.isLoadingPage) {
+      const modal = this.modalSvc.open(ErrorModalComponent, {
+        size: 'xl',
+      });
+      modal.componentInstance.messages = this.errorsMsgs;
+    }
   }
 
   ngOnDestroy() {
@@ -91,7 +107,9 @@ export class HomepageComponent {
       .pipe(
         catchError((err) => {
           this.isLoadingPage = false;
-          throw err;
+          this.errorsMsgs.push(err.message);
+          this.showModal();
+          return EMPTY;
         })
       )
       .subscribe((res) => {

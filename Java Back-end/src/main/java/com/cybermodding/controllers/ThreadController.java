@@ -17,17 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cybermodding.entities.Post;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.payload.CommentInDTO;
-import com.cybermodding.payload.CommentOutDTO;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.PostDTO;
-import com.cybermodding.payload.PostDTOWithID;
 import com.cybermodding.payload.PostHome;
-import com.cybermodding.payload.PostOutDTOCPaged;
 import com.cybermodding.payload.ReactionDTO;
 import com.cybermodding.payload.UpdatePostDTO;
+import com.cybermodding.responses.CommentOut;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.PostWithID;
+import com.cybermodding.responses.ReactionResponse;
+import com.cybermodding.responses.PostOutCPaged;
+import com.cybermodding.responses.PostResponse;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.UserService;
 
@@ -42,12 +43,12 @@ public class ThreadController {
     UserService u_svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostOutDTOCPaged> getById(@PathVariable Long id, Pageable page) {
+    public ResponseEntity<PostOutCPaged> getById(@PathVariable Long id, Pageable page) {
         return ResponseEntity.ok(svc.getPostOut(id, page));
     }
 
     @GetMapping("/single/{id}")
-    public ResponseEntity<PostDTOWithID> getSinglePost(@PathVariable Long id) {
+    public ResponseEntity<PostWithID> getSinglePost(@PathVariable Long id) {
         return ResponseEntity.ok(svc.getByIdPout(id));
     }
 
@@ -70,7 +71,8 @@ public class ThreadController {
     }
 
     @PutMapping("/{u_id}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long u_id, @RequestParam(defaultValue = "false") String mod,
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long u_id,
+            @RequestParam(defaultValue = "false") String mod,
             @RequestBody UpdatePostDTO data) {
         return ResponseEntity.ok(svc.updatePost(u_id, mod, data));
     }
@@ -81,12 +83,12 @@ public class ThreadController {
     }
 
     @PostMapping("/react")
-    public ResponseEntity<Reaction> addReaction(@RequestBody ReactionDTO react) {
+    public ResponseEntity<ReactionResponse> addReaction(@RequestBody ReactionDTO react) {
         return ResponseEntity.ok(svc.addReaction(react));
     }
 
     @PutMapping("/react/{id}")
-    public ResponseEntity<Reaction> updateReaction(@PathVariable Long id, @RequestBody Reaction react) {
+    public ResponseEntity<ReactionResponse> updateReaction(@PathVariable Long id, @RequestBody Reaction react) {
         return ResponseEntity.ok(svc.updateReaction(id, react));
     }
 
@@ -96,12 +98,12 @@ public class ThreadController {
     }
 
     @PostMapping("/reply")
-    public ResponseEntity<CommentOutDTO> postComment(@RequestBody CommentInDTO comm) {
+    public ResponseEntity<CommentOut> postComment(@RequestBody CommentInDTO comm) {
         return ResponseEntity.ok(svc.addComment(comm));
     }
 
     @PostMapping("")
-    public ResponseEntity<Post> postNewThread(@RequestBody PostDTO post) {
+    public ResponseEntity<PostResponse> postNewThread(@RequestBody PostDTO post) {
         return ResponseEntity.ok(svc.createNewPost(post));
     }
 

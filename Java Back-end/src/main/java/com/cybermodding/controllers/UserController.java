@@ -20,11 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.User;
-import com.cybermodding.payload.AdminModsDTO;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.ModerateUserInDTO;
-import com.cybermodding.payload.ProfileOutDTO;
 import com.cybermodding.payload.UserModerationData;
+import com.cybermodding.responses.AdminModsRes;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.ProfileOut;
+import com.cybermodding.responses.UserResponse;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.services.ModerationService;
 import com.cybermodding.services.UserService;
@@ -40,8 +41,8 @@ public class UserController {
     ModerationService m_svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
-        return new ResponseEntity<User>(u_svc.getById(id), HttpStatus.OK);
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        return new ResponseEntity<UserResponse>(u_svc.getUserOut(id), HttpStatus.OK);
     }
 
     @GetMapping("/name")
@@ -58,13 +59,13 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User u) {
-        return u_svc.updateUser(id, u);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody User u) {
+        return ResponseEntity.ok(u_svc.updateUser(id, u));
     }
 
     @PostMapping("/pass/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateDTO passDto) {
+    public ResponseEntity<UserResponse> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateDTO passDto) {
         return ResponseEntity.ok(u_svc.updatePassword(id, passDto));
     }
 
@@ -76,12 +77,12 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<?> getUsersPageSorted(Pageable pageable) {
-        return new ResponseEntity<Page<ProfileOutDTO>>(u_svc.getUsersPaginationProfile(pageable),
+        return new ResponseEntity<Page<ProfileOut>>(u_svc.getUsersPaginationProfile(pageable),
                 HttpStatus.OK);
     }
 
     @GetMapping("/bosses")
-    public ResponseEntity<AdminModsDTO> getBosses() {
+    public ResponseEntity<AdminModsRes> getBosses() {
         return ResponseEntity.ok(u_svc.getAdminMods());
     }
 
@@ -98,7 +99,7 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<ProfileOutDTO> getProfileInfo(@PathVariable Long id) {
+    public ResponseEntity<ProfileOut> getProfileInfo(@PathVariable Long id) {
         return ResponseEntity.ok(u_svc.getProfile(id));
     }
 }

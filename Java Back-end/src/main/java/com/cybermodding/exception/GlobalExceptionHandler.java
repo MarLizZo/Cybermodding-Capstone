@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.cybermodding.payload.ErrorDetails;
+import com.cybermodding.responses.CustomResponse;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -23,25 +23,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handle specific exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
+    public ResponseEntity<CustomResponse> handleResourceNotFoundException(ResourceNotFoundException exception,
             WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
-                webRequest.getDescription(false), HttpStatus.NOT_FOUND);
+        CustomResponse errorDetails = new CustomResponse(new Date(), exception.getMessage(), HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorDetails> handleBlogAPIException(CustomException exception, WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
-                webRequest.getDescription(false), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<CustomResponse> handleBlogAPIException(CustomException exception, WebRequest webRequest) {
+        CustomResponse errorDetails = new CustomResponse(new Date(), exception.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     // global exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception, WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
-                webRequest.getDescription(false), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<CustomResponse> handleGlobalException(Exception exception, WebRequest webRequest) {
+        CustomResponse errorDetails = new CustomResponse(new Date(), exception.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -61,10 +59,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorDetails> handleAccessDeniedException(AccessDeniedException exception,
+    public ResponseEntity<CustomResponse> handleAccessDeniedException(AccessDeniedException exception,
             WebRequest webRequest) {
-        ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
-                webRequest.getDescription(false), HttpStatus.UNAUTHORIZED);
+        CustomResponse errorDetails = new CustomResponse(new Date(), exception.getMessage(), HttpStatus.UNAUTHORIZED);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 }

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.ChatMsgDTO;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.repositories.ChatRepo;
+import com.cybermodding.responses.CustomResponse;
 
 @Service
 public class ChatService {

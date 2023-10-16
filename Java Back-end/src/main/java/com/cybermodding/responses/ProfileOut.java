@@ -1,8 +1,9 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.time.LocalDate;
 
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.payload.CommentCompleteDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProfileOutDTO {
+public class ProfileOut {
+    private ResponseBase response;
     private Long id;
     private String username;
     private String email;
@@ -23,7 +25,7 @@ public class ProfileOutDTO {
     private LocalDate birthdate;
     private Integer posts_count;
     private Integer comments_count;
-    private PostDTOWithID last_post;
+    private PostWithID last_post;
     private CommentCompleteDTO last_comment;
     private EUserLevel level;
 }

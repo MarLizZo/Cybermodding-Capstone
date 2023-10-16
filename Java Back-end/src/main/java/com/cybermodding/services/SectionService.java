@@ -1,5 +1,6 @@
 package com.cybermodding.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,22 +10,32 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Section;
-import com.cybermodding.exception.CustomException;
-import com.cybermodding.payload.CustomResponse;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.SectionDto;
-import com.cybermodding.payload.SectionWithSub;
 import com.cybermodding.repositories.SectionRepo;
+import com.cybermodding.repositories.UserRepo;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.ResponseBase;
+import com.cybermodding.responses.SectionResponse;
+import com.cybermodding.responses.SectionWithSub;
 
 @Service
 public class SectionService {
     @Autowired
     SectionRepo repo;
+    @Autowired
+    UserRepo u_repo;
+    @Autowired
+    UserService u_svc;
 
-    public Section getById(Long id) {
+    public SectionResponse getById(Long id) {
         if (repo.existsById(id)) {
-            return repo.findById(id).get();
+            Section s = repo.findById(id).get();
+            return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), s.getId(), s.getTitle(),
+                    s.getDescription(), s.getActive(), s.getOrder_number());
         } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** Section not found **");
+            return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()), null,
+                    null, null, null, null);
         }
     }
 
@@ -37,27 +48,39 @@ public class SectionService {
         }
     }
 
-    public Section saveSection(SectionDto s) {
+    public SectionResponse saveSection(SectionDto s) {
         try {
-            Section sec = new Section(s.getTitle(), s.getDescription(), s.getActive(), s.getOrder_number());
-            return repo.save(sec);
+            Section sec = repo.save(new Section(s.getTitle(), s.getDescription(), s.getActive(), s.getOrder_number()));
+            return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), sec.getId(),
+                    sec.getTitle(), sec.getDescription(), sec.getActive(), sec.getOrder_number());
         } catch (IllegalArgumentException ex) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Campi obbligatori mancanti **");
+            return new SectionResponse(new ResponseBase(false, "** Campi obbligatori mancanti **", LocalDateTime.now()),
+                    null, null, null, null, null);
         } catch (Exception ex) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** " + ex.getMessage() + " **");
+            return new SectionResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
+                    null, null, null, null, null);
         }
     }
 
-    public Section updateSection(Long id, Section s) {
-        if (id.equals(s.getId())) {
-            Section fromDB = getById(s.getId());
-            fromDB.setTitle(s.getTitle());
-            fromDB.setDescription(s.getDescription());
-            fromDB.setActive(s.getActive());
-            fromDB.setOrder_number(s.getOrder_number());
-            return repo.save(fromDB);
+    public SectionResponse updateSection(Long id, Section s) {
+        if (u_repo.existsById(id) && u_svc.getRank(id).equals(EUserLevel.BOSS)) {
+            if (repo.existsById(s.getId())) {
+                Section fromDB = repo.findById(id).get();
+                fromDB.setTitle(s.getTitle());
+                fromDB.setDescription(s.getDescription());
+                fromDB.setActive(s.getActive());
+                fromDB.setOrder_number(s.getOrder_number());
+                repo.save(fromDB);
+                return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                        fromDB.getTitle(), fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number());
+            } else {
+                return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()),
+                        null, null, null, null, null);
+            }
         } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** IDs does not match **");
+            return new SectionResponse(
+                    new ResponseBase(false, "** User not found or authorized **", LocalDateTime.now()), null,
+                    null, null, null, null);
         }
     }
 

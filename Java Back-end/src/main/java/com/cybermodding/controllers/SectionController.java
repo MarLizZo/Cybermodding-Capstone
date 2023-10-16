@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.Section;
-import com.cybermodding.payload.CustomResponse;
 import com.cybermodding.payload.SectionDto;
+import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.SectionResponse;
 import com.cybermodding.services.SectionService;
 
 @RestController
@@ -29,8 +31,8 @@ public class SectionController {
     SectionService svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Section> getById(@PathVariable Long id) {
-        return new ResponseEntity<Section>(svc.getById(id), HttpStatus.OK);
+    public ResponseEntity<SectionResponse> getById(@PathVariable Long id) {
+        return new ResponseEntity<SectionResponse>(svc.getById(id), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -45,17 +47,20 @@ public class SectionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomResponse> deleteSection(@PathVariable Long id) {
         return new ResponseEntity<CustomResponse>(svc.deleteById(id), HttpStatus.OK);
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Section> createNewSection(@RequestBody SectionDto s) {
-        return new ResponseEntity<Section>(svc.saveSection(s), HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionResponse> createNewSection(@RequestBody SectionDto s) {
+        return new ResponseEntity<SectionResponse>(svc.saveSection(s), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Section> updateSection(@PathVariable Long id, @RequestBody Section s) {
-        return new ResponseEntity<Section>(svc.updateSection(id, s), HttpStatus.OK);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<SectionResponse> updateSection(@PathVariable Long id, @RequestBody Section s) {
+        return new ResponseEntity<SectionResponse>(svc.updateSection(id, s), HttpStatus.OK);
     }
 }

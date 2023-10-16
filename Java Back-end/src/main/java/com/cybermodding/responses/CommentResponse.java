@@ -1,23 +1,24 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.time.LocalDateTime;
 
+import com.cybermodding.entities.Post;
 import com.cybermodding.entities.User;
-import com.cybermodding.enumerators.EUserLevel;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
-public class CommentOutDTO {
+@Setter
+public class CommentResponse {
+    private ResponseBase response;
     private Long id;
     private String content;
     private User user;
+    private Post post;
     private LocalDateTime publishedDate;
-    private EUserLevel user_level;
 }

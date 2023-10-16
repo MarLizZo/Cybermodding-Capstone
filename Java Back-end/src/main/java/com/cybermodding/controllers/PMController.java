@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cybermodding.entities.PrivateMessage;
+import com.cybermodding.responses.ResponsePM;
 import com.cybermodding.services.PMService;
 
 @RestController
@@ -26,7 +27,7 @@ public class PMController {
     }
 
     @GetMapping("/viewed/{id}")
-    public ResponseEntity<PrivateMessage> markViewed(@PathVariable Long id) {
+    public ResponseEntity<ResponsePM> markViewed(@PathVariable Long id) {
         return ResponseEntity.ok(svc.markAsViewed(id));
     }
 }

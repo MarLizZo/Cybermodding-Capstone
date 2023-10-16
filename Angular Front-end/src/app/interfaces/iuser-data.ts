@@ -1,8 +1,10 @@
 import { UserLevel } from '../enums/user-level';
 import { ICommentData } from './icomment-data';
 import { IPostData } from './ipost-data';
+import { IResponseBase } from './iresponse-base';
 
 export interface IUserData {
+  response?: IResponseBase;
   id?: number;
   username: string;
   email: string;

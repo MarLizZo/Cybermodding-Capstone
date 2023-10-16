@@ -1,4 +1,4 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.util.Date;
 

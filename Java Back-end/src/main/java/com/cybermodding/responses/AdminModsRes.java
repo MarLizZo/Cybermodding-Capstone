@@ -1,4 +1,4 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.util.List;
 
@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminModsDTO {
-    private List<ProfileOutDTO> admins;
-    private List<ProfileOutDTO> mods;
+public class AdminModsRes {
+    private ResponseBase response;
+    private List<ProfileOut> admins;
+    private List<ProfileOut> mods;
 }

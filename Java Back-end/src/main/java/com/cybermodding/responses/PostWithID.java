@@ -1,4 +1,4 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import com.cybermodding.enumerators.EPostType;
 
@@ -6,12 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class PostDTOWithID {
+@Setter
+public class PostWithID {
+    private ResponseBase response;
     private Long id;
     private String title;
     private String body;

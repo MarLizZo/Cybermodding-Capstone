@@ -8,6 +8,7 @@ import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { SideblockComponent } from 'src/app/components/sideblock/sideblock.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [HomepageComponent],
@@ -19,6 +20,7 @@ import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-b
     SideblockComponent,
     NgbDropdownModule,
     OrangeButtonComponent,
+    ErrorModalComponent,
   ],
 })
 export class HomepageModule {}
