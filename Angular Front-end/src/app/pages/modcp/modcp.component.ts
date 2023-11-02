@@ -1,7 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
@@ -14,13 +14,18 @@ import { ModerationService } from 'src/app/services/moderation.service';
 })
 export class ModcpComponent {
   isLoadingPage: boolean = true;
+  isWaitingPage: boolean = true;
+  isWaitingPanel: boolean = true;
+  isErrorPanel: boolean = false;
+  errorPanelMsg: string = '';
   isOpUsers: boolean = false;
-  username: string = '';
-  user_id: number = 0;
+  username: string | undefined = '';
+  user_id: number | undefined = 0;
   classColor: string = '';
   granted: boolean = false;
   isUsersModeration: boolean = true;
   isThreadsModeration: boolean = false;
+  initSub!: Subscription;
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
   usersSub!: Subscription;
@@ -42,22 +47,26 @@ export class ModcpComponent {
   ) {}
 
   ngOnInit() {
-    this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
-      if (res?.isMod || res?.isAdmin) {
-        this.granted = true;
-        this.classColor = res.isMod ? 'text-mod' : 'text-danger';
+    this.initSub = this.authSvc.intialized$.subscribe((res) => {
+      if (res) {
+        this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
+          if (res?.isMod || res?.isAdmin) {
+            this.granted = true;
+            this.classColor = res.isMod ? 'text-mod' : 'text-danger';
 
-        this.authUserSub = this.authSvc.user$.subscribe((res) => {
-          this.username = res!.username;
-          this.user_id = res!.user_id;
-          this.isLoadingPage = false;
+            this.authUserSub = this.authSvc.user$.subscribe((res) => {
+              this.username = res!.username;
+              this.user_id = res!.user_id;
+              this.isLoadingPage = false;
+            });
+          } else {
+            this.isLoadingPage = false;
+            this.granted = false;
+            setTimeout(() => {
+              this.router.navigateByUrl('/');
+            }, 2000);
+          }
         });
-      } else {
-        this.isLoadingPage = false;
-        this.granted = false;
-        setTimeout(() => {
-          this.router.navigateByUrl('/');
-        }, 2000);
       }
     });
   }
@@ -68,9 +77,13 @@ export class ModcpComponent {
     if (this.usersSub) this.usersSub.unsubscribe();
     if (this.searcUserSub) this.searcUserSub.unsubscribe();
     if (this.moderateUserSub) this.moderateUserSub.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
   }
 
   switchModeration(flag: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (flag == 0) {
       if (!this.isUsersModeration) {
         this.isUsersModeration = !this.isUsersModeration;
@@ -89,11 +102,16 @@ export class ModcpComponent {
   }
 
   searchUsers(page: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     this.searcUserSub = this.svc
       .getUsersFromName(this.inputSearchUser, page)
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorPanelMsg = 'Errore nel caricamento degli utenti.';
+          this.isErrorPanel = true;
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -208,7 +226,7 @@ export class ModcpComponent {
       };
 
       this.moderateUserSub = this.svc
-        .moderate(this.user_id, outData)
+        .moderate(this.user_id!, outData)
         .pipe(
           catchError((err) => {
             this.isOpUsers = false;

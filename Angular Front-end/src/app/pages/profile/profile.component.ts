@@ -1,7 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IPasswordChange } from 'src/app/interfaces/ipassword-change';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
@@ -13,6 +15,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent {
+  initSub!: Subscription;
   userSub!: Subscription;
   profileSub!: Subscription;
   updateSub!: Subscription;
@@ -25,6 +28,7 @@ export class ProfileComponent {
   isQuickStatsCollapsed: boolean = false;
   isInfoCollapsed: boolean = true;
   isPassCollapsed: boolean = true;
+  errorsMsgs: string[] = [];
   @ViewChild('fInfo') formInfo!: NgForm;
   @ViewChild('fPass') formPass!: NgForm;
   @ViewChild('usernameP') usernameP!: ElementRef<HTMLElement>;
@@ -61,35 +65,55 @@ export class ProfileComponent {
   constructor(
     private authSvc: AuthService,
     private uSvc: UserService,
-    private router: Router
+    private router: Router,
+    private modalSvc: NgbModal
   ) {}
 
   ngOnInit() {
     setTimeout(() => {
       this.isWaitingPage = false;
-    }, 250);
+    }, 500);
 
-    this.userSub = this.authSvc.user$.subscribe((res) => {
-      if (res != null) {
-        this.profileSub = this.uSvc
-          .getProfileData(res.user_id)
-          .pipe(
-            catchError((err) => {
-              throw err;
-            })
-          )
-          .subscribe((res) => {
-            this.profileData = res;
-            this.userObject.id = res.id;
-            this.userObject.username = res.username;
-            this.userObject.email = res.email;
-            this.userObject.description = res.description;
-            this.userObject.avatar = res.avatar;
-            this.userObject.birthdate = res.birthdate;
+    this.initSub = this.authSvc.intialized$.subscribe((init) => {
+      if (init) {
+        this.userSub = this.authSvc.user$.subscribe((res) => {
+          if (res != null) {
+            this.profileSub = this.uSvc
+              .getProfileData(res.user_id)
+              .pipe(
+                catchError((err) => {
+                  this.errorsMsgs.push(
+                    'Errore nel caricamento dei dati del profilo.'
+                  );
+                  this.isLoadingPage = false;
+                  this.showModal();
+                  return EMPTY;
+                })
+              )
+              .subscribe((res) => {
+                this.profileData = res;
+                this.userObject.id = res.id;
+                this.userObject.username = res.username;
+                this.userObject.email = res.email;
+                this.userObject.description = res.description;
+                this.userObject.avatar = res.avatar;
+                this.userObject.birthdate = res.birthdate;
+                this.isLoadingPage = false;
+              });
+          } else {
             this.isLoadingPage = false;
-          });
+            this.errorsMsgs.push('Errore nel caricamento della pagina.');
+          }
+        });
       }
     });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -97,6 +121,7 @@ export class ProfileComponent {
     if (this.profileSub) this.profileSub.unsubscribe();
     if (this.updateSub) this.updateSub.unsubscribe();
     if (this.updatePassSub) this.updatePassSub.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
   }
 
   getClassColor() {
@@ -189,7 +214,10 @@ export class ProfileComponent {
       bool = false;
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
-    if (this.formInfo.controls['avatar'].value != null) {
+    if (
+      this.formInfo.controls['avatar'].value != null &&
+      this.formInfo.controls['avatar'].value != ''
+    ) {
       if (
         !RegExp('/.(jpeg|jpg|png|gif|bmp)$/i').test(
           this.formInfo.controls['avatar'].value
@@ -224,6 +252,9 @@ export class ProfileComponent {
   }
 
   resetUserInfoFields() {
+    this.accountUpd.nativeElement.innerText =
+      'Account aggiornato con successo!';
+    this.accountUpd.nativeElement.classList.add('opacity-0');
     this.avatarP.nativeElement.classList.add('d-none');
     this.descriptionP.nativeElement.classList.add('d-none');
     this.birthdateP.nativeElement.classList.add('d-none');
@@ -232,6 +263,8 @@ export class ProfileComponent {
   }
 
   resetUserPassFields() {
+    this.passUpd.nativeElement.classList.add('opacity-0');
+    this.passUpd.nativeElement.innerText = 'Password aggiornata con successo!';
     this.actualP.nativeElement.classList.add('d-none');
     this.repeatActualP.nativeElement.classList.add('d-none');
     this.newP.nativeElement.classList.add('d-none');
@@ -240,14 +273,20 @@ export class ProfileComponent {
 
   updateUserInfo() {
     this.resetUserInfoFields();
+
     if (this.checkInputInfos()) {
       this.isSendingData = true;
       this.updateSub = this.uSvc
         .updateUser(this.userObject)
         .pipe(
           catchError((err) => {
-            this.isSendingData = false;
-            throw err;
+            setTimeout(() => {
+              this.isSendingData = false;
+              this.accountUpd.nativeElement.innerText =
+                "Errore nell'aggiornamento dell'account.";
+              this.accountUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -264,6 +303,7 @@ export class ProfileComponent {
 
   updatePass() {
     this.resetUserPassFields();
+
     if (this.checkUserPassInputs()) {
       this.isSendingDataPass = true;
       this.userPassObject.id = this.profileData?.id;
@@ -273,7 +313,13 @@ export class ProfileComponent {
         .pipe(
           catchError((err) => {
             this.isSendingDataPass = false;
-            throw err;
+            setTimeout(() => {
+              this.isSendingData = false;
+              this.passUpd.nativeElement.innerText =
+                "Errore nell'aggiornamento della password.";
+              this.passUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+            return EMPTY;
           })
         )
         .subscribe((res) => {

@@ -1,5 +1,14 @@
 import { Component } from '@angular/core';
-import { EMPTY, Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Subscription,
+  catchError,
+  from,
+  zip,
+} from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { UserLevel } from 'src/app/enums/user-level';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
@@ -23,6 +32,10 @@ export class ForumComponent {
   privSub!: Subscription;
   sidesSub!: Subscription;
   forumSub!: Subscription;
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean[]>([false, false]);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
   isUserLogged: boolean = false;
   sectionsArr: ISectionData[] = [];
   sidesArr: ISideBlockData[] = [];
@@ -33,7 +46,11 @@ export class ForumComponent {
     },
   ];
 
-  constructor(private authSvc: AuthService, private fSvc: ForumService) {}
+  constructor(
+    private authSvc: AuthService,
+    private fSvc: ForumService,
+    private modalSvc: NgbModal
+  ) {}
 
   ngOnInit() {
     this.logSub = this.authSvc.isLogged$.subscribe((res) => {
@@ -58,14 +75,18 @@ export class ForumComponent {
       .pipe(
         catchError((err) => {
           this.fetchErrors = true;
-          this.isLoadingPage = false;
-          console.log('Error fetching sections data');
+          this.errorsMsgs.push('Errore nel caricamento delle sezioni.');
+          const currentValues = this.subsBoolArr.value;
+          currentValues[0] = true;
+          this.subsBoolArr.next(currentValues);
           return EMPTY;
         })
       )
       .subscribe((res) => {
         this.sectionsArr = res;
-        this.isLoadingPage = false;
+        const currentValues = this.subsBoolArr.value;
+        currentValues[0] = true;
+        this.subsBoolArr.next(currentValues);
       });
 
     this.sidesSub = this.fSvc
@@ -73,17 +94,41 @@ export class ForumComponent {
       .pipe(
         catchError((err) => {
           this.fetchErrors = true;
-          console.log('Error fetching side blocks data');
+          this.errorsMsgs.push(
+            'Errore nel caricamento della sidebar laterale.'
+          );
+          const currentValues = this.subsBoolArr.value;
+          currentValues[1] = true;
+          this.subsBoolArr.next(currentValues);
           return EMPTY;
         })
       )
       .subscribe((res) => {
         this.sidesArr = res;
+        const currentValues = this.subsBoolArr.value;
+        currentValues[1] = true;
+        this.subsBoolArr.next(currentValues);
       });
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res.every((el) => el == true)) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
 
     setTimeout(() => {
       this.isWaitingPage = false;
     }, 1000);
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -92,5 +137,6 @@ export class ForumComponent {
     if (this.privSub) this.privSub.unsubscribe();
     if (this.sidesSub) this.sidesSub.unsubscribe();
     if (this.forumSub) this.forumSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 }

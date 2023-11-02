@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IPrivateMessageData } from 'src/app/interfaces/iprivate-message-data';
 import { IPrivateMessageDTO } from 'src/app/interfaces/iprivate-message-dto';
 import { IUserData } from 'src/app/interfaces/iuser-data';
@@ -17,10 +19,15 @@ export class NewpmComponent {
   isLoadingPage: boolean = true;
   isWaitingPage: boolean = true;
   isAllDataLoaded: boolean = false;
+  initSub!: Subscription;
   authSub!: Subscription;
   routeSub!: Subscription;
   pmSub!: Subscription;
   userSub!: Subscription;
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean>(false);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
 
   sender_id: number = 0;
   recipient_user: IUserData | null = null;
@@ -38,46 +45,74 @@ export class NewpmComponent {
     private authSvc: AuthService,
     private pmSvc: PmService,
     private route: ActivatedRoute,
-    private u_svc: UserService
+    private u_svc: UserService,
+    private modalSvc: NgbModal
   ) {}
 
   ngOnInit() {
     setTimeout(() => {
       this.isWaitingPage = false;
-    }, 250);
-    this.authSub = this.authSvc.user$.subscribe((res) => {
-      if (res) {
-        this.sender_id = res.user_id;
-        this.routeSub = this.route.paramMap.subscribe((rt) => {
-          let rec_id: number = Number(rt.get('id'));
-          if (rec_id && !isNaN(rec_id)) {
-            this.userSub = this.u_svc
-              .getById(rec_id)
-              .pipe(
-                catchError((err) => {
-                  this.isLoadingPage = false;
-                  throw err;
-                })
-              )
-              .subscribe((res) => {
-                this.recipient_user = res;
-                this.recipient_username = res.username;
-                this.isLoadingPage = false;
+    }, 500);
+
+    this.initSub = this.authSvc.intialized$.subscribe((init) => {
+      if (init) {
+        this.authSub = this.authSvc.user$.subscribe((res) => {
+          if (res) {
+            this.sender_id = res.user_id;
+            this.routeSub = this.route.paramMap.subscribe((rt) => {
+              let rec_id: number = Number(rt.get('id'));
+              if (rec_id && !isNaN(rec_id)) {
+                this.userSub = this.u_svc
+                  .getById(rec_id)
+                  .pipe(
+                    catchError((err) => {
+                      this.errorsMsgs.push(
+                        "Errore nel recupero dei dati dell'utente destinatario."
+                      );
+                      this.subsBoolArr.next(true);
+                      return EMPTY;
+                    })
+                  )
+                  .subscribe((res) => {
+                    this.recipient_user = res;
+                    this.recipient_username = res.username;
+                    this.subsBoolArr.next(true);
+                    setTimeout(() => {
+                      this.setInputEvent();
+                    }, 500);
+                  });
+              } else {
+                this.subsBoolArr.next(true);
                 setTimeout(() => {
                   this.setInputEvent();
                 }, 500);
-              });
+              }
+            });
           } else {
-            this.isLoadingPage = false;
-            setTimeout(() => {
-              this.setInputEvent();
-            }, 500);
+            this.errorsMsgs.push(
+              'Errore nel caricamento dei dati del tuo account.'
+            );
+            this.subsBoolArr.next(true);
           }
         });
-      } else {
-        this.isLoadingPage = false;
       }
     });
+
+    this.subSub = this.subsBoolArr.subscribe((res) => {
+      if (res) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   setInputEvent(): void {
@@ -87,7 +122,7 @@ export class NewpmComponent {
           .getByUsername(this.recipientInput.nativeElement.value)
           .pipe(
             catchError((err) => {
-              throw err;
+              return EMPTY;
             })
           )
           .subscribe((res) => {
@@ -104,6 +139,7 @@ export class NewpmComponent {
     if (this.pmSub) this.pmSub.unsubscribe();
     if (this.routeSub) this.routeSub.unsubscribe();
     if (this.userSub) this.userSub.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
   }
 
   selectUser(index: number) {
@@ -122,22 +158,32 @@ export class NewpmComponent {
         sender_id: this.sender_id,
         recipient_id: this.recipient_user!.id!,
       };
-      console.log(obj);
-      this.pmSub = this.pmSvc.getMessages().subscribe((newpm) => {
-        let ms = newpm as IPrivateMessageData;
-        if (
-          ms.sender_user?.id == this.sender_id &&
-          ms.recipient_user?.id == this.recipient_user?.id
-        ) {
-          this.recipient_user = null;
-          this.recipient_username = '';
-          this.pm_title = '';
-          this.isMessageSent = true;
-          setTimeout(() => {
-            this.isMessageTriggered = false;
-          }, 3000);
-        }
-      });
+      // console.log(obj);
+      this.pmSub = this.pmSvc
+        .getMessages()
+        .pipe(
+          catchError((err) => {
+            this.errorsMsgs.push(
+              'Errore di connessione o nel sistema di messaggistica.'
+            );
+            return EMPTY;
+          })
+        )
+        .subscribe((newpm) => {
+          let ms = newpm as IPrivateMessageData;
+          if (
+            ms.sender_user?.id == this.sender_id &&
+            ms.recipient_user?.id == this.recipient_user?.id
+          ) {
+            this.recipient_user = null;
+            this.recipient_username = '';
+            this.pm_title = '';
+            this.isMessageSent = true;
+            setTimeout(() => {
+              this.isMessageTriggered = false;
+            }, 3000);
+          }
+        });
       this.pmSvc.sendMessage(obj);
     }
   }

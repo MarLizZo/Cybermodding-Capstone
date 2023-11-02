@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IBosses } from 'src/app/interfaces/ibosses';
 import { ICollapseable } from 'src/app/interfaces/icollapseable';
 import { IUserData } from 'src/app/interfaces/iuser-data';
@@ -21,7 +23,6 @@ export class UsersComponent {
   profileData!: IUserData;
   isWaitingPage: boolean = true;
   isLoadingPage: boolean = true;
-  isLoadingPageTwo: boolean = true;
   isSingleUser: boolean = false;
   isQuickStatsCollapsed: boolean = false;
   isInfosCollapsed: boolean = false;
@@ -29,6 +30,10 @@ export class UsersComponent {
   pagesArr: number[] = [];
   isBossesCollapsed: boolean = true;
   isCommunityCollapsed: boolean = true;
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean[]>([false, false]);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
   bossesArr: IBosses = {
     response: undefined,
     admins: [],
@@ -41,7 +46,8 @@ export class UsersComponent {
     private u_svc: UserService,
     private route: ActivatedRoute,
     private auth_svc: AuthService,
-    private router: Router
+    private router: Router,
+    private modalSvc: NgbModal
   ) {}
 
   doCall(page: number) {
@@ -79,11 +85,11 @@ export class UsersComponent {
   ngOnInit() {
     setTimeout(() => {
       this.isWaitingPage = false;
-    }, 350);
+    }, 500);
+
     this.paramSub = this.route.paramMap.subscribe((res) => {
       if (res.get('hash')) {
         this.isSingleUser = true;
-        this.isLoadingPageTwo = false;
         let userId: number = parseInt(res.get('hash')!.split('-')[0]);
         if (!isNaN(userId) && userId != null) {
           this.authSub = this.auth_svc.user$.subscribe((res) => {
@@ -96,13 +102,20 @@ export class UsersComponent {
             .getProfileData(userId)
             .pipe(
               catchError((err) => {
-                this.isLoadingPage = false;
-                throw err;
+                this.errorsMsgs.push('Errore nel caricamento degli utenti.');
+                const currentValues = this.subsBoolArr.value;
+                currentValues[0] = true;
+                currentValues[1] = true;
+                this.subsBoolArr.next(currentValues);
+                return EMPTY;
               })
             )
             .subscribe((res) => {
               this.profileData = res;
-              this.isLoadingPage = false;
+              const currentValues = this.subsBoolArr.value;
+              currentValues[0] = true;
+              currentValues[1] = true;
+              this.subsBoolArr.next(currentValues);
             });
         }
       } else {
@@ -111,21 +124,33 @@ export class UsersComponent {
           .getBosses()
           .pipe(
             catchError((err) => {
-              this.isLoadingPage = false;
-              throw err;
+              if (this.errorsMsgs.length == 0) {
+                this.errorsMsgs.push('Errore nel caricamento degli utenti.');
+              }
+              const currentValues = this.subsBoolArr.value;
+              currentValues[0] = true;
+              this.subsBoolArr.next(currentValues);
+              return EMPTY;
             })
           )
           .subscribe((res) => {
-            this.isLoadingPage = false;
             this.bossesArr = res;
+            const currentValues = this.subsBoolArr.value;
+            currentValues[0] = true;
+            this.subsBoolArr.next(currentValues);
           });
 
         this.userSub = this.u_svc
           .getUsersPaged(8, 0)
           .pipe(
             catchError((err) => {
-              this.isLoadingPageTwo = false;
-              throw err;
+              if (this.errorsMsgs.length == 0) {
+                this.errorsMsgs.push('Errore nel caricamento degli utenti.');
+              }
+              const currentValues = this.subsBoolArr.value;
+              currentValues[1] = true;
+              this.subsBoolArr.next(currentValues);
+              return EMPTY;
             })
           )
           .subscribe((res) => {
@@ -142,7 +167,10 @@ export class UsersComponent {
             }
 
             this.usersArr = res;
-            this.isLoadingPageTwo = false;
+
+            const currentValues = this.subsBoolArr.value;
+            currentValues[1] = true;
+            this.subsBoolArr.next(currentValues);
           });
       }
     });
@@ -162,6 +190,22 @@ export class UsersComponent {
         }
       }
     }
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res.every((el) => el == true)) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -169,6 +213,7 @@ export class UsersComponent {
     if (this.bossSub) this.bossSub.unsubscribe();
     if (this.paramSub) this.paramSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 
   getClassColor() {

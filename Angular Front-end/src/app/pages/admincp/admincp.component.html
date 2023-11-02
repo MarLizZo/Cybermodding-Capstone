@@ -1,10 +1,11 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !granted" class="container-fluid d-flex flex-column align-items-center mt-5">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && !granted"
+        class="container-fluid d-flex flex-column align-items-center mt-5">
         <h2>Non sei autorizzato..</h2>
         <h2>Ti rispedisco alla Home..</h2>
     </div>
-    <div *ngIf="!isLoadingPage && granted" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && granted" class="container-fluid mt-4">
         <h1 class="mb-2 text-danger">{{ username }}</h1>
         <h3 class="mb-4">Pannello Admin</h3>
 
@@ -27,9 +28,14 @@
                         class="form-control form-control-sm px-2 border-0 shadow-none resp-input"
                         placeholder="Cerca utente..">
                 </form>
-                <p *ngIf="usersFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
+                <p *ngIf="usersFound == undefined && !isErrorPanel" class="mt-4 fw-medium fs-5">Il risultato apparirà
+                    qui</p>
 
-                <div *ngIf="usersFound != undefined && usersFound.content.length != 0" class="w-100 mt-4 p-3">
+                <div *ngIf="isErrorPanel" class="w-100 mt-5">
+                    <h4 class="m-0 pb-1 text-center">{{ errorPanelMsg }}</h4>
+                </div>
+                <div *ngIf="usersFound != undefined && usersFound.content.length != 0 && !isErrorPanel"
+                    class="w-100 mt-4 p-3">
                     <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-result"
                         [ngClass]="{'mt-3' : !first}">
                         <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
@@ -172,9 +178,12 @@
                     <button *ngIf="threadSearchCriteria == 2"
                         class="btn moderation-btn btn-sm px-5 rounded-1 border-0 btn-selected"
                         (click)="doThreadSearch(0)">Cerca thread per Data</button>
-                    <p *ngIf="threadsCustomFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
 
-                    <div *ngIf="threadsCustomFound != undefined" class="w-100 p-3 mt-4">
+                    <p *ngIf="threadsCustomFound == undefined && !isErrorPanel" class="mt-4 fw-medium fs-5">Il risultato
+                        apparirà qui</p>
+                    <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5">{{ errorPanelMsg }}</p>
+
+                    <div *ngIf="threadsCustomFound != undefined && !isErrorPanel" class="w-100 p-3 mt-4">
                         <div *ngFor="let t of threadsCustomFound.content; let i = index; let first = first"
                             class="single-result" [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
@@ -273,7 +282,7 @@
                         class="btn moderation-btn btn-sm px-4 rounded-1 border-0 btn-selected"
                         (click)="doThreadSearch(0)">Cerca tutti i
                         thread</button>
-                    <div *ngIf="threadsFound != undefined" class="w-100">
+                    <div *ngIf="threadsFound != undefined && !isErrorPanel" class="w-100">
                         <div *ngFor="let t of threadsFound.content; let i = index; let first = first"
                             class="single-result" [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
@@ -363,6 +372,7 @@
                             </div>
                         </div>
                     </div>
+                    c
                 </div>
             </div>
 
@@ -378,7 +388,10 @@
                 </div>
 
                 <div *ngIf="isSectionViewCreate" class="w-100 mt-3 d-flex justify-content-center">
-                    <form #fNewSection="ngForm" class="w-100 pb-2 d-flex flex-column align-items-center">
+                    <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
+
+                    <form *ngIf="!isErrorPanel" #fNewSection="ngForm"
+                        class="w-100 pb-2 d-flex flex-column align-items-center">
 
                         <div class="resp-div mt-3">
                             <div class="d-flex justify-content-between mb-1">
@@ -436,7 +449,11 @@
                 </div>
 
                 <div *ngIf="isSubSectionViewCreate" class="w-100 mt-3 d-flex justify-content-center">
-                    <form #fNewSubSection="ngForm" class="w-100 pb-2 d-flex flex-column align-items-center">
+                    <p *ngIf="!isWaitingPanel && isErrorPanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg
+                        }}</p>
+
+                    <form *ngIf="!isWaitingPanel && !isErrorPanel" #fNewSubSection="ngForm"
+                        class="w-100 pb-2 d-flex flex-column align-items-center">
 
                         <div class="resp-div mt-3">
                             <div class="d-flex justify-content-between mb-1">
@@ -507,7 +524,10 @@
                 </div>
 
                 <div *ngIf="isSectionViewAll" class="w-100 mt-3">
-                    <div *ngIf="sectionsArr.length" class="w-100">
+
+                    <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
+
+                    <div *ngIf="sectionsArr.length && !isErrorPanel" class="w-100">
                         <div *ngFor="let s of sectionsArr; let i = index; let first = first" class="single-result"
                             [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
@@ -715,7 +735,10 @@
                 </div>
 
                 <div *ngIf="isBlocksViewCreate" class="w-100 mt-3 d-flex justify-content-center">
-                    <form #fNewBlock="ngForm" class="w-100 pb-2 d-flex flex-column align-items-center">
+                    <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
+
+                    <form *ngIf="!isErrorPanel" #fNewBlock="ngForm"
+                        class="w-100 pb-2 d-flex flex-column align-items-center">
                         <div class="resp-div mt-3">
                             <div class="d-flex justify-content-between mb-1">
                                 <label [htmlFor]="'btitle'">Titolo</label>
@@ -790,7 +813,11 @@
                     </form>
                 </div>
 
-                <div *ngIf="isBlockViewAll" class="w-100 mt-3 d-flex justify-content-center">
+                <p *ngIf="!isWaitingPanel && isErrorPanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}
+                </p>
+
+                <div *ngIf="!isWaitingPanel && isBlockViewAll && !isErrorPanel"
+                    class="w-100 mt-3 d-flex justify-content-center">
                     <div *ngIf="blocksArr.length" class="w-100">
                         <div *ngFor="let b of blocksArr; let i = index; let first = first" class="single-result"
                             [ngClass]="{'mt-3' : !first}">

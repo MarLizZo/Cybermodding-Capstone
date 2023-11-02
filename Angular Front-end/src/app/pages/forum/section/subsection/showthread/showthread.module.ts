@@ -11,6 +11,7 @@ import { CommentComponent } from 'src/app/components/comment/comment.component';
 import { ThreadUserDetailsComponent } from 'src/app/components/thread-user-details/thread-user-details.component';
 import { BtnReplyComponent } from 'src/app/components/btn-reply/btn-reply.component';
 import { EditorFormComponent } from 'src/app/components/editor-form/editor-form.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [ShowthreadComponent],
@@ -25,6 +26,7 @@ import { EditorFormComponent } from 'src/app/components/editor-form/editor-form.
     ThreadUserDetailsComponent,
     BtnReplyComponent,
     EditorFormComponent,
+    ErrorModalComponent,
   ],
 })
 export class ShowthreadModule {}

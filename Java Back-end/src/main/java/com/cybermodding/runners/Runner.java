@@ -170,7 +170,7 @@ public class Runner implements CommandLineRunner {
                                         System.out.println("Saved Comment ID: " + co.get().getId());
                                         comm_repo.delete(co.get());
                                 } else {
-                                        System.out.println("DIOP NOT PRESENT");
+                                        System.out.println("NOT PRESENT");
                                 }
                                 System.out.println("Post saved from Comments");
                         });
@@ -179,7 +179,7 @@ public class Runner implements CommandLineRunner {
                         try {
                                 p_repo.save(p);
                         } catch (Exception ex) {
-                                System.out.println("DIOP " + ex.getMessage());
+                                System.out.println(ex.getMessage());
                         }
                 }
                 System.out.println(p.getComments().size() + " " + p.getReactions().size());

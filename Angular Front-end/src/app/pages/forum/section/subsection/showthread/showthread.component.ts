@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { ReactionType } from 'src/app/enums/reaction-type';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
 import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
@@ -41,6 +43,10 @@ export class ShowthreadComponent {
   postId: number = 0;
   topBObj: any = [];
   canEdit: boolean | undefined = false;
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean>(false);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
 
   @ViewChild('editorForm') editorForm!: ElementRef<HTMLElement>;
 
@@ -48,7 +54,8 @@ export class ShowthreadComponent {
     private svc: ForumService,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalSvc: NgbModal
   ) {}
 
   setTopBarObj() {
@@ -102,8 +109,11 @@ export class ShowthreadComponent {
         })
         .pipe(
           catchError((err) => {
-            this.isLoadingPage = false;
-            throw err;
+            this.errorsMsgs.push('Errore nel caricamento del post.');
+            let currentValues = this.subsBoolArr.value;
+            currentValues = true;
+            this.subsBoolArr.next(currentValues);
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -112,9 +122,9 @@ export class ShowthreadComponent {
           this.subSectionTitle = res.subsection_title!;
           this.getReactionsCount();
           this.hasUserReaction();
-          this.isLoadingPage = false;
           this.pagesArr = [];
           this.setTopBarObj();
+
           if (page + 1 <= 3) {
             for (let i = 0; i < res.comments.totalPages; i++) {
               i < 5 || i > res.comments.totalPages - 3
@@ -142,6 +152,11 @@ export class ShowthreadComponent {
                 (page + 1)
             );
           }
+
+          let currentValues = this.subsBoolArr.value;
+          currentValues = true;
+          this.subsBoolArr.next(currentValues);
+
           if (sessionStorage.getItem('scrolltocomment')) {
             sessionStorage.removeItem('scrolltocomment');
             setTimeout(() => {
@@ -194,15 +209,33 @@ export class ShowthreadComponent {
         this.canEdit = res?.isAdmin || res?.isMod;
       });
     }
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res == true) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+
     setTimeout(() => {
       this.isWaitingPage = false;
     }, 400);
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
     if (this.authSub) this.authSub.unsubscribe();
     if (this.postSub) this.postSub.unsubscribe();
     if (this.reactSub) this.reactSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 
   getReactionsCount(): void {

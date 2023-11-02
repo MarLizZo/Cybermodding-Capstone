@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription, catchError } from 'rxjs';
+import { EMPTY, EmptyError, Subscription, catchError } from 'rxjs';
 import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
@@ -28,8 +28,12 @@ export class AdmincpComponent {
   ) {}
 
   isLoadingPage: boolean = true;
-  username: string = '';
-  user_id: number = 0;
+  isWaitingPage: boolean = true;
+  isWaitingPanel: boolean = true;
+  isErrorPanel: boolean = false;
+  errorPanelMsg: string = '';
+  username: string | undefined = '';
+  user_id: number | undefined = 0;
   granted: boolean = false;
 
   isUsersModeration: boolean = true;
@@ -49,6 +53,7 @@ export class AdmincpComponent {
   isOpSection: boolean = false;
   isOpBlock: boolean = false;
 
+  initSub!: Subscription;
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
   usersSub!: Subscription;
@@ -161,23 +166,31 @@ export class AdmincpComponent {
   @ViewChild('blockParagMod') blockMod!: ElementRef<HTMLElement>;
 
   ngOnInit() {
-    this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
-      if (res?.isAdmin) {
-        this.granted = true;
+    this.authSvc.intialized$.subscribe((init) => {
+      if (init) {
+        this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
+          if (res?.isAdmin) {
+            this.granted = true;
 
-        this.authUserSub = this.authSvc.user$.subscribe((res) => {
-          this.username = res!.username;
-          this.user_id = res!.user_id;
-          this.isLoadingPage = false;
+            this.authUserSub = this.authSvc.user$.subscribe((res) => {
+              this.username = res?.username;
+              this.user_id = res?.user_id;
+              this.isLoadingPage = false;
+            });
+          } else {
+            this.isLoadingPage = false;
+            this.granted = false;
+            setTimeout(() => {
+              this.router.navigateByUrl('/');
+            }, 2000);
+          }
         });
-      } else {
-        this.isLoadingPage = false;
-        this.granted = false;
-        setTimeout(() => {
-          this.router.navigateByUrl('/');
-        }, 2000);
       }
     });
+
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 750);
   }
 
   ngOnDestroy() {
@@ -194,9 +207,13 @@ export class AdmincpComponent {
     if (this.subSectionOperationsSub)
       this.subSectionOperationsSub.unsubscribe();
     if (this.blockOperationsSub) this.blockOperationsSub.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
   }
 
   switchModeration(flag: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (flag == 0) {
       if (!this.isUsersModeration) {
         this.isUsersModeration = true;
@@ -245,6 +262,9 @@ export class AdmincpComponent {
   }
 
   switchThreadView(flag: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (flag == 0) {
       if (!this.isThreadViewSearch) {
         this.isThreadViewSearch = true;
@@ -263,6 +283,8 @@ export class AdmincpComponent {
   }
 
   getBlocks() {
+    this.isWaitingPanel = true;
+
     for (let i = 0; i < this.collapseableBArr.length; i++) {
       this.collapseableBArr[i] = true;
     }
@@ -273,21 +295,27 @@ export class AdmincpComponent {
       .getBlocks()
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorPanelMsg = 'Errore nel caricamento dei blocchi';
+          this.isErrorPanel = true;
+          this.isWaitingPanel = false;
+          return EMPTY;
         })
       )
       .subscribe((res) => {
-        console.log(res);
         this.blocksArr = res;
         for (let i = 0; i < res.length; i++) {
           this.activeBoolBArr.push(res[i].active);
           this.blocksTitleArr.push(res[i].title);
           this.blocksTypeArr.push(res[i].e_block_type.toString());
         }
+        this.isWaitingPanel = false;
       });
   }
 
   switchBlockView(flag: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (flag == 0) {
       if (!this.isBlocksViewCreate) {
         this.isBlocksViewCreate = true;
@@ -307,6 +335,9 @@ export class AdmincpComponent {
   }
 
   switchSectionView(flag: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (flag == 0) {
       if (!this.isSectionViewCreate) {
         this.isSectionViewCreate = true;
@@ -352,11 +383,16 @@ export class AdmincpComponent {
   }
 
   searchUsers(page: number): void {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     this.searcUserSub = this.svc
       .getUsersFromName(this.inputSearchUser, page)
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorPanelMsg = 'Errore nel caricamento degli utenti.';
+          this.isErrorPanel = true;
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -470,7 +506,7 @@ export class AdmincpComponent {
       };
 
       this.moderateUserSub = this.svc
-        .moderate(this.user_id, outData)
+        .moderate(this.user_id!, outData)
         .pipe(
           catchError((err) => {
             this.isOpUsers = false;
@@ -505,7 +541,7 @@ export class AdmincpComponent {
         : data.controls['titlec'].value,
     };
     this.moderateThreadSub = this.svc
-      .updatePost(this.user_id, obj)
+      .updatePost(this.user_id!, obj)
       .pipe(
         catchError((err) => {
           this.isOpThread = false;
@@ -544,6 +580,9 @@ export class AdmincpComponent {
   }
 
   doThreadSearch(page: number) {
+    this.isErrorPanel = false;
+    this.errorPanelMsg = '';
+
     if (this.threadSub) this.threadSub.unsubscribe();
 
     if (this.isThreadViewAll) {
@@ -551,7 +590,9 @@ export class AdmincpComponent {
         .getPosts(0, '?size=6' + '&page=' + page, 0)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.errorPanelMsg = 'Errore nel caricamento dei post.';
+            this.isErrorPanel = true;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -606,7 +647,9 @@ export class AdmincpComponent {
         .getPostPaged(params)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.errorPanelMsg = 'Errore nel caricamento dei post.';
+            this.isErrorPanel = true;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -652,6 +695,10 @@ export class AdmincpComponent {
   }
 
   getSections() {
+    this.errorPanelMsg = '';
+    this.isErrorPanel = false;
+    this.isWaitingPanel = true;
+
     this.sectionsTitleArr = [];
     this.sectionsArr = [];
     this.activeBoolArr = [];
@@ -660,7 +707,10 @@ export class AdmincpComponent {
       .getSections()
       .pipe(
         catchError((err) => {
-          throw err;
+          this.errorPanelMsg = 'Errore nel caricamento delle sezioni.';
+          this.isErrorPanel = true;
+          this.isWaitingPanel = false;
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -669,6 +719,7 @@ export class AdmincpComponent {
           this.sectionsTitleArr.push(res[i].title);
           this.activeBoolArr.push(res[i].active);
         }
+        this.isWaitingPanel = false;
       });
   }
 
@@ -718,7 +769,7 @@ export class AdmincpComponent {
       };
 
       this.sectionOperationsSub = this.svc
-        .updateSection(this.user_id, obj)
+        .updateSection(this.user_id!, obj)
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
@@ -791,7 +842,7 @@ export class AdmincpComponent {
       };
 
       this.subSectionOperationsSub = this.svc
-        .updateSubSection(this.user_id, obj)
+        .updateSubSection(this.user_id!, obj)
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
@@ -896,6 +947,9 @@ export class AdmincpComponent {
 
   doCreateSection(data: NgForm) {
     this.resetSFields();
+    this.errorPanelMsg = '';
+    this.isErrorPanel = false;
+
     if (this.doNewSecChecks(data)) {
       this.isOpSection = true;
       let obj: Partial<ISectionData> = {
@@ -910,7 +964,9 @@ export class AdmincpComponent {
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
-            throw err;
+            this.errorPanelMsg = 'Errore nella creazione della sezione';
+            this.isErrorPanel = true;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -935,6 +991,9 @@ export class AdmincpComponent {
 
   doCreateSubSection(data: NgForm) {
     this.resetSSFields();
+    this.errorPanelMsg = '';
+    this.isErrorPanel = false;
+
     if (this.doNewSubSecChecks(data)) {
       this.isOpSection = true;
       let obj: Partial<ISubSectionData> = {
@@ -949,7 +1008,9 @@ export class AdmincpComponent {
         .pipe(
           catchError((err) => {
             this.isOpSection = false;
-            throw err;
+            this.errorPanelMsg = 'Errore nella creazione della sotto-sezione';
+            this.isErrorPanel = true;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -1057,6 +1118,9 @@ export class AdmincpComponent {
 
   doCreateNewBlock(data: NgForm) {
     this.resetBFields();
+    this.errorPanelMsg = '';
+    this.isErrorPanel = false;
+
     if (this.doBlockChecks(data)) {
       this.isOpBlock = true;
       let obj: ISideBlockData = {
@@ -1071,7 +1135,9 @@ export class AdmincpComponent {
         .pipe(
           catchError((err) => {
             this.isOpBlock = false;
-            throw err;
+            this.errorPanelMsg = 'Errore nella creazione del blocco.';
+            this.isErrorPanel = true;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -1132,7 +1198,7 @@ export class AdmincpComponent {
       };
 
       this.blockOperationsSub = this.svc
-        .updateBlock(this.user_id, obj)
+        .updateBlock(this.user_id!, obj)
         .pipe(
           catchError((err) => {
             this.isOpBlock = false;

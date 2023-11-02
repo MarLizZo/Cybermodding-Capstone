@@ -1,13 +1,14 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="my-4">
-        <app-topbar *ngIf="!isLoadingPage && !isWaitingPage" [pathObject]="topBObj"></app-topbar>
+        <app-topbar *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0"
+            [pathObject]="topBObj"></app-topbar>
     </div>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="px-3 py-2 head-w-title">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="px-3 py-2 head-w-title">
         <p class="mb-1 fs-5" [innerText]="subSData != undefined ? subSData.title : ''"></p>
         <p class="mb-1" [innerText]="subSData != undefined ? subSData.description : ''"></p>
     </div>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-5">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-5">
         <app-orange-button *ngIf="isAuthenticated" [btnTitle]="'Scrivi Nuovo Post'" [btnTheme]="'orange'"
             [routerLink]="newThreadPath"></app-orange-button>
         <div class="posts-container mt-4 d-flex justify-content-center">
@@ -32,7 +33,7 @@
                             <img *ngIf="post.author.avatar != null && post.author.avatar != ''"
                                 [src]="post.author.avatar">
                         </div>
-                        <div class="ms-2">
+                        <div class="ms-2 pe-3">
                             <h6 class="m-0 selectable"
                                 [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
                                 {{ post.type.toString() + ' > ' + post.title }}</h6>
@@ -59,5 +60,9 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-5">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
     </div>
 </div>

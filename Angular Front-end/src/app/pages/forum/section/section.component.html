@@ -1,15 +1,19 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="my-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="my-4">
         <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="px-3 py-2 head-w-title">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="px-3 py-2 head-w-title">
         <p class="mb-1 fs-5" [innerText]="sectionData != undefined ? sectionData.title : ''"></p>
         <p class="mb-1" [innerText]="sectionData != undefined ? sectionData.description : ''"></p>
     </div>
-    <div *ngIf="!isLoadingPage && !isLoadingPageTwo && !isWaitingPage" class="container-fluid mt-5 pb-2">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-5 pb-2">
         <div *ngFor="let sub of subsData; let first = first;">
             <app-subsection-body [subSection]="sub" [margin]="!first"></app-subsection-body>
         </div>
+    </div>
+
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-5">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
     </div>
 </div>

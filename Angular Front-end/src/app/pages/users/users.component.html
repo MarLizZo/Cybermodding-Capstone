@@ -1,6 +1,11 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !isLoadingPageTwo && !isSingleUser && !isWaitingPage" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-4">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+    </div>
+
+    <div *ngIf="!isLoadingPage && !isSingleUser && !isWaitingPage && errorsMsgs.length == 0"
+        class="container-fluid mt-4">
         <h2 class="m-0">Cybermodding Community</h2>
         <div class="users-container mt-5">
             <div class="d-flex justify-content-between align-items-center head rounded-1 px-3 pt-2 pb-3">
@@ -81,7 +86,8 @@
         </div>
     </div>
 
-    <div *ngIf="!isLoadingPage && isSingleUser && !isWaitingPage" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && isSingleUser && !isWaitingPage && errorsMsgs.length == 0"
+        class="container-fluid mt-4">
         <div class="d-flex flex-column flex-md-row align-items-center">
             <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null" class="img-placeholder profile-img">
             </div>

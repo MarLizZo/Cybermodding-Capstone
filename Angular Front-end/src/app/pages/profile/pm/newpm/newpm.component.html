@@ -1,6 +1,9 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-4">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+    </div>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-4">
         <h2 class="m-0">Nuovo Messaggio Privato</h2>
 
         <div class="d-flex flex-column align-items-center mt-5">

@@ -1,9 +1,12 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div class="my-4">
+    <h4 *ngIf="!isWaitingPage && !isLoadingPage && errorsMsgs.length" class="mt-4 mb-0 text-center">Errori nel
+        caricamento della pagina... Per favore riprova!</h4>
+    <div *ngIf="!isWaitingPage && !isLoadingPage && errorsMsgs.length == 0" class="my-4">
         <app-topbar [pathObject]="topBObj"></app-topbar>
     </div>
-    <div class="container-fluid px-3 d-flex flex-column">
+    <div *ngIf="!isWaitingPage && !isLoadingPage && errorsMsgs.length == 0"
+        class="container-fluid px-3 d-flex flex-column">
         <h2 class="mb-4" [innerText]="editPostId == 0 ? 'Scrivi nuovo Thread' : 'Modifica il Thread'"></h2>
         <p class="m-0">Titolo</p>
         <div id="thread-info" class="input-group mt-1 mb-5">

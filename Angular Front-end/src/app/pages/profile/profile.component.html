@@ -1,6 +1,9 @@
 <div class="h-100 mb-3 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-4">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+    </div>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-4">
         <div class="d-flex align-items-center">
             <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
                 class="img-placeholder profile-img me-3"></div>
@@ -97,10 +100,10 @@
                     [ngClass]="{'disabled' : !fInfo.touched}">
                     <app-orange-button (click)="updateUserInfo()" [btnTheme]="'orange'"
                         [btnTitle]="'Aggiorna Account'"></app-orange-button>
-                    <div *ngIf="isSendingData" class="mt-3">
+                    <div *ngIf="isSendingData" class="mt-4">
                         <app-inline-loader [bg]="'darker'"></app-inline-loader>
                     </div>
-                    <p #accountUpd class="mt-3 mb-0 fw-medium opacity-0">Account aggiornato con successo!</p>
+                    <p #accountUpd class="mt-4 mb-0 fw-medium opacity-0">Account aggiornato con successo!</p>
                 </div>
             </form>
         </div>
@@ -149,10 +152,10 @@
                     [ngClass]="{'disabled' : !fPass.touched }">
                     <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Cambia Password'"
                         (click)="updatePass()"></app-orange-button>
-                    <div *ngIf="isSendingDataPass" class="mt-3">
+                    <div *ngIf="isSendingDataPass" class="mt-4">
                         <app-inline-loader [bg]="'darker'"></app-inline-loader>
                     </div>
-                    <p #passUpd class="mt-3 mb-0 fw-medium opacity-0">Password aggiornata con successo!</p>
+                    <p #passUpd class="mt-4 mb-0 fw-medium opacity-0">Password aggiornata con successo!</p>
                 </div>
             </form>
         </div>

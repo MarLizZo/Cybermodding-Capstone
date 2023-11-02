@@ -2,7 +2,12 @@
     <app-loader></app-loader>
 </div>
 
-<div *ngIf="!isLoadingPage && !isWaitingPage" class="h-100 pb-5">
+<div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="h-100 pb-5">
+    <app-hero></app-hero>
+    <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+</div>
+
+<div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="h-100 pb-5">
     <app-hero></app-hero>
     <div class="mt-4">
         <app-topbar [pathObject]="topBObj"></app-topbar>

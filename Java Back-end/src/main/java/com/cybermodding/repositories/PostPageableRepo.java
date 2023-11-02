@@ -32,7 +32,7 @@ public interface PostPageableRepo extends PagingAndSortingRepository<Post, Long>
     @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%'))")
     public Page<Post> findAllByTitle(String title, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.author pa WHERE pa.username = :username")
+    @Query("SELECT p FROM Post p JOIN p.author pa WHERE LOWER(pa.username) LIKE LOWER(CONCAT('%', :username, '%'))")
     public Page<Post> findAllByAuthorName(String username, Pageable pageable);
 
     public Page<Post> findAllByPublishedDateBetween(LocalDateTime date1, LocalDateTime date2, Pageable pageable);

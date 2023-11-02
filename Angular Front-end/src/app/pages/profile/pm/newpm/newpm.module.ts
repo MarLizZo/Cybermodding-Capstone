@@ -8,6 +8,7 @@ import { EditorFormComponent } from 'src/app/components/editor-form/editor-form.
 import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { FormsModule } from '@angular/forms';
 import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-loader.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [NewpmComponent],
@@ -19,6 +20,7 @@ import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-l
     EditorFormComponent,
     FormsModule,
     InlineLoaderComponent,
+    ErrorModalComponent,
   ],
 })
 export class NewpmModule {}

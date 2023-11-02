@@ -10,6 +10,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { CommunityMemberComponent } from 'src/app/components/community-member/community-member.component';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [UsersComponent],
@@ -21,6 +22,7 @@ import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-b
     CommunityMemberComponent,
     NgbCollapseModule,
     OrangeButtonComponent,
+    ErrorModalComponent,
   ],
 })
 export class UsersModule {}

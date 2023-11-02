@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IPMInformer } from 'src/app/interfaces/ipminformer';
 import { IPrivateMessageData } from 'src/app/interfaces/iprivate-message-data';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
@@ -14,6 +16,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./pm.component.scss'],
 })
 export class PmComponent {
+  initSub!: Subscription;
   authSub!: Subscription;
   userSub!: Subscription;
   pmSub!: Subscription;
@@ -32,6 +35,10 @@ export class PmComponent {
   collapseableSArr: boolean[] = [];
   replyArr: boolean[] = [];
   quotedMessage: IQuoteInfo | undefined;
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean[]>([false, false]);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
 
   @ViewChild('sentBtn') sentBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('receivedBtn') receivedBtn!: ElementRef<HTMLButtonElement>;
@@ -39,94 +46,157 @@ export class PmComponent {
   constructor(
     private userSvc: UserService,
     private authSvc: AuthService,
-    private pmSvc: PmService
+    private pmSvc: PmService,
+    private modalSvc: NgbModal
   ) {}
 
   ngOnInit() {
     setTimeout(() => {
       this.isWaitingPage = false;
-    }, 250);
-    this.authSub = this.authSvc.user$.subscribe((res) => {
-      if (res) {
-        this.userSub = this.userSvc
-          .getProfileData(res.user_id)
-          .pipe(
-            catchError((err) => {
-              this.isLoadingPage = false;
-              throw err;
-            })
-          )
-          .subscribe((res) => {
-            this.profileData = res;
-          });
+    }, 500);
 
-        this.pmSub = this.pmSvc
-          .getInitMessages(res.user_id)
-          .pipe(
-            catchError((err) => {
-              this.isLoadingPage = false;
-              throw err;
-            })
-          )
-          .subscribe((msgs) => {
-            this.receivedMessages = msgs.filter(
-              (el) => el.recipient_user!.id == res.user_id
+    this.initSub = this.authSvc.intialized$.subscribe((init) => {
+      if (init) {
+        this.authSub = this.authSvc.user$.subscribe((res) => {
+          if (res) {
+            this.userSub = this.userSvc
+              .getProfileData(res.user_id)
+              .pipe(
+                catchError((err) => {
+                  const currentValues = this.subsBoolArr.value;
+                  currentValues[0] = true;
+                  this.subsBoolArr.next(currentValues);
+                  this.errorsMsgs.push(
+                    'Errore nel caricamento dei dati del profilo'
+                  );
+
+                  return EMPTY;
+                })
+              )
+              .subscribe((res) => {
+                this.profileData = res;
+                const currentValues = this.subsBoolArr.value;
+                currentValues[0] = true;
+                this.subsBoolArr.next(currentValues);
+              });
+
+            this.pmSub = this.pmSvc
+              .getInitMessages(res.user_id)
+              .pipe(
+                catchError((err) => {
+                  const currentValues = this.subsBoolArr.value;
+                  currentValues[1] = true;
+                  this.subsBoolArr.next(currentValues);
+                  this.errorsMsgs.push(
+                    "Errore nel caricamento dei messaggi dell'utente."
+                  );
+                  return EMPTY;
+                })
+              )
+              .subscribe((msgs) => {
+                this.receivedMessages = msgs.filter(
+                  (el) => el.recipient_user!.id == res.user_id
+                );
+                this.sentMessages = msgs.filter(
+                  (el) => el.sender_user!.id == res.user_id
+                );
+
+                for (let i = 0; i < this.receivedMessages.length; i++) {
+                  this.collapseableRArr.push(true);
+                  this.replyArr.push(false);
+                }
+
+                for (let i = 0; i < this.sentMessages.length; i++) {
+                  this.collapseableSArr.push(true);
+                }
+
+                const currentValues = this.subsBoolArr.value;
+                currentValues[1] = true;
+                this.subsBoolArr.next(currentValues);
+              });
+
+            this.pmSocket = this.pmSvc
+              .getMessages()
+              .pipe(
+                catchError((err) => {
+                  this.errorsMsgs.push(
+                    'Errore di connessione o nel sistema di messaggistica.'
+                  );
+                  const currentValues = this.subsBoolArr.value;
+                  currentValues[2] = true;
+                  this.subsBoolArr.next(currentValues);
+                  return EMPTY;
+                })
+              )
+              .subscribe((newpm) => {
+                for (let i = 0; i < this.collapseableRArr.length; i++) {
+                  this.collapseableRArr[i] = true;
+                  this.replyArr[i] = false;
+                }
+
+                let ms = newpm as IPrivateMessageData;
+
+                if (ms.recipient_user?.id == res.user_id) {
+                  let obj: IPMInformer = {
+                    id: ms.id!,
+                    sender_id: ms.sender_user!.id!,
+                    recipient_id: ms.recipient_user!.id!,
+                  };
+
+                  this.collapseableRArr.unshift(true);
+                  this.receivedMessages.unshift(ms);
+
+                  if (localStorage.getItem('newpm')) {
+                    let fromLS: IPMInformer[] = JSON.parse(
+                      localStorage.getItem('newpm')!
+                    );
+                    fromLS.push(obj);
+                    localStorage.setItem('newpm', JSON.stringify(obj));
+                    this.pmSvc.newPmsPresent.next(fromLS);
+                  } else {
+                    localStorage.setItem(
+                      'newpm',
+                      JSON.stringify(Array.of(obj))
+                    );
+                    this.pmSvc.newPmsPresent.next(Array.of(obj));
+                  }
+                }
+                if (ms.sender_user?.id == res.user_id) {
+                  this.collapseableSArr.unshift(true);
+                  this.sentMessages.unshift(ms);
+                }
+                const currentValues = this.subsBoolArr.value;
+                currentValues[2] = true;
+                this.subsBoolArr.next(currentValues);
+              });
+          } else {
+            this.errorsMsgs.push(
+              "Errore nel caricamento dei dati dell'utente."
             );
-            this.sentMessages = msgs.filter(
-              (el) => el.sender_user!.id == res.user_id
-            );
-
-            for (let i = 0; i < this.receivedMessages.length; i++) {
-              this.collapseableRArr.push(true);
-              this.replyArr.push(false);
-            }
-
-            for (let i = 0; i < this.sentMessages.length; i++) {
-              this.collapseableSArr.push(true);
-            }
-
-            this.isLoadingPage = false;
-          });
-
-        this.pmSocket = this.pmSvc.getMessages().subscribe((newpm) => {
-          for (let i = 0; i < this.collapseableRArr.length; i++) {
-            this.collapseableRArr[i] = true;
-            this.replyArr[i] = false;
-          }
-
-          let ms = newpm as IPrivateMessageData;
-
-          if (ms.recipient_user?.id == res.user_id) {
-            let obj: IPMInformer = {
-              id: ms.id!,
-              sender_id: ms.sender_user!.id!,
-              recipient_id: ms.recipient_user!.id!,
-            };
-
-            this.collapseableRArr.unshift(true);
-            this.receivedMessages.unshift(ms);
-
-            if (localStorage.getItem('newpm')) {
-              let fromLS: IPMInformer[] = JSON.parse(
-                localStorage.getItem('newpm')!
-              );
-              fromLS.push(obj);
-              localStorage.setItem('newpm', JSON.stringify(obj));
-              this.pmSvc.newPmsPresent.next(fromLS);
-            } else {
-              localStorage.setItem('newpm', JSON.stringify(Array.of(obj)));
-              this.pmSvc.newPmsPresent.next(Array.of(obj));
-            }
-          }
-          if (ms.sender_user?.id == res.user_id) {
-            this.collapseableSArr.unshift(true);
-            this.sentMessages.unshift(ms);
+            const currentValues = this.subsBoolArr.value;
+            currentValues[0] = true;
+            currentValues[1] = true;
+            this.subsBoolArr.next(currentValues);
           }
         });
-      } else {
-        this.isLoadingPage = false;
       }
     });
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res.every((el) => el == true)) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -135,6 +205,8 @@ export class PmComponent {
     if (this.pmSub) this.pmSub.unsubscribe();
     if (this.pmOps) this.pmOps.unsubscribe();
     if (this.pmSocket) this.pmSocket.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 
   getClassColor() {

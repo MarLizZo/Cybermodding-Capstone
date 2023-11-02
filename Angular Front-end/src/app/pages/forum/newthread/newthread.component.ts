@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { PostType } from 'src/app/enums/post-type';
 import { IPostDTO } from 'src/app/interfaces/ipost-dto';
 import { IUpdatePostDTO } from 'src/app/interfaces/iupdate-post-dto';
@@ -13,6 +15,8 @@ import { ForumService } from 'src/app/services/forum.service';
   styleUrls: ['./newthread.component.scss'],
 })
 export class NewthreadComponent {
+  isLoadingPage: boolean = true;
+  isWaitingPage: boolean = true;
   getPostSub!: Subscription;
   postSub!: Subscription;
   authSub!: Subscription;
@@ -28,6 +32,10 @@ export class NewthreadComponent {
   threadTitle = '';
   editPostId: number = 0;
   editPostInitBody: string = '';
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean>(false);
+  subsArr$ = this.subsBoolArr.asObservable();
+  errorsMsgs: string[] = [];
   @ViewChild('generalBtn') generalBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('newsBtn') newsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('guideBtn') guideBtn!: ElementRef<HTMLButtonElement>;
@@ -38,7 +46,8 @@ export class NewthreadComponent {
     private svc: ForumService,
     private route: ActivatedRoute,
     private authSvc: AuthService,
-    private router: Router
+    private router: Router,
+    private modalSvc: NgbModal
   ) {}
 
   setTopBarObj() {
@@ -87,12 +96,21 @@ export class NewthreadComponent {
         .getSinglePost(this.editPostId)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.errorsMsgs.push(
+              'Errore nel caricamento delle informazioni sul post.'
+            );
+            let currentValues = this.subsBoolArr.value;
+            currentValues = true;
+            this.subsBoolArr.next(currentValues);
+            return EMPTY;
           })
         )
         .subscribe((res) => {
           this.threadTitle = res.title;
           this.editPostInitBody = res.body;
+          let currentValues = this.subsBoolArr.value;
+          currentValues = true;
+          this.subsBoolArr.next(currentValues);
         });
     } else {
       this.ssId = parseInt(this.route.snapshot.paramMap.get('id')!);
@@ -100,7 +118,13 @@ export class NewthreadComponent {
         .getSubSectionById(this.ssId)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.errorsMsgs.push(
+              'Errore nel caricamento delle informazioni sulla sezione del nuovo post da creare.'
+            );
+            let currentValues = this.subsBoolArr.value;
+            currentValues = true;
+            this.subsBoolArr.next(currentValues);
+            return EMPTY;
           })
         )
         .subscribe((res) => {
@@ -108,12 +132,35 @@ export class NewthreadComponent {
           this.ssParentId = res.parent_id;
           this.ssTitle = res.title;
           this.setTopBarObj();
+          let currentValues = this.subsBoolArr.value;
+          currentValues = true;
+          this.subsBoolArr.next(currentValues);
         });
     }
 
     this.authSub = this.authSvc.user$.subscribe((res) => {
       this.user_id = res?.user_id;
     });
+
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 400);
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res == true) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -121,6 +168,7 @@ export class NewthreadComponent {
     if (this.postSub) this.postSub.unsubscribe();
     if (this.ssInfoSub) this.ssInfoSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
     localStorage.removeItem('post-id');
     localStorage.removeItem('topbar-editp');
   }

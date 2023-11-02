@@ -1,6 +1,9 @@
 <div class="h-100 pb-4">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && !isWaitingPage" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length" class="container-fluid mt-4">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+    </div>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-4">
         <div class="d-flex align-items-center">
             <div *ngIf="profileData?.avatar == '' || profileData?.avatar == null"
                 class="img-placeholder profile-img me-3"></div>
@@ -13,7 +16,7 @@
                 <h6 class="m-0">{{ profileData?.description }}</h6>
             </div>
         </div>
-        <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly head mt-4 py-3">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-evenly head mt-4 mb-3 py-3">
             <button class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0" [routerLink]="'/profile/pm/newpm'">Nuovo
                 Messaggio</button>
             <button #sentBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0 btn-selected my-2 my-md-0"

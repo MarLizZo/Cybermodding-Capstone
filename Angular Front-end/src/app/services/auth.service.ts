@@ -35,6 +35,8 @@ export class AuthService {
   privileges$ = this.privilegeSubj.asObservable();
   private checkValSub!: Subscription;
   public user_id: number = 0;
+  private initalizedInfo = new BehaviorSubject<boolean>(false);
+  intialized$ = this.initalizedInfo.asObservable().pipe(map((init) => init));
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -50,7 +52,7 @@ export class AuthService {
       )
         .pipe(
           catchError((err) => {
-            //console.log('Mio log custom', err);
+            this.initalizedInfo.next(true);
             return EMPTY;
           })
         )
@@ -64,10 +66,10 @@ export class AuthService {
             this.subj.next(user);
             this.user_id = user!.user_id;
           } else {
-            console.log('INVALID TOKEN OR SERVER ERROR');
             localStorage.removeItem('user');
             this.router.navigate(['/auth/login/tk']);
           }
+          this.initalizedInfo.next(true);
           this.checkValSub.unsubscribe();
         });
     }

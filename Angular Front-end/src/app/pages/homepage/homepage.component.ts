@@ -1,7 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, Subscription, catchError } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Subscription,
+  catchError,
+  forkJoin,
+  from,
+  zip,
+} from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
@@ -30,6 +38,7 @@ export class HomepageComponent {
   sectionsSub!: Subscription;
   postsSub!: Subscription;
   authSub!: Subscription;
+  subSub!: Subscription;
   isLoadingPage: boolean = true;
   isWaitingPage: boolean = true;
   selectedSectionIndex: number = 0;
@@ -42,26 +51,40 @@ export class HomepageComponent {
   postsData!: IPostHomePaged;
   pagesArr: number[] = [];
   errorsMsgs: string[] = [];
+  subsBoolArr = new BehaviorSubject<boolean[]>([false, false, false]);
+  subsArr$ = this.subsBoolArr.asObservable();
 
   ngOnInit() {
     this.sidesSub = this.svc
       .getForumSideBlocks()
       .pipe(
         catchError((err) => {
-          this.errorsMsgs.push(err.message);
-          this.showModal();
+          this.errorsMsgs.push(
+            'Errore nel caricamento della sidebar laterale.'
+          );
+          const currentValues = this.subsBoolArr.value;
+          currentValues[0] = true;
+          this.subsBoolArr.next(currentValues);
           return EMPTY;
         })
       )
       .subscribe((res) => {
         this.sidesArr = res;
+        const currentValues = this.subsBoolArr.value;
+        currentValues[0] = true;
+        this.subsBoolArr.next(currentValues);
       });
 
     this.sectionsSub = this.svc
       .getSections()
       .pipe(
         catchError((err) => {
-          this.errorsMsgs.push(err.message);
+          this.errorsMsgs.push(
+            'Errore nel caricamento delle informazioni sulle sezioni.'
+          );
+          const currentValues = this.subsBoolArr.value;
+          currentValues[1] = true;
+          this.subsBoolArr.next(currentValues);
           return EMPTY;
         })
       )
@@ -71,9 +94,21 @@ export class HomepageComponent {
           1
         );
         this.sectionsArr = res;
+        const currentValues = this.subsBoolArr.value;
+        currentValues[1] = true;
+        this.subsBoolArr.next(currentValues);
       });
 
     this.doPostsCall(0, 0, true);
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res.every((el) => el == true)) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
 
     setTimeout(() => {
       this.isWaitingPage = false;
@@ -81,12 +116,10 @@ export class HomepageComponent {
   }
 
   showModal() {
-    if (!this.isLoadingPage) {
-      const modal = this.modalSvc.open(ErrorModalComponent, {
-        size: 'xl',
-      });
-      modal.componentInstance.messages = this.errorsMsgs;
-    }
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
@@ -95,6 +128,7 @@ export class HomepageComponent {
     if (this.sectionsSub) this.sectionsSub.unsubscribe();
     if (this.postsSub) this.postsSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 
   doPostsCall(parent_id: number, page: number, init: boolean) {
@@ -106,9 +140,10 @@ export class HomepageComponent {
       )
       .pipe(
         catchError((err) => {
-          this.isLoadingPage = false;
-          this.errorsMsgs.push(err.message);
-          this.showModal();
+          this.errorsMsgs.push('Errore nel caricamento dei post.');
+          const currentValues = this.subsBoolArr.value;
+          currentValues[2] = true;
+          this.subsBoolArr.next(currentValues);
           return EMPTY;
         })
       )
@@ -130,7 +165,9 @@ export class HomepageComponent {
           }
           this.pagesArr.push(res.totalPages);
         }
-        this.isLoadingPage = false;
+        const currentValues = this.subsBoolArr.value;
+        currentValues[2] = true;
+        this.subsBoolArr.next(currentValues);
 
         if (!init) {
           setTimeout(() => {

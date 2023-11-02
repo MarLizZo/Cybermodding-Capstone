@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { TopbarComponent } from 'src/app/components/topbar/topbar.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [NewthreadComponent],
@@ -23,6 +24,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     HeroComponent,
     TopbarComponent,
     NgbDropdownModule,
+    ErrorModalComponent,
   ],
 })
 export class NewthreadModule {}

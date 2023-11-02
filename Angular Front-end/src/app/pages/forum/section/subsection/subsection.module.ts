@@ -6,6 +6,7 @@ import { SubsectionComponent } from './subsection.component';
 import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { TopbarComponent } from 'src/app/components/topbar/topbar.component';
 import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-button.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [SubsectionComponent],
@@ -15,6 +16,7 @@ import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-b
     HeroComponent,
     TopbarComponent,
     OrangeButtonComponent,
+    ErrorModalComponent,
   ],
 })
 export class SubsectionModule {}

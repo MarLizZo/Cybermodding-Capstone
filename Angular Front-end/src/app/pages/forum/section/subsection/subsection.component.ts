@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { UserLevel } from 'src/app/enums/user-level';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
@@ -27,12 +29,17 @@ export class SubsectionComponent {
   isAuthenticated: boolean = false;
   newThreadPath: string = '';
   topBObj: any = [];
+  errorsMsgs: string[] = [];
+  subSub!: Subscription;
+  subsBoolArr = new BehaviorSubject<boolean>(false);
+  subsArr$ = this.subsBoolArr.asObservable();
 
   constructor(
     private svc: ForumService,
     private route: ActivatedRoute,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private modalSvc: NgbModal
   ) {}
 
   setTopBarObj() {
@@ -67,6 +74,7 @@ export class SubsectionComponent {
     setTimeout(() => {
       this.isWaitingPage = false;
     }, 350);
+
     this.routeSub = this.route.paramMap.subscribe((res) => {
       let ssId: number = parseInt(res.get('hash')!.split('-')[0]);
       this.newThreadPath = '/forum/newthread/' + ssId;
@@ -76,7 +84,9 @@ export class SubsectionComponent {
           .getSubSectionById(ssId)
           .pipe(
             catchError((err) => {
-              throw err;
+              this.errorsMsgs.push('Errore nel caricamento della sezione.');
+              this.subsBoolArr.next(true);
+              return EMPTY;
             })
           )
           .subscribe((res) => {
@@ -86,26 +96,43 @@ export class SubsectionComponent {
             this.ssTitle = res.title;
             this.postsArr = res.posts;
             this.setTopBarObj();
-            this.isLoadingPage = false;
+            this.subsBoolArr.next(true);
           });
       }
 
       this.authSub = this.auth.isLogged$
         .pipe(
           catchError((err) => {
-            throw err;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
           this.isAuthenticated = res;
         });
     });
+
+    this.subSub = this.subsArr$.subscribe((res) => {
+      if (res == true) {
+        this.isLoadingPage = false;
+        if (this.errorsMsgs.length) {
+          this.showModal();
+        }
+      }
+    });
+  }
+
+  showModal() {
+    const modal = this.modalSvc.open(ErrorModalComponent, {
+      size: 'xl',
+    });
+    modal.componentInstance.messages = this.errorsMsgs;
   }
 
   ngOnDestroy() {
     if (this.ssSub) this.ssSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
     if (this.routeSub) this.routeSub.unsubscribe();
+    if (this.subSub) this.subSub.unsubscribe();
   }
 
   getClassName(level: UserLevel): string {

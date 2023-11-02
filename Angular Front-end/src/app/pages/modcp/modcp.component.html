@@ -23,8 +23,10 @@
                         placeholder="Cerca utente..">
                 </form>
 
-                <p *ngIf="usersFound == undefined" class="mt-4 fw-medium fs-5">Il risultato apparirà qui</p>
-                <div *ngIf="usersFound != undefined && usersFound.content.length != 0"
+                <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5">{{ errorPanelMsg }}</p>
+                <p *ngIf="usersFound == undefined && !isErrorPanel" class="mt-4 fw-medium fs-5">Il risultato apparirà
+                    qui</p>
+                <div *ngIf="usersFound != undefined && usersFound.content.length != 0 && !isErrorPanel"
                     class="user-container w-100 mt-4 p-3">
                     <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-user"
                         [ngClass]="{'mt-3' : !first}">

@@ -6,6 +6,7 @@ import { SectionComponent } from './section.component';
 import { HeroComponent } from 'src/app/components/hero/hero.component';
 import { TopbarComponent } from 'src/app/components/topbar/topbar.component';
 import { SubsectionBodyComponent } from 'src/app/components/subsection-body/subsection-body.component';
+import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 
 @NgModule({
   declarations: [SectionComponent],
@@ -15,6 +16,7 @@ import { SubsectionBodyComponent } from 'src/app/components/subsection-body/subs
     HeroComponent,
     TopbarComponent,
     SubsectionBodyComponent,
+    ErrorModalComponent,
   ],
 })
 export class SectionModule {}
