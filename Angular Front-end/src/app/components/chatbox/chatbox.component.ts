@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from 'src/app/services/chat.service';
 import { IChatMessage } from 'src/app/interfaces/ichat-message';
-import { Subscription, catchError } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { UserLevel } from 'src/app/enums/user-level';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
@@ -42,7 +42,7 @@ export class ChatboxComponent {
       .getInitMessages()
       .pipe(
         catchError((err) => {
-          throw err;
+          return EMPTY;
         })
       )
       .subscribe((res) => {
@@ -57,9 +57,16 @@ export class ChatboxComponent {
         }, 300);
       });
 
-    this.connectSub = this.svc.getMessages()!.subscribe((message) => {
-      this.messages.push(message);
-    });
+    this.connectSub = this.svc
+      .getMessages()
+      .pipe(
+        catchError((err) => {
+          return EMPTY;
+        })
+      )
+      .subscribe((message) => {
+        this.messages.push(message);
+      });
   }
 
   ngOnDestroy() {
