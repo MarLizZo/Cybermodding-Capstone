@@ -9,17 +9,16 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
-<h4>Current Version: 1.1</h4>
+<h4>Current Version: 1.2</h4>
 
--   Implemented full responsiveness design
+-   BE Responses improvements, Error management
 
 <p></p>
 
-<h5>TO-DO after the v1.1:</h5>
+<h5>TO-DO after the v1.2:</h5>
 
--   Security checks on both Front-end and Back-end
--   Back-end responses improvements
--   Cleanup and general optimizations
+-   Avatar upload
+-   Contact us feature
 
 <img src="Repo assets/my-hr.png" style="height:8px; width:100%">
 
