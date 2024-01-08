@@ -1,24 +1,9 @@
 <div class="h-100 pb-5">
     <app-hero></app-hero>
-    <div *ngIf="!isLoadingPage && errorsMsgs.length" class="container-fluid mt-4">
-        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
-    </div>
-    <div *ngIf="!isLoadingPage && errorsMsgs.length == 0" class="container-fluid mt-4">
+    <div *ngIf="!isLoadingPage" class="container-fluid mt-4">
         <h2 class="m-0">Contattaci</h2>
         <div class="mt-5">
-            <div *ngIf="isUserLogged" class="bg-container">
-                <p class="m-0 p-2 fs-4 bb-nb-2 rounded-top-1 text-center">Contatta un Admin tramite messaggistica
-                    privata</p>
-                <div *ngIf="bossArr != null">
-                    <div *ngFor="let a of bossArr.admins; let last = last; let first = first"
-                        class="single-container d-flex justify-content-center p-1"
-                        [ngClass]="{'rounded-bottom-1' : last, 'mt-2' : first, 'pb-2' : last}">
-                        <p class="m-0 text-danger fs-5 fw-medium" (click)="true">{{ a.username }}</p>
-                    </div>
-                </div>
-            </div>
-            <div [ngClass]="{'mt-5' : isUserLogged}"
-                class="bg-container rounded-1 w-100 d-flex flex-column align-items-center pb-3">
+            <div class="mt-5 bg-container rounded-1 w-100 d-flex flex-column align-items-center pb-4">
                 <p class="m-0 p-2 fs-4 bb-nb-2 text-center w-100">Contattaci tramite il form sottostante</p>
                 <div class="w-100 d-flex flex-column align-items-center">
                     <div class="mt-4 select-cont">
@@ -29,11 +14,29 @@
                             <option *ngFor="let s of reasonsArr; let i = index" [value]="s">{{ s }}
                             </option>
                         </select>
+                        <div *ngIf="!isUserLogged" class="mt-3">
+                            <p #nameP class="mb-1 text-danger d-none">Inserisci nome / contatto</p>
+                            <input #nameInput type="text"
+                                class="w-100 form-control form-control-sm px-2 border-0 shadow-none"
+                                placeholder="Il tuo nome e contatto">
+                        </div>
                     </div>
                     <div class="mt-4 editor-cont shadow">
-                        <app-editor-form [type]="'newpm'" (submitPost)="sendFormMessage($event)"></app-editor-form>
+                        <p #messageP class="mb-1 text-danger d-none">Inserisci un messaggio</p>
+                        <app-editor-form [type]="'newpm'" (submitPost)="doChecks($event)"></app-editor-form>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div #afterMessageDiv class="mt-5 bg-container p-3 pb-4 shadow d-none">
+            <p class="mb-1">Grazie per averci contattato!</p>
+            <p [ngClass]="{'mb-0' : isUserLogged, 'mb-2' : !isUserLogged}">Un Admin si occuperà del messaggio prima
+                possibile.</p>
+            <p *ngIf="!isUserLogged" class="mb-0">Assicurati di aver inserito un metodo di contatto, che sia una email o
+                contatto Discord. Nel caso ti fossi dimenticato di farlo, scrivi un nuovo messaggio.</p>
+
+            <div class="d-flex justify-content-center mt-4">
+                <app-orange-button btnTitle="Torna al Forum" btnTheme="dark"></app-orange-button>
             </div>
         </div>
     </div>

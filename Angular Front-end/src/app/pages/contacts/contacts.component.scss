@@ -1,5 +1,14 @@
 .bg-container {
   background-color: var(--bg-lighter);
+
+  input {
+    background-color: var(--bg);
+    color: var(--txt);
+  }
+
+  ::placeholder {
+    color: var(--txt-muted);
+  }
 }
 
 .single-container {

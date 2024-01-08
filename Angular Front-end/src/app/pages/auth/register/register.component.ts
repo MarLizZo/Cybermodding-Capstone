@@ -45,6 +45,10 @@ export class RegisterComponent {
     }, 500);
   }
 
+  ngAfterViewInit() {
+    this.avatarP.nativeElement.addEventListener('change', () => {});
+  }
+
   ngOnDestroy() {
     if (this.regSub) this.regSub.unsubscribe();
   }
@@ -86,7 +90,7 @@ export class RegisterComponent {
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
     if (this.regData.avatar != '') {
-      if (!RegExp('/.(jpeg|jpg|png|gif|bmp)$/i').test(this.regData.avatar)) {
+      if (!RegExp('/.(jpeg|jpg|png)$/i').test(this.regData.avatar)) {
         checksResult = false;
         this.avatarP.nativeElement.classList.remove('d-none');
       }
@@ -101,6 +105,8 @@ export class RegisterComponent {
     }
     return checksResult;
   }
+
+  checkAndUploadAvatar() {}
 
   doRegister() {
     this.resetErrFields();

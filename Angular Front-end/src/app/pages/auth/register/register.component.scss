@@ -45,6 +45,17 @@
   button {
     background-color: rgb(7, 7, 7) !important;
   }
+
+  label.input-group-text {
+    cursor: pointer;
+    background-color: var(--bs-gray-900);
+    color: var(--txt);
+    font-size: 1.01rem;
+
+    &:hover {
+      background-color: var(--bs-gray-800);
+    }
+  }
 }
 
 .txt-orange {

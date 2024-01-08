@@ -3,5 +3,5 @@
         [placeholderText]="type == 'comment' ? 'Rispondi qui..' : 'Scrivi qui..'" [type]="type"
         (onSubmit)="doPost($event)" [quotedMsg]="quoted == undefined ? undefined : quoted"
         [threadTitle]="postTitle == undefined ? undefined : postTitle"
-        [postBody]="postBody == undefined ? undefined : postBody"></app-ckeditor>
+        [postBody]="postBody == undefined ? undefined : postBody" [type]="type"></app-ckeditor>
 </div>

@@ -101,7 +101,9 @@ export class CkeditorComponent {
   emitData(): void {
     this.onSubmit.emit(this.editorData);
     this.quotedMsg = undefined;
-    this.editorData = '';
+    if (this.type == 'comment') {
+      this.editorData = '';
+    }
   }
 
   previewPost(): void {

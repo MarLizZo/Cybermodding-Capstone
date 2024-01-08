@@ -13,6 +13,8 @@ import { IPostDTO } from '../interfaces/ipost-dto';
 import { IPostHomePaged } from '../interfaces/ipost-home-paged';
 import { IUpdatePostDTO } from '../interfaces/iupdate-post-dto';
 import { IPostDataPaged } from '../interfaces/ipost-data-paged';
+import { IcontactDto } from '../interfaces/icontact-dto';
+import { IContactMessage } from '../interfaces/icontact-message-res';
 
 type paramsPage = {
   size: number;
@@ -26,6 +28,7 @@ export class ForumService {
   sidesApiUrl: string = 'http://localhost:8080/api/sides';
   threadsApiUrl: string = 'http://localhost:8080/api/threads';
   sectionsApiUrl: string = 'http://localhost:8080/api/sections';
+  contactsApiUrl: string = 'http://localhost:8080/api/contacts';
   subsectionsApiUrl: string = 'http://localhost:8080/api/subsections';
 
   constructor(private http: HttpClient) {}
@@ -98,5 +101,9 @@ export class ForumService {
 
   public postNewThread(data: IPostDTO): Observable<IPostData> {
     return this.http.post<IPostData>(this.threadsApiUrl, data);
+  }
+
+  public sendContactMessage(data: IcontactDto) {
+    return this.http.post<IContactMessage>(this.contactsApiUrl + '/new', data);
   }
 }
