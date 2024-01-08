@@ -1,5 +1,7 @@
 package com.cybermodding.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cybermodding.entities.ContactMessage;
 import com.cybermodding.payload.ContactMessageDTO;
 import com.cybermodding.responses.ContactMsgResponse;
 import com.cybermodding.services.ContactMsgService;
@@ -35,7 +38,7 @@ public class ContactMsgController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("")
-    public ResponseEntity<ContactMsgResponse> getAll() {
+    public ResponseEntity<List<ContactMessage>> getAll() {
         return ResponseEntity.ok(svc.getAll());
     }
 

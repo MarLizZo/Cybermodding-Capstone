@@ -31,9 +31,8 @@ public class ContactMsgService {
                 : new ContactMsgResponse(new ResponseBase(true, "", LocalDateTime.now()), cm.get());
     }
 
-    public ContactMsgResponse getAll() {
-        List<ContactMessage> cms = repo.findAll();
-        return new ContactMsgResponse(new ResponseBase(true, "", LocalDateTime.now()), cms);
+    public List<ContactMessage> getAll() {
+        return repo.findAll();
     }
 
     public ContactMsgResponse getAllFromUserID(Long id) {

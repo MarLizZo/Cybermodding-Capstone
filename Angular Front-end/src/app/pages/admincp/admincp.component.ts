@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, EmptyError, Subscription, catchError } from 'rxjs';
 import { ModalComponent } from 'src/app/components/modal/modal.component';
+import { IContactMessageBody } from 'src/app/interfaces/icontact-message-body';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
@@ -31,11 +32,13 @@ export class AdmincpComponent {
   isWaitingPage: boolean = true;
   isWaitingPanel: boolean = true;
   isErrorPanel: boolean = false;
+  isErrorMessagePanel: boolean = false;
   errorPanelMsg: string = '';
   username: string | undefined = '';
   user_id: number | undefined = 0;
   granted: boolean = false;
 
+  isContactModeration: boolean = false;
   isUsersModeration: boolean = true;
   isThreadsModeration: boolean = false;
   isSectionsModeration: boolean = false;
@@ -66,12 +69,16 @@ export class AdmincpComponent {
   subSectionOperationsSub!: Subscription;
   sectionOperationsSub!: Subscription;
   blockOperationsSub!: Subscription;
+  contactsOperationsSub!: Subscription;
 
   inputSearchUser: string = '';
   usersFound!: IUserDataPageable;
   collapseableArr: boolean[] = [true, true, true, true, true, true, true, true];
   userNamesArr: string[] = [];
   userPagesArr: number[] = [];
+  contactMessagesArr: IContactMessageBody[] = [];
+  openContactMessagesArr: IContactMessageBody[] = [];
+  closedContactMessagesArr: IContactMessageBody[] = [];
 
   inputSearchThread: string = '';
   threadSearchCriteria: number = 0;
@@ -134,10 +141,12 @@ export class AdmincpComponent {
     true,
     true,
   ];
+  collapseableCMArr: boolean[] = [];
   activeBoolBArr: boolean[] = [];
   blocksTitleArr: string[] = [];
   blocksTypeArr: string[] = [];
 
+  @ViewChild('contactsMod') contactsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('sectionMod') sectionsBtn!: ElementRef<HTMLButtonElement>;
@@ -175,6 +184,8 @@ export class AdmincpComponent {
             this.authUserSub = this.authSvc.user$.subscribe((res) => {
               this.username = res?.username;
               this.user_id = res?.user_id;
+
+              this.getContactMessages();
               this.isLoadingPage = false;
             });
           } else {
@@ -208,6 +219,7 @@ export class AdmincpComponent {
       this.subSectionOperationsSub.unsubscribe();
     if (this.blockOperationsSub) this.blockOperationsSub.unsubscribe();
     if (this.initSub) this.initSub.unsubscribe();
+    if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
   }
 
   switchModeration(flag: number): void {
@@ -215,44 +227,65 @@ export class AdmincpComponent {
     this.errorPanelMsg = '';
 
     if (flag == 0) {
-      if (!this.isUsersModeration) {
-        this.isUsersModeration = true;
+      if (!this.isContactModeration) {
+        this.isContactModeration = true;
+        this.isUsersModeration = false;
         this.isThreadsModeration = false;
         this.isSectionsModeration = false;
         this.isBlocksModeration = false;
-        this.usersBtn.nativeElement.classList.add('btn-selected');
+        this.contactsBtn.nativeElement.classList.add('btn-selected');
+        this.usersBtn.nativeElement.classList.remove('btn-selected');
         this.threadsBtn.nativeElement.classList.remove('btn-selected');
         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
         this.blocksBtn.nativeElement.classList.remove('btn-selected');
       }
     } else if (flag == 1) {
+      if (!this.isUsersModeration) {
+        this.isContactModeration = false;
+        this.isUsersModeration = true;
+        this.isThreadsModeration = false;
+        this.isSectionsModeration = false;
+        this.isBlocksModeration = false;
+        this.contactsBtn.nativeElement.classList.remove('btn-selected');
+        this.usersBtn.nativeElement.classList.add('btn-selected');
+        this.threadsBtn.nativeElement.classList.remove('btn-selected');
+        this.sectionsBtn.nativeElement.classList.remove('btn-selected');
+        this.blocksBtn.nativeElement.classList.remove('btn-selected');
+      }
+    } else if (flag == 2) {
       if (!this.isThreadsModeration) {
+        this.isContactModeration = false;
         this.isThreadsModeration = true;
         this.isUsersModeration = false;
         this.isSectionsModeration = false;
         this.isBlocksModeration = false;
+        this.contactsBtn.nativeElement.classList.remove('btn-selected');
         this.usersBtn.nativeElement.classList.remove('btn-selected');
         this.threadsBtn.nativeElement.classList.add('btn-selected');
         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
         this.blocksBtn.nativeElement.classList.remove('btn-selected');
       }
-    } else if (flag == 2) {
+    } else if (flag == 3) {
       if (!this.isSectionsModeration) {
+        this.isContactModeration = false;
         this.isSectionsModeration = true;
         this.isUsersModeration = false;
         this.isThreadsModeration = false;
         this.isBlocksModeration = false;
+        this.contactsBtn.nativeElement.classList.remove('btn-selected');
         this.usersBtn.nativeElement.classList.remove('btn-selected');
         this.threadsBtn.nativeElement.classList.remove('btn-selected');
         this.sectionsBtn.nativeElement.classList.add('btn-selected');
         this.blocksBtn.nativeElement.classList.remove('btn-selected');
       }
-    } else if (flag == 3) {
+    } else if (flag == 4) {
       if (!this.isBlocksModeration) {
+        this.isContactModeration = false;
         this.isBlocksModeration = true;
         this.isUsersModeration = false;
         this.isThreadsModeration = false;
         this.isSectionsModeration = false;
+        this.contactsBtn.nativeElement.classList.remove('btn-selected');
         this.usersBtn.nativeElement.classList.remove('btn-selected');
         this.threadsBtn.nativeElement.classList.remove('btn-selected');
         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
@@ -280,6 +313,32 @@ export class AdmincpComponent {
         this.threadViewAllBtn.nativeElement.classList.add('btn-selected');
       }
     }
+  }
+
+  getContactMessages() {
+    if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
+    this.isWaitingPanel = true;
+    this.isErrorPanel = false;
+    this.isErrorMessagePanel = false;
+
+    this.contactsOperationsSub = this.svc
+      .getAllContactMessages()
+      .pipe(
+        catchError((err) => {
+          this.errorPanelMsg = 'Errore nel caricamento dei messaggi';
+          this.isErrorMessagePanel = true;
+          this.isWaitingPanel = false;
+          return EMPTY;
+        })
+      )
+      .subscribe((res) => {
+        this.contactMessagesArr = res;
+        this.openContactMessagesArr = res.filter((el) => !el.closed);
+        this.closedContactMessagesArr = res.filter((el) => el.closed);
+        console.log(this.openContactMessagesArr);
+
+        this.isWaitingPanel = false;
+      });
   }
 
   getBlocks() {

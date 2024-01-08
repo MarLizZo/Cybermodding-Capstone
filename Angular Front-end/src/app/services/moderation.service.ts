@@ -10,6 +10,7 @@ import { ISideBlockData } from '../interfaces/iside-block-data';
 import { ISectionData } from '../interfaces/isection-data';
 import { ISubSectionData } from '../interfaces/isub-section-data';
 import { ICustomResponse } from '../interfaces/icustom-response';
+import { IContactMessageBody } from '../interfaces/icontact-message-body';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +19,7 @@ export class ModerationService {
   usersApiUrl: string = 'http://localhost:8080/api/users';
   sidesApiUrl: string = 'http://localhost:8080/api/sides';
   threadsApiUrl: string = 'http://localhost:8080/api/threads';
+  contactsApiUrl: string = 'http://localhost:8080/api/contacts';
   sectionsApiUrl: string = 'http://localhost:8080/api/sections';
   subsectionsApiUrl: string = 'http://localhost:8080/api/subsections';
 
@@ -147,5 +149,9 @@ export class ModerationService {
 
   public updateBlock(id: number, data: ISideBlockData) {
     return this.http.put<ISideBlockData>(this.sidesApiUrl + '/' + id, data);
+  }
+
+  public getAllContactMessages(): Observable<IContactMessageBody[]> {
+    return this.http.get<IContactMessageBody[]>(this.contactsApiUrl);
   }
 }

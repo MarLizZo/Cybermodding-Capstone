@@ -9,18 +9,38 @@
         <h1 class="mb-2 text-danger">{{ username }}</h1>
         <h3 class="mb-4">Pannello Admin</h3>
 
-        <div class="head-container d-flex flex-column flex-lg-row align-items-center justify-content-lg-evenly p-3">
-            <button #userMod class="btn moderation-btn px-4 rounded-1 btn-selected border-0"
-                (click)="switchModeration(0)">Moderazione utenti</button>
-            <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-lg-0"
-                (click)="switchModeration(1)">Moderazione threads</button>
-            <button #sectionMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-lg-0"
-                (click)="switchModeration(2)">Moderazione sezioni</button>
-            <button #blockMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-lg-0"
-                (click)="switchModeration(3)">Moderazione blocchi</button>
+        <div class="head-container d-flex flex-column flex-xl-row align-items-center justify-content-xl-evenly p-3">
+            <button #contactsMod class="btn moderation-btn px-4 rounded-1 border-0" (click)="switchModeration(0)"
+                [innerHTML]="'Messaggi aperti < ' + openContactMessagesArr.length + ' >'"></button>
+            <button #userMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0 btn-selected"
+                (click)="switchModeration(1)">Moderazione utenti</button>
+            <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0"
+                (click)="switchModeration(2)">Moderazione threads</button>
+            <button #sectionMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0"
+                (click)="switchModeration(3)">Moderazione sezioni</button>
+            <button #blockMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0"
+                (click)="switchModeration(4)">Moderazione blocchi</button>
         </div>
 
         <div class="main-container p-3">
+            <div *ngIf="isContactModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+                <p *ngIf="isErrorMessagePanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
+
+                <div *ngIf="!isWaitingPanel && !isErrorMessagePanel"
+                    class="d-flex flex-column align-items-center w-100">
+                    <p *ngIf="openContactMessagesArr.length < 1" class="mb-0 fs-5 fw-medium">Nessun messaggio aperto</p>
+                    <div *ngFor="let m of openContactMessagesArr; let i = index; let first = first"
+                        class="single-result contact-message" [ngClass]="{'mt-3' : !first}">
+                        <div class="w-100 py-2 px-3 rounded-1">
+                            <p class="m-0 fw-medium fs-5">DA: <span [ngClass]="{'text-orange' : m.fromUser != null}">{{
+                                    m.name != '' ? m.name :
+                                    m.fromUser!.username }}</span></p>
+                            <p class="m-0" [innerText]="m.type"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div *ngIf="isUsersModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
                 <p id="top-user" class="mb-2">Cerca utenti</p>
                 <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">

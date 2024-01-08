@@ -103,7 +103,7 @@ export class ForumService {
     return this.http.post<IPostData>(this.threadsApiUrl, data);
   }
 
-  public sendContactMessage(data: IcontactDto) {
+  public sendContactMessage(data: IcontactDto): Observable<IContactMessage> {
     return this.http.post<IContactMessage>(this.contactsApiUrl + '/new', data);
   }
 }

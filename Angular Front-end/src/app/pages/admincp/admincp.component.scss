@@ -134,15 +134,15 @@
     background-color: var(--near-black);
   }
 
-  @media screen and (max-width: 576px) {
+  @media screen and (max-width: 768px) {
     width: 90%;
   }
 
-  @media screen and (min-width: 576px) {
+  @media screen and (min-width: 769px) {
     width: 65%;
   }
 
-  @media screen and (min-width: 992px) {
+  @media screen and (min-width: 1200px) {
     width: auto;
   }
 }
@@ -172,4 +172,26 @@
 
 .text-mod {
   color: var(--mod-color);
+}
+
+.text-orange {
+  color: var(--orange);
+}
+
+.contact-message {
+  transition: transform 0.3s;
+  width: 90%;
+
+  @media screen and (min-width: 992px) {
+    width: 75%;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  div,
+  p {
+    cursor: pointer;
+  }
 }
