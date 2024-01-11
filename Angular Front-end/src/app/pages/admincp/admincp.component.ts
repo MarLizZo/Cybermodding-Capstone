@@ -39,6 +39,7 @@ export class AdmincpComponent {
   granted: boolean = false;
 
   isContactModeration: boolean = false;
+  isSingleContactModeration: boolean = false;
   isUsersModeration: boolean = true;
   isThreadsModeration: boolean = false;
   isSectionsModeration: boolean = false;
@@ -79,6 +80,7 @@ export class AdmincpComponent {
   contactMessagesArr: IContactMessageBody[] = [];
   openContactMessagesArr: IContactMessageBody[] = [];
   closedContactMessagesArr: IContactMessageBody[] = [];
+  singleContactMsg: IContactMessageBody | null = null;
 
   inputSearchThread: string = '';
   threadSearchCriteria: number = 0;
@@ -147,6 +149,7 @@ export class AdmincpComponent {
   blocksTypeArr: string[] = [];
 
   @ViewChild('contactsMod') contactsBtn!: ElementRef<HTMLButtonElement>;
+  @ViewChild('errorSingleContact') errorSingleContact!: ElementRef<HTMLElement>;
   @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('sectionMod') sectionsBtn!: ElementRef<HTMLButtonElement>;
@@ -335,10 +338,44 @@ export class AdmincpComponent {
         this.contactMessagesArr = res;
         this.openContactMessagesArr = res.filter((el) => !el.closed);
         this.closedContactMessagesArr = res.filter((el) => el.closed);
-        console.log(this.openContactMessagesArr);
-
         this.isWaitingPanel = false;
       });
+  }
+
+  showMsg(index: number) {
+    this.singleContactMsg = this.openContactMessagesArr[index];
+    this.isSingleContactModeration = true;
+  }
+
+  setMsgAsClosed() {
+    this.errorSingleContact.nativeElement.classList.add('d-none');
+    let index: number = this.openContactMessagesArr.findIndex(
+      (el) => el.id == this.singleContactMsg?.id
+    );
+
+    if (index >= 0) {
+      this.svc
+        .setMessageClosed(this.openContactMessagesArr[index].id)
+        .pipe(
+          catchError((err) => {
+            this.errorSingleContact.nativeElement.classList.remove('d-none');
+            return EMPTY;
+          })
+        )
+        .subscribe((res) => {
+          if (res.response.ok) {
+            this.openContactMessagesArr[index].closed = true;
+            this.closedContactMessagesArr.push(
+              this.openContactMessagesArr[index]
+            );
+            this.openContactMessagesArr.splice(index, 1);
+            this.isSingleContactModeration = false;
+            console.log(res);
+          } else {
+            this.errorSingleContact.nativeElement.classList.remove('d-none');
+          }
+        });
+    }
   }
 
   getBlocks() {

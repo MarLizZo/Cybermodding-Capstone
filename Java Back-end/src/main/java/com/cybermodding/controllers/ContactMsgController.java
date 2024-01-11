@@ -44,7 +44,7 @@ public class ContactMsgController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/close/{id}")
-    public ResponseEntity<ContactMsgResponse> setClose(Long id) {
+    public ResponseEntity<ContactMsgResponse> setClose(@PathVariable Long id) {
         return ResponseEntity.ok(svc.setMessageAsClosed(id));
     }
 }

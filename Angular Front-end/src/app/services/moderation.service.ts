@@ -11,6 +11,7 @@ import { ISectionData } from '../interfaces/isection-data';
 import { ISubSectionData } from '../interfaces/isub-section-data';
 import { ICustomResponse } from '../interfaces/icustom-response';
 import { IContactMessageBody } from '../interfaces/icontact-message-body';
+import { IContactMessage } from '../interfaces/icontact-message-res';
 
 @Injectable({
   providedIn: 'root',
@@ -153,5 +154,9 @@ export class ModerationService {
 
   public getAllContactMessages(): Observable<IContactMessageBody[]> {
     return this.http.get<IContactMessageBody[]>(this.contactsApiUrl);
+  }
+
+  public setMessageClosed(id: number): Observable<IContactMessage> {
+    return this.http.get<IContactMessage>(this.contactsApiUrl + '/close/' + id);
   }
 }

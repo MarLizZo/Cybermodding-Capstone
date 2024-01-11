@@ -20,9 +20,15 @@
                                 class="w-100 form-control form-control-sm px-2 border-0 shadow-none"
                                 placeholder="Il tuo nome e contatto">
                         </div>
+                        <div class="mt-3">
+                            <p #titleP class="mb-1 text-danger d-none">Inserisci un titolo</p>
+                            <input #titleInput type="text"
+                                class="w-100 form-control form-control-sm px-2 border-0 shadow-none"
+                                placeholder="Titolo del messaggio">
+                        </div>
                     </div>
                     <div class="mt-4 editor-cont shadow">
-                        <p #messageP class="mb-1 text-danger d-none">Inserisci un messaggio</p>
+                        <p #messageP class="mb-0 text-danger d-none">Inserisci un messaggio</p>
                         <app-editor-form [type]="'newpm'" (submitPost)="doChecks($event)"></app-editor-form>
                     </div>
                 </div>

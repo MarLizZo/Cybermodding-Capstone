@@ -11,7 +11,7 @@
 
         <div class="head-container d-flex flex-column flex-xl-row align-items-center justify-content-xl-evenly p-3">
             <button #contactsMod class="btn moderation-btn px-4 rounded-1 border-0" (click)="switchModeration(0)"
-                [innerHTML]="'Messaggi aperti < ' + openContactMessagesArr.length + ' >'"></button>
+                [innerHTML]="'Messaggi di contatto < ' + openContactMessagesArr.length + ' >'"></button>
             <button #userMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0 btn-selected"
                 (click)="switchModeration(1)">Moderazione utenti</button>
             <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0"
@@ -23,21 +23,42 @@
         </div>
 
         <div class="main-container p-3">
-            <div *ngIf="isContactModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
+            <div *ngIf="isContactModeration" class="moderation-body d-flex flex-column align-items-center mt-2 pb-3">
                 <p *ngIf="isErrorMessagePanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
 
-                <div *ngIf="!isWaitingPanel && !isErrorMessagePanel"
+                <div *ngIf="!isWaitingPanel && !isErrorMessagePanel && !isSingleContactModeration"
                     class="d-flex flex-column align-items-center w-100">
                     <p *ngIf="openContactMessagesArr.length < 1" class="mb-0 fs-5 fw-medium">Nessun messaggio aperto</p>
                     <div *ngFor="let m of openContactMessagesArr; let i = index; let first = first"
-                        class="single-result contact-message" [ngClass]="{'mt-3' : !first}">
+                        class="single-result contact-message" [ngClass]="{'mt-3' : !first}" (click)="showMsg(i)">
                         <div class="w-100 py-2 px-3 rounded-1">
-                            <p class="m-0 fw-medium fs-5">DA: <span [ngClass]="{'text-orange' : m.fromUser != null}">{{
+                            <p class="mb-0 fs-5 title-trunc">{{ m.title }}</p>
+                            <p class="mb-0">Da: <span class="fw-medium"
+                                    [ngClass]="{'text-orange' : m.fromUser != null}">{{
                                     m.name != '' ? m.name :
                                     m.fromUser!.username }}</span></p>
-                            <p class="m-0" [innerText]="m.type"></p>
+                            <p class="mb-0" [innerText]="'Categoria: ' + m.type"></p>
                         </div>
                     </div>
+                </div>
+
+                <div *ngIf="isSingleContactModeration" class="single-result p-3 w-100 d-flex flex-column">
+                    <p #errorSingleContact class="mb-2 text-center text-danger d-none">Errore nel processamento del
+                        messaggio</p>
+                    <div class="mb-3 px-3 d-flex justify-content-between">
+                        <i class="bi bi-arrow-left-circle fs-1" (click)="isSingleContactModeration = false"></i>
+                        <div class="d-flex align-items-center">
+                            <p class="m-0 me-2">Segna come risolto</p>
+                            <i class="bi bi-check-circle-fill fs-2" (click)="setMsgAsClosed()"></i>
+                        </div>
+                    </div>
+                    <div class="fs-5">{{ singleContactMsg?.title }}</div>
+                    <div class="su-head pb-1">Da: <span class="fw-medium"
+                            [ngClass]="{ 'text-orange' : singleContactMsg?.fromUser }">{{ singleContactMsg?.fromUser ==
+                            null ? singleContactMsg?.name :
+                            singleContactMsg?.fromUser?.username }}</span></div>
+                    <div class="pb-2 bb-orange">Categoria: {{ singleContactMsg?.type }}</div>
+                    <div class="mt-3" [innerHTML]="singleContactMsg?.content"></div>
                 </div>
             </div>
 
@@ -392,7 +413,6 @@
                             </div>
                         </div>
                     </div>
-                    c
                 </div>
             </div>
 

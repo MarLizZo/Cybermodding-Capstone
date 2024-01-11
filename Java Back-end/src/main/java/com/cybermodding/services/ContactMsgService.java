@@ -78,6 +78,7 @@ public class ContactMsgService {
         cm.setName(dto.getName());
         cm.setType(type);
         cm.setContent(dto.getContent());
+        cm.setTitle(dto.getTitle());
         cm.setClosed(false);
         cm.setDate(LocalDateTime.now());
 

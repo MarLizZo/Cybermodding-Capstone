@@ -29,6 +29,8 @@ export class ContactsComponent {
   @ViewChild('reasonP') reasonP!: ElementRef<HTMLElement>;
   @ViewChild('nameP') nameP!: ElementRef<HTMLElement>;
   @ViewChild('nameInput') nameInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('titleP') titleP!: ElementRef<HTMLElement>;
+  @ViewChild('titleInput') titleInput!: ElementRef<HTMLInputElement>;
   @ViewChild('messageP') messageP!: ElementRef<HTMLElement>;
   @ViewChild('afterMessageDiv') afterMessageDiv!: ElementRef<HTMLElement>;
 
@@ -65,6 +67,7 @@ export class ContactsComponent {
       user_id: this.user_id,
       name: !this.isUserLogged ? this.nameInput.nativeElement.value : '',
       content: text,
+      title: this.titleInput.nativeElement.value,
       type:
         this.reason == "Problemi con l'account"
           ? 'ACCOUNT_ISSUE'
@@ -94,12 +97,18 @@ export class ContactsComponent {
   doChecks(content: string) {
     this.reasonP.nativeElement.classList.add('d-none');
     this.nameP?.nativeElement.classList.add('d-none');
+    this.titleP?.nativeElement.classList.add('d-none');
     this.messageP.nativeElement.classList.add('d-none');
     this.afterMessageDiv?.nativeElement.classList.add('d-none');
     let err: boolean = false;
 
     if (this.reason == '-1') {
       this.reasonP.nativeElement.classList.remove('d-none');
+      err = true;
+    }
+
+    if (this.titleInput.nativeElement.value.length < 1) {
+      this.titleP.nativeElement.classList.remove('d-none');
       err = true;
     }
 

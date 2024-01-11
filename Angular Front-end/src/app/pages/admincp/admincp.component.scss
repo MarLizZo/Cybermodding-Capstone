@@ -62,6 +62,13 @@
       color: var(--txt);
     }
 
+    i {
+      cursor: pointer;
+      color: var(--orange-hover);
+      font-size: 1.2rem;
+      width: max-content;
+    }
+
     .single-result {
       background-color: var(--bg);
 
@@ -73,12 +80,6 @@
         background-color: var(--bg-lighter);
         border: 1px solid var(--near-black);
         border-top: 0;
-      }
-
-      i {
-        cursor: pointer;
-        color: var(--orange-hover);
-        font-size: 1.2rem;
       }
     }
 
@@ -164,7 +165,6 @@
 
 .title-trunc {
   overflow: hidden;
-  display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
@@ -176,6 +176,10 @@
 
 .text-orange {
   color: var(--orange);
+}
+
+.bb-orange {
+  border-bottom: 1px solid var(--orange);
 }
 
 .contact-message {

@@ -7,5 +7,6 @@ public class ContactMessageDTO {
     private Long user_id;
     private String name;
     private String content;
+    private String title;
     private String type;
 }

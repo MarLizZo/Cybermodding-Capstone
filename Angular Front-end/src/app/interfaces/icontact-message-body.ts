@@ -5,6 +5,7 @@ export interface IContactMessageBody {
   fromUser?: IUserData;
   name?: string;
   content: string;
+  title: string;
   date: Date;
   closed: boolean;
   type: string;
