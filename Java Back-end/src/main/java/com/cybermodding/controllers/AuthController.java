@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cybermodding.entities.User;
 import com.cybermodding.payload.LoginDto;
 import com.cybermodding.payload.PingDto;
 import com.cybermodding.payload.RegisterDto;
+import com.cybermodding.responses.AvatarRes;
 import com.cybermodding.responses.JWTAuthResponse;
 import com.cybermodding.services.AuthService;
 
@@ -47,6 +49,14 @@ public class AuthController {
     public ResponseEntity<User> register(@RequestBody RegisterDto registerDto) {
         User response = authService.register(registerDto);
         return new ResponseEntity<User>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/avatarTest")
+    public ResponseEntity<AvatarRes> postMethodName(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.ok(new AvatarRes(null));
+        }
+        return ResponseEntity.ok(new AvatarRes(authService.uploadAvatar(file)));
     }
 
     @GetMapping("/ping")

@@ -3,6 +3,6 @@ export interface IRegisterData {
   email: string;
   password: string;
   description: string;
-  avatar: string;
+  avatar: File | null;
   birthdate: Date;
 }

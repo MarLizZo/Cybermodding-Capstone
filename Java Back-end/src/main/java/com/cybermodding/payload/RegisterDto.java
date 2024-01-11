@@ -2,6 +2,8 @@ package com.cybermodding.payload;
 
 import java.time.LocalDate;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,6 @@ public class RegisterDto {
     private String email;
     private String password;
     private String description;
-    private String avatar;
+    private MultipartFile avatar;
     private LocalDate birthdate;
 }

@@ -6,6 +6,7 @@ import { RegisterComponent } from './register.component';
 import { FormsModule } from '@angular/forms';
 import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-loader.component';
 import { LoaderComponent } from 'src/app/components/loader/loader.component';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 
 @NgModule({
   declarations: [RegisterComponent],
@@ -15,6 +16,7 @@ import { LoaderComponent } from 'src/app/components/loader/loader.component';
     FormsModule,
     LoaderComponent,
     InlineLoaderComponent,
+    ModalComponent,
   ],
 })
 export class RegisterModule {}

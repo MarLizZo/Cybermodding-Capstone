@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.User;
@@ -25,6 +27,9 @@ import com.cybermodding.security.JwtTokenProvider;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+    @Autowired
+    FTPUploadService ftpSvc;
+
     AuthenticationManager authenticationManager;
     PasswordEncoder passwordEncoder;
     private UserRepo userRepository;
@@ -56,6 +61,10 @@ public class AuthServiceImpl implements AuthService {
         return token;
     }
 
+    public String uploadAvatar(MultipartFile file) {
+        return ftpSvc.uploadAvatar(file, "Username");
+    }
+
     @Override
     public User register(RegisterDto registerDto) {
 
@@ -69,21 +78,27 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Email already exists **");
         }
 
-        User user = new User();
-        user.setUsername(registerDto.getUsername());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setDescription(registerDto.getDescription());
-        user.setBirthdate(registerDto.getBirthdate());
-        user.setRegistrationDate(LocalDate.now());
-        user.setAvatar(registerDto.getAvatar());
+        String avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername());
 
-        Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByRoleName(ERole.ROLE_USER).get();
-        roles.add(userRole);
+        if (avatarPath != null) {
+            User user = new User();
+            user.setUsername(registerDto.getUsername());
+            user.setEmail(registerDto.getEmail());
+            user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+            user.setDescription(registerDto.getDescription());
+            user.setBirthdate(registerDto.getBirthdate());
+            user.setRegistrationDate(LocalDate.now());
+            user.setAvatar(avatarPath);
 
-        user.setRoles(roles);
-        return userRepository.save(user);
+            Set<Role> roles = new HashSet<>();
+            Role userRole = roleRepository.findByRoleName(ERole.ROLE_USER).get();
+            roles.add(userRole);
+
+            user.setRoles(roles);
+            return userRepository.save(user);
+        } else {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "** Error uploading the Avatar **");
+        }
     }
 
     public boolean isMod(String username) {

@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, catchError } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { EMPTY, Subscription, catchError } from 'rxjs';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IErrorResponse } from 'src/app/interfaces/ierror-response';
 import { IRegisterData } from 'src/app/interfaces/iregister-data';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,21 +13,29 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent {
-  constructor(private svc: AuthService, private router: Router) {}
+  constructor(
+    private svc: AuthService,
+    private router: Router,
+    private modalSvc: NgbModal
+  ) {}
 
   isLoadingPage: boolean = true;
   isRegistering: boolean = false;
   isRegisterOperationSuccess: boolean = false;
   isRegisterOperationError: boolean = false;
   isWaitingRegistering: boolean = false;
+  isTeaserVisible: boolean = false;
   errorMessage: string = '';
+  tempAvatarLink: string | null = null;
+  tempAvatarBlob: File | null = null;
   regSub!: Subscription;
+  avatarSub!: Subscription;
   regData: IRegisterData = {
     username: '',
     email: '',
     password: '',
     description: '',
-    avatar: '',
+    avatar: null,
     birthdate: new Date(),
   };
 
@@ -37,16 +47,13 @@ export class RegisterComponent {
   ripetiPasswordInput!: ElementRef<HTMLInputElement>;
   @ViewChild('descriptionP') descriptionP!: ElementRef<HTMLElement>;
   @ViewChild('avatarP') avatarP!: ElementRef<HTMLElement>;
+  @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
   @ViewChild('birthdateP') birthdateP!: ElementRef<HTMLElement>;
 
   ngOnInit() {
     setTimeout(() => {
       this.isLoadingPage = false;
     }, 500);
-  }
-
-  ngAfterViewInit() {
-    this.avatarP.nativeElement.addEventListener('change', () => {});
   }
 
   ngOnDestroy() {
@@ -65,10 +72,12 @@ export class RegisterComponent {
 
   doChecks(): boolean {
     let checksResult: boolean = true;
+
     if (this.regData.username.length < 3) {
       checksResult = false;
       this.usernameP.nativeElement.classList.remove('d-none');
     }
+
     if (
       !RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$').test(
         this.regData.email
@@ -77,24 +86,33 @@ export class RegisterComponent {
       checksResult = false;
       this.emailP.nativeElement.classList.remove('d-none');
     }
+
     if (this.regData.password.length < 8) {
       checksResult = false;
       this.passwordP.nativeElement.classList.remove('d-none');
     }
+
     if (this.regData.password != this.ripetiPasswordInput.nativeElement.value) {
       checksResult = false;
       this.ripetiPasswordP.nativeElement.classList.remove('d-none');
     }
+
     if (this.regData.description.length > 20) {
       checksResult = false;
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
-    if (this.regData.avatar != '') {
-      if (!RegExp('/.(jpeg|jpg|png)$/i').test(this.regData.avatar)) {
+
+    if (this.avatarInput.nativeElement.value != '') {
+      if (
+        !RegExp('/.(jpeg|jpg|png)$/i').test(
+          this.avatarInput.nativeElement.value
+        )
+      ) {
         checksResult = false;
         this.avatarP.nativeElement.classList.remove('d-none');
       }
     }
+
     const birth = new Date(this.regData.birthdate.toString());
     if (birth.getFullYear() != undefined || !isNaN(birth.getFullYear())) {
       const year = new Date().getFullYear() - birth.getFullYear();
@@ -106,7 +124,43 @@ export class RegisterComponent {
     return checksResult;
   }
 
-  checkAndUploadAvatar() {}
+  onAvatarSelect(image: any) {
+    this.tempAvatarBlob = image.target.files[0];
+  }
+
+  showTeaser() {
+    console.log(this.tempAvatarBlob);
+    const formData = new FormData();
+    formData.append('file', this.tempAvatarBlob!);
+
+    this.avatarSub = this.svc
+      .uploadAvatarTest(formData)
+      .pipe(
+        catchError((err) => {
+          return EMPTY;
+        })
+      )
+      .subscribe((res) => {
+        this.tempAvatarLink = res.link;
+        const modal = this.modalSvc.open(ModalComponent, {
+          size: 'xl',
+        });
+        modal.componentInstance.title = 'Anteprima';
+        modal.componentInstance.body = `
+      <div class="d-flex align-items-center">
+        <div>
+            <img src="${this.tempAvatarLink}" class="profile-img me-3">
+        </div>
+        <div>
+            <h1 class="mb-0 pb-1 txt-orange">${
+              this.regData.username || 'Username'
+            }</h1>
+            <h6 class="m-0">${this.regData.description || 'Descrizione'}</h6>
+        </div>
+      </div>
+      `;
+      });
+  }
 
   doRegister() {
     this.resetErrFields();

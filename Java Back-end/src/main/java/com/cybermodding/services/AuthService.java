@@ -1,5 +1,7 @@
 package com.cybermodding.services;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.cybermodding.entities.User;
 import com.cybermodding.payload.LoginDto;
 import com.cybermodding.payload.RegisterDto;
@@ -18,4 +20,6 @@ public interface AuthService {
     public boolean getIsTokenValid(String tk);
 
     public boolean userExists(String username);
+
+    public String uploadAvatar(MultipartFile file);
 }

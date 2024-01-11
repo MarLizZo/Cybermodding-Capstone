@@ -10,13 +10,14 @@ import {
   tap,
 } from 'rxjs';
 import { ILoginResponse } from '../interfaces/ilogin-response';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ILoginData } from '../interfaces/ilogin-data';
 import { IRegisterData } from '../interfaces/iregister-data';
 import { IRegisterResponse } from '../interfaces/iregister-response';
 import { IPingData } from '../interfaces/iping-data';
 import { IStorageUserData } from '../interfaces/istorage-user-data';
 import { Router } from '@angular/router';
+import { IUploadAvRes } from '../interfaces/iupload-av-res';
 
 interface privObj {
   isMod: boolean;
@@ -119,5 +120,9 @@ export class AuthService {
     localStorage.removeItem('user');
     this.subj.next(null);
     this.privilegeSubj.next(null);
+  }
+
+  uploadAvatarTest(file: any): Observable<IUploadAvRes> {
+    return this.http.post<IUploadAvRes>(this.apiUrl + '/avatarTest', file);
   }
 }
