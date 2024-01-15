@@ -62,3 +62,14 @@
   pointer-events: none;
   opacity: 0.6;
 }
+
+label.input-group-text {
+  cursor: pointer;
+  background-color: var(--bs-gray-900);
+  color: var(--txt);
+  font-size: 1.01rem;
+
+  &:hover {
+    background-color: var(--bs-gray-800);
+  }
+}

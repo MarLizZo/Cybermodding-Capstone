@@ -9,6 +9,7 @@ import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-b
 import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-loader.component';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 
 @NgModule({
   declarations: [ProfileComponent],
@@ -21,6 +22,7 @@ import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.
     InlineLoaderComponent,
     NgbCollapseModule,
     ErrorModalComponent,
+    ModalComponent,
   ],
 })
 export class ProfileModule {}

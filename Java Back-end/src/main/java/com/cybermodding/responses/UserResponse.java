@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class UserResponse {
-    private ResponseBase reponse;
+    private ResponseBase response;
     private Long id;
     private String username;
     private String email;

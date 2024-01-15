@@ -1,5 +1,6 @@
 package com.cybermodding.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cybermodding.entities.User;
 import com.cybermodding.payload.ModerateUserInDTO;
@@ -27,6 +29,7 @@ import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.ProfileOut;
 import com.cybermodding.responses.UserResponse;
 import com.cybermodding.payload.PasswordUpdateDTO;
+import com.cybermodding.payload.UpdateUser;
 import com.cybermodding.services.ModerationService;
 import com.cybermodding.services.UserService;
 
@@ -59,8 +62,14 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody User u) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUser u) {
         return ResponseEntity.ok(u_svc.updateUser(id, u));
+    }
+
+    @PostMapping("/{id}/updateAvatar")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponse> updateAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(u_svc.updateAvatar(id, file));
     }
 
     @PostMapping("/pass/{id}")

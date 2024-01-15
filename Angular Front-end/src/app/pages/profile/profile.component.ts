@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, Subscription, catchError } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
+import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IPasswordChange } from 'src/app/interfaces/ipassword-change';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
@@ -20,15 +21,21 @@ export class ProfileComponent {
   profileSub!: Subscription;
   updateSub!: Subscription;
   updatePassSub!: Subscription;
+  avatarSub!: Subscription;
+  updateAvatarSub!: Subscription;
   profileData: IUserData | null = null;
   isLoadingPage: boolean = true;
   isWaitingPage: boolean = true;
   isSendingData: boolean = false;
+  isSendingDataAvatar: boolean = false;
   isSendingDataPass: boolean = false;
   isQuickStatsCollapsed: boolean = false;
   isInfoCollapsed: boolean = true;
   isPassCollapsed: boolean = true;
+  tempAvatarLink: string | null = null;
+  tempAvatarBlob: File | null = null;
   errorsMsgs: string[] = [];
+  isAvatarReady: boolean = false;
   @ViewChild('fInfo') formInfo!: NgForm;
   @ViewChild('fPass') formPass!: NgForm;
   @ViewChild('usernameP') usernameP!: ElementRef<HTMLElement>;
@@ -43,7 +50,10 @@ export class ProfileComponent {
   @ViewChild('repeatNewP') repeatNewP!: ElementRef<HTMLElement>;
 
   @ViewChild('accountUpd') accountUpd!: ElementRef<HTMLElement>;
+  @ViewChild('avatarUpd') avatarUpd!: ElementRef<HTMLElement>;
   @ViewChild('passUpd') passUpd!: ElementRef<HTMLElement>;
+
+  @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
 
   userObject: Partial<IUserData> = {
     id: 0,
@@ -122,6 +132,8 @@ export class ProfileComponent {
     if (this.updateSub) this.updateSub.unsubscribe();
     if (this.updatePassSub) this.updatePassSub.unsubscribe();
     if (this.initSub) this.initSub.unsubscribe();
+    if (this.avatarSub) this.avatarSub.unsubscribe();
+    if (this.updateAvatarSub) this.updateAvatarSub.unsubscribe();
   }
 
   getClassColor() {
@@ -214,15 +226,13 @@ export class ProfileComponent {
       bool = false;
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
-    if (
-      this.formInfo.controls['avatar'].value != null &&
-      this.formInfo.controls['avatar'].value != ''
-    ) {
-      if (
-        !RegExp('/.(jpeg|jpg|png|gif|bmp)$/i').test(
-          this.formInfo.controls['avatar'].value
-        )
-      ) {
+    return bool;
+  }
+
+  checkAvatarInfo(): boolean {
+    let bool = true;
+    if (this.tempAvatarBlob) {
+      if (!/\.(jpeg|jpg|png)$/i.test(this.tempAvatarBlob.name)) {
         bool = false;
         this.avatarP.nativeElement.classList.remove('d-none');
       }
@@ -255,11 +265,16 @@ export class ProfileComponent {
     this.accountUpd.nativeElement.innerText =
       'Account aggiornato con successo!';
     this.accountUpd.nativeElement.classList.add('opacity-0');
-    this.avatarP.nativeElement.classList.add('d-none');
     this.descriptionP.nativeElement.classList.add('d-none');
     this.birthdateP.nativeElement.classList.add('d-none');
     this.emailP.nativeElement.classList.add('d-none');
     this.usernameP.nativeElement.classList.add('d-none');
+  }
+
+  resetUserAvatarFields() {
+    this.isSendingData = false;
+    this.avatarUpd.nativeElement.innerText = 'Avatar aggiornato con successo!';
+    this.avatarP.nativeElement.classList.add('d-none');
   }
 
   resetUserPassFields() {
@@ -269,6 +284,138 @@ export class ProfileComponent {
     this.repeatActualP.nativeElement.classList.add('d-none');
     this.newP.nativeElement.classList.add('d-none');
     this.repeatNewP.nativeElement.classList.add('d-none');
+  }
+
+  async onAvatarSelect(image: any) {
+    if (image.target.files[0]) {
+      const resizedImg: File = new File(
+        [await this.resizeImage(image.target.files[0])],
+        image.target.files[0].name,
+        { type: 'image/png' }
+      );
+
+      this.tempAvatarBlob = resizedImg;
+      this.isAvatarReady = true;
+
+      if (this.tempAvatarBlob.name) {
+        if (!/\.(jpeg|jpg|png)$/i.test(this.tempAvatarBlob.name)) {
+          this.avatarP.nativeElement.classList.remove('d-none');
+          this.isAvatarReady = false;
+        }
+      }
+    } else {
+      this.isAvatarReady = false;
+      this.tempAvatarBlob = null;
+    }
+  }
+
+  async resizeImage(file: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > 64) {
+            height *= 64 / width;
+            width = 64;
+          }
+        } else {
+          if (height > 64) {
+            width *= 64 / height;
+            height = 64;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx!.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (resizedImageBlob) => {
+            if (resizedImageBlob) {
+              resolve(resizedImageBlob);
+            } else {
+              reject(
+                new Error(
+                  "Impossibile creare il blob dell'immagine ridimensionata."
+                )
+              );
+            }
+          },
+          'image/png',
+          0.8
+        );
+      };
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        img.src = e.target.result;
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  showTeaser() {
+    if (this.tempAvatarBlob != null) {
+      const formData = new FormData();
+      formData.append('file', this.tempAvatarBlob!);
+
+      this.avatarSub = this.authSvc
+        .uploadAvatarTest(formData)
+        .pipe(
+          catchError((err) => {
+            const modal = this.modalSvc.open(ModalComponent, {
+              size: 'lg',
+            });
+            modal.componentInstance.title = 'Anteprima Avatar';
+            modal.componentInstance.body = `
+            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+          `;
+            return EMPTY;
+          })
+        )
+        .subscribe((res) => {
+          if (res.response.ok) {
+            this.tempAvatarLink = res.link;
+            const modal = this.modalSvc.open(ModalComponent, {
+              size: 'lg',
+            });
+            modal.componentInstance.title = 'Anteprima Avatar';
+            modal.componentInstance.body = `
+            <div class="d-flex align-items-center">
+              <img src="${this.tempAvatarLink}" class="profile-img me-3">
+              <div>
+                <h1 class="mb-0 pb-1 txt-orange">${
+                  this.userObject.username || 'Username'
+                }</h1>
+                <h6 class="m-0">${
+                  this.userObject.description || 'Descrizione'
+                }</h6>
+              </div>
+            </div>
+          `;
+          } else {
+            const modal = this.modalSvc.open(ModalComponent, {
+              size: 'lg',
+            });
+            modal.componentInstance.title = 'Anteprima Avatar';
+            modal.componentInstance.body = `
+            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+          `;
+          }
+        });
+    }
   }
 
   updateUserInfo() {
@@ -292,11 +439,56 @@ export class ProfileComponent {
         .subscribe((res) => {
           setTimeout(() => {
             this.isSendingData = false;
+            this.userObject = res;
             this.accountUpd.nativeElement.classList.remove('opacity-0');
             setTimeout(() => {
               this.accountUpd.nativeElement.classList.add('opacity-0');
             }, 3500);
           }, 500);
+        });
+    }
+  }
+
+  updateAvatar() {
+    this.resetUserAvatarFields();
+
+    if (this.checkAvatarInfo()) {
+      const formData = new FormData();
+      formData.append('file', this.tempAvatarBlob!);
+      this.isSendingDataAvatar = true;
+
+      this.updateAvatarSub = this.uSvc
+        .updateAvatar(this.userObject.id!, formData)
+        .pipe(
+          catchError((err) => {
+            setTimeout(() => {
+              this.isSendingDataAvatar = false;
+              this.avatarUpd.nativeElement.innerText =
+                "Errore nell'aggiornamento dell'account.";
+              this.avatarUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+            return EMPTY;
+          })
+        )
+        .subscribe((res) => {
+          console.log(res);
+          if (res.response!.ok) {
+            setTimeout(() => {
+              this.isSendingDataAvatar = false;
+              this.userObject = res;
+              this.avatarUpd.nativeElement.classList.remove('opacity-0');
+              setTimeout(() => {
+                this.avatarUpd.nativeElement.classList.add('opacity-0');
+              }, 3500);
+            }, 500);
+          } else {
+            setTimeout(() => {
+              this.isSendingDataAvatar = false;
+              this.avatarUpd.nativeElement.innerText =
+                "Errore nell'aggiornamento dell'account.";
+              this.avatarUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+          }
         });
     }
   }

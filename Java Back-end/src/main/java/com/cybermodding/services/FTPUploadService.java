@@ -20,7 +20,7 @@ public class FTPUploadService {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    public String uploadAvatar(MultipartFile file, String username) {
+    public String uploadAvatar(MultipartFile file, String username, Boolean temp) {
         try {
             FTPClient ftpClient = new FTPClient();
             ftpClient.connect(ftpHost, 21);
@@ -30,7 +30,8 @@ public class FTPUploadService {
             ftpClient.enterLocalPassiveMode();
 
             if (loginSuccess) {
-                String remoteFilePath = "avatars/" + LocalDateTime.now().toString() + "-" + username + "-"
+                String tmp = temp ? "tmp/" : "";
+                String remoteFilePath = "avatars/" + tmp + LocalDateTime.now().toString() + "-" + username + "-"
                         + file.getOriginalFilename();
                 try (InputStream inputStream = file.getInputStream()) {
                     boolean uploaded = ftpClient.storeFile(remoteFilePath, inputStream);

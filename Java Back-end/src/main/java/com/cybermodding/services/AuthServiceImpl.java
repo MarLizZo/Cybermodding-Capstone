@@ -62,7 +62,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public String uploadAvatar(MultipartFile file) {
-        return ftpSvc.uploadAvatar(file, "Username");
+        return ftpSvc.uploadAvatar(file, "Username", true);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Email already exists **");
         }
 
-        String avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername());
+        String avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername(), false);
 
         if (avatarPath != null) {
             User user = new User();

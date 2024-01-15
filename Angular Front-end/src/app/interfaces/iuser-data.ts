@@ -10,7 +10,7 @@ export interface IUserData {
   email: string;
   description: string;
   registrationDate: Date;
-  avatar: string | null;
+  avatar: string | File | null;
   birthdate: Date;
   posts_count?: number;
   comments_count?: number;

@@ -30,6 +30,13 @@ export class UserService {
     return this.http.patch<IUserData>(this.apiUrl + '/' + data.id, data);
   }
 
+  public updateAvatar(id: number, file: any): Observable<IUserData> {
+    return this.http.post<IUserData>(
+      this.apiUrl + '/' + id + '/updateAvatar',
+      file
+    );
+  }
+
   public updatePassword(data: IPasswordChange): Observable<IUserData> {
     return this.http.post<IUserData>(this.apiUrl + '/pass/' + data.id, data);
   }
