@@ -107,8 +107,16 @@ export class AuthService {
   }
 
   register(data: IRegisterData): Observable<IRegisterResponse> {
+    const formData = new FormData();
+    formData.append('avatar', data.avatar as File);
+    formData.append('username', data.username);
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+    formData.append('description', data.description);
+    formData.append('birthdate', data.birthdate.toString());
+
     return this.http
-      .post<IRegisterResponse>(this.apiUrl + '/register', data)
+      .post<IRegisterResponse>(this.apiUrl + '/register', formData)
       .pipe(
         tap((res) => {
           console.log(res);

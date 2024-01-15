@@ -21,19 +21,3 @@ button.custom-btn {
     background-color: var(--near-black);
   }
 }
-
-.txt-orange {
-  color: var(--orange) !important;
-  transition: color 0.2s;
-
-  &:hover:not(p) {
-    color: var(--orange-hover) !important;
-  }
-}
-
-.profile-img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid var(--orange);
-}

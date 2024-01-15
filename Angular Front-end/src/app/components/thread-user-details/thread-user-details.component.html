@@ -1,8 +1,9 @@
 <div class="d-none d-lg-flex flex-column align-items-center">
     <div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
-        class="placeholder-img"></div>
-    <div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
-        <!-- link all'img -->
+        class="profile-img"></div>
+    <div *ngIf="postData != null && postData.author?.avatar != null || commentData?.user?.avatar != null">
+        <img *ngIf="postData?.author?.avatar" [src]="postData?.author?.avatar" class="profile-img">
+        <img *ngIf="commentData?.user?.avatar" [src]="commentData?.user?.avatar" class="profile-img">
     </div>
 
     <p class="mt-2 mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"
@@ -20,9 +21,10 @@
 <div class="d-flex d-lg-none flex-column align-items-center">
     <div class="d-flex align-items-center">
         <div *ngIf="postData != null ? postData.author.avatar == null || postData.author.avatar == '' : commentData!.user.avatar == null || commentData!.user.avatar == ''"
-            class="placeholder-img"></div>
-        <div *ngIf="postData != null ? postData.author.avatar != null : commentData!.user.avatar != null">
-            <!-- link all'img -->
+            class="profile-img"></div>
+        <div *ngIf="postData != null && postData.author?.avatar != null || commentData?.user?.avatar != null">
+            <img *ngIf="postData?.author?.avatar" [src]="postData?.author?.avatar" class="profile-img">
+            <img *ngIf="commentData?.user?.avatar" [src]="commentData?.user?.avatar" class="profile-img">
         </div>
         <div class="d-flex flex-column ms-3">
             <p class="mb-1 fw-medium selectable" [class]="getNameClass()" (click)="goToProfile()"

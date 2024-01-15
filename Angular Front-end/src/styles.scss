@@ -38,7 +38,7 @@ body {
 .post-content,
 .post-body,
 .modal-body {
-  img {
+  img:not(.profile-img) {
     max-width: 90% !important;
 
     @media screen and (min-width: 992px) {
@@ -46,6 +46,22 @@ body {
     }
     @media screen and (min-width: 1200px) {
       max-width: 65% !important;
+    }
+  }
+
+  .profile-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--orange);
+  }
+
+  .txt-orange {
+    color: var(--orange) !important;
+    transition: color 0.2s;
+
+    &:hover:not(p) {
+      color: var(--orange-hover) !important;
     }
   }
 

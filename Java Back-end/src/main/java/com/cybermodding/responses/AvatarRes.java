@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AvatarRes {
+    private ResponseBase response;
     private String link;
 }

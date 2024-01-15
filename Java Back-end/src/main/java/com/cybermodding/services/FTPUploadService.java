@@ -30,11 +30,10 @@ public class FTPUploadService {
             ftpClient.enterLocalPassiveMode();
 
             if (loginSuccess) {
-                String remoteFilePath = "avatars/" + LocalDateTime.now().toString() + username + "-"
+                String remoteFilePath = "avatars/" + LocalDateTime.now().toString() + "-" + username + "-"
                         + file.getOriginalFilename();
                 try (InputStream inputStream = file.getInputStream()) {
                     boolean uploaded = ftpClient.storeFile(remoteFilePath, inputStream);
-                    // System.out.println(ftpClient.getReplyString());
 
                     if (uploaded) {
                         return "https://www.lizcybm.altervista.org/" + remoteFilePath;

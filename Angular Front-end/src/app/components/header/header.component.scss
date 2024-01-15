@@ -9,7 +9,7 @@ nav {
     border-top-right-radius: var(--bs-border-radius-lg);
     width: max-content;
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 767px) {
       border-radius: var(--bs-border-radius);
       align-self: center;
       display: flex;
@@ -59,7 +59,7 @@ div.dropdown-menu {
   .search-container {
     width: 25%;
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 767px) {
       width: 70%;
     }
 

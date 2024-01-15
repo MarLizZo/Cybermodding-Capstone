@@ -1,5 +1,8 @@
 package com.cybermodding.controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +20,7 @@ import com.cybermodding.payload.PingDto;
 import com.cybermodding.payload.RegisterDto;
 import com.cybermodding.responses.AvatarRes;
 import com.cybermodding.responses.JWTAuthResponse;
+import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.services.AuthService;
 
 @RestController
@@ -46,17 +50,34 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterDto registerDto) {
-        User response = authService.register(registerDto);
+    public ResponseEntity<User> register(@RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("description") String description,
+            @RequestParam("avatar") MultipartFile avatar,
+            @RequestParam("birthdate") LocalDate birthdate) {
+        System.out.println(avatar.getOriginalFilename());
+        System.out.println(avatar.getSize());
+        System.out.println(avatar.getContentType());
+        RegisterDto regDto = new RegisterDto(username, email, password, description, avatar, birthdate);
+        User response = authService.register(regDto);
         return new ResponseEntity<User>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/avatarTest")
     public ResponseEntity<AvatarRes> postMethodName(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return ResponseEntity.ok(new AvatarRes(null));
+            return ResponseEntity
+                    .ok(new AvatarRes(new ResponseBase(false, "** Invalid File **", LocalDateTime.now()), null));
+        } else {
+            String link = authService.uploadAvatar(file);
+            if (link == null) {
+                return ResponseEntity
+                        .ok(new AvatarRes(new ResponseBase(false, "** Upload error **", LocalDateTime.now()), null));
+            }
+            return ResponseEntity
+                    .ok(new AvatarRes(new ResponseBase(true, "", LocalDateTime.now()), link));
         }
-        return ResponseEntity.ok(new AvatarRes(authService.uploadAvatar(file)));
     }
 
     @GetMapping("/ping")

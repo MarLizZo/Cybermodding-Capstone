@@ -49,6 +49,7 @@ export class RegisterComponent {
   @ViewChild('avatarP') avatarP!: ElementRef<HTMLElement>;
   @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
   @ViewChild('birthdateP') birthdateP!: ElementRef<HTMLElement>;
+  @ViewChild('inlineRegIcon') inlineRegIcon!: ElementRef<HTMLElement>;
 
   ngOnInit() {
     setTimeout(() => {
@@ -102,13 +103,9 @@ export class RegisterComponent {
       this.descriptionP.nativeElement.classList.remove('d-none');
     }
 
-    if (this.avatarInput.nativeElement.value != '') {
-      if (
-        !RegExp('/.(jpeg|jpg|png)$/i').test(
-          this.avatarInput.nativeElement.value
-        )
-      ) {
-        checksResult = false;
+    if (this.regData.avatar != null) {
+      let av = this.regData.avatar as File;
+      if (!/\.(jpeg|jpg|png)$/i.test(av.name)) {
         this.avatarP.nativeElement.classList.remove('d-none');
       }
     }
@@ -124,12 +121,86 @@ export class RegisterComponent {
     return checksResult;
   }
 
-  onAvatarSelect(image: any) {
-    this.tempAvatarBlob = image.target.files[0];
+  async onAvatarSelect(image: any) {
+    if (image.target.files[0]) {
+      const resizedImg: File = new File(
+        [await this.resizeImage(image.target.files[0])],
+        image.target.files[0].name,
+        { type: 'image/png' }
+      );
+
+      this.tempAvatarBlob = resizedImg;
+      this.regData.avatar = resizedImg;
+
+      if (this.regData.avatar?.name) {
+        if (!/\.(jpeg|jpg|png)$/i.test(this.regData.avatar!.name)) {
+          this.avatarP.nativeElement.classList.remove('d-none');
+        }
+      }
+    } else {
+      this.tempAvatarBlob = null;
+      this.regData.avatar = null;
+    }
+  }
+
+  async resizeImage(file: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > 64) {
+            height *= 64 / width;
+            width = 64;
+          }
+        } else {
+          if (height > 64) {
+            width *= 64 / height;
+            height = 64;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx!.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (resizedImageBlob) => {
+            if (resizedImageBlob) {
+              resolve(resizedImageBlob);
+            } else {
+              reject(
+                new Error(
+                  "Impossibile creare il blob dell'immagine ridimensionata."
+                )
+              );
+            }
+          },
+          'image/png',
+          0.8
+        );
+      };
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        img.src = e.target.result;
+      };
+
+      reader.onerror = (error) => {
+        reject(error);
+      };
+
+      reader.readAsDataURL(file);
+    });
   }
 
   showTeaser() {
-    console.log(this.tempAvatarBlob);
     const formData = new FormData();
     formData.append('file', this.tempAvatarBlob!);
 
@@ -137,39 +208,56 @@ export class RegisterComponent {
       .uploadAvatarTest(formData)
       .pipe(
         catchError((err) => {
+          const modal = this.modalSvc.open(ModalComponent, {
+            size: 'lg',
+          });
+          modal.componentInstance.title = 'Anteprima Avatar';
+          modal.componentInstance.body = `
+            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+          `;
           return EMPTY;
         })
       )
       .subscribe((res) => {
-        this.tempAvatarLink = res.link;
-        const modal = this.modalSvc.open(ModalComponent, {
-          size: 'xl',
-        });
-        modal.componentInstance.title = 'Anteprima';
-        modal.componentInstance.body = `
-      <div class="d-flex align-items-center">
-        <div>
-            <img src="${this.tempAvatarLink}" class="profile-img me-3">
-        </div>
-        <div>
-            <h1 class="mb-0 pb-1 txt-orange">${
-              this.regData.username || 'Username'
-            }</h1>
-            <h6 class="m-0">${this.regData.description || 'Descrizione'}</h6>
-        </div>
-      </div>
-      `;
+        if (res.response.ok) {
+          this.tempAvatarLink = res.link;
+          const modal = this.modalSvc.open(ModalComponent, {
+            size: 'lg',
+          });
+          modal.componentInstance.title = 'Anteprima Avatar';
+          modal.componentInstance.body = `
+            <div class="d-flex align-items-center">
+              <img src="${this.tempAvatarLink}" class="profile-img me-3">
+              <div>
+                <h1 class="mb-0 pb-1 txt-orange">${
+                  this.regData.username || 'Username'
+                }</h1>
+                <h6 class="m-0">${
+                  this.regData.description || 'Descrizione'
+                }</h6>
+              </div>
+            </div>
+          `;
+        } else {
+          const modal = this.modalSvc.open(ModalComponent, {
+            size: 'lg',
+          });
+          modal.componentInstance.title = 'Anteprima Avatar';
+          modal.componentInstance.body = `
+            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+          `;
+        }
       });
   }
 
   doRegister() {
     this.resetErrFields();
     if (this.doChecks()) {
+      this.inlineRegIcon.nativeElement.classList.remove('d-none');
       this.isRegisterOperationSuccess = false;
       this.isRegisterOperationError = false;
       this.isWaitingRegistering = true;
       this.isRegistering = true;
-
       this.regSub = this.svc
         .register(this.regData)
         .pipe(
@@ -177,7 +265,9 @@ export class RegisterComponent {
             this.isRegistering = false;
             this.isRegisterOperationError = true;
             this.isWaitingRegistering = false;
-            this.errorMessage = err.error.message;
+            this.errorMessage =
+              'Errore nella registrazione. Contatta un Admin!';
+            this.inlineRegIcon.nativeElement.classList.add('d-none');
             throw err;
           })
         )
@@ -187,6 +277,7 @@ export class RegisterComponent {
           setTimeout(() => {
             this.isWaitingRegistering = false;
           }, 800);
+          this.inlineRegIcon.nativeElement.classList.add('d-none');
           setTimeout(() => {
             this.router.navigate(['/auth/login']);
           }, 2500);

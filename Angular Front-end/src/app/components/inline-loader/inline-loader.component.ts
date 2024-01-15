@@ -10,10 +10,5 @@ import { CommonModule } from '@angular/common';
 })
 export class InlineLoaderComponent {
   @Input() bg!: string;
-
-  ngOnInit() {
-    if (this.bg) {
-      //
-    }
-  }
+  @Input() size!: string;
 }
