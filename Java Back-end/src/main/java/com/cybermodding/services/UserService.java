@@ -2,6 +2,7 @@ package com.cybermodding.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +48,6 @@ public class UserService {
         RoleRepo roleRepository;
         @Autowired
         AuthServiceImpl auth_svc;
-
         @Autowired
         FTPUploadService ftpSvc;
 
@@ -193,9 +193,18 @@ public class UserService {
                 }
         }
 
-        public UserResponse updateAvatar(Long id, MultipartFile file) {
+        public UserResponse updateAvatar(Long id, MultipartFile file, String tmpAvatarString) {
                 if (u_repo.existsById(id)) {
                         User fromDB = u_repo.findById(id).get();
+
+                        // delete eventually the tmp avatars
+                        if (!tmpAvatarString.isEmpty()) {
+                                String[] arrLs = tmpAvatarString.split(",");
+                                if (ftpSvc.deleteFile(Arrays.asList(arrLs))) {
+                                        System.out.println("Temp folder cleanup ok");
+                                }
+                        }
+
                         if (!file.isEmpty()) {
                                 String path = ftpSvc.uploadAvatar(file, fromDB.getUsername(), false);
                                 if (path != null) {

@@ -55,17 +55,15 @@ public class AuthController {
             @RequestParam("password") String password,
             @RequestParam("description") String description,
             @RequestParam("avatar") MultipartFile avatar,
-            @RequestParam("birthdate") LocalDate birthdate) {
-        System.out.println(avatar.getOriginalFilename());
-        System.out.println(avatar.getSize());
-        System.out.println(avatar.getContentType());
-        RegisterDto regDto = new RegisterDto(username, email, password, description, avatar, birthdate);
+            @RequestParam("birthdate") LocalDate birthdate,
+            @RequestParam("tmpPaths") String tmpPaths) {
+        RegisterDto regDto = new RegisterDto(username, email, password, description, avatar, birthdate, tmpPaths);
         User response = authService.register(regDto);
         return new ResponseEntity<User>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/avatarTest")
-    public ResponseEntity<AvatarRes> postMethodName(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<AvatarRes> avatarPreview(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity
                     .ok(new AvatarRes(new ResponseBase(false, "** Invalid File **", LocalDateTime.now()), null));

@@ -220,7 +220,7 @@ public class Runner implements CommandLineRunner {
                 User u = authService.register(new RegisterDto("Mar.LizZo",
                                 "liz@liz.com", "qwertyqwerty",
                                 "Ekse..Calibaaaaa", null,
-                                LocalDate.of(1990, 1, 1)));
+                                LocalDate.of(1990, 1, 1), ""));
                 u.setRoles(Set.of(roleRepository.findById(3l).get()));
                 userRepository.save(u);
         }
@@ -231,7 +231,8 @@ public class Runner implements CommandLineRunner {
                         authService.register(new RegisterDto(fk.name().username(),
                                         fk.internet().emailAddress(), "qwertyqwerty",
                                         "No descr please", null,
-                                        fk.date().birthday().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()));
+                                        fk.date().birthday().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                                        ""));
                 }
         }
 

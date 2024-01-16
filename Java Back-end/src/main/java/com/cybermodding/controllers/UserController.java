@@ -68,8 +68,9 @@ public class UserController {
 
     @PostMapping("/{id}/updateAvatar")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponse> updateAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(u_svc.updateAvatar(id, file));
+    public ResponseEntity<UserResponse> updateAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file,
+            @RequestParam("tmpPaths") String tmpAv) {
+        return ResponseEntity.ok(u_svc.updateAvatar(id, file, tmpAv));
     }
 
     @PostMapping("/pass/{id}")

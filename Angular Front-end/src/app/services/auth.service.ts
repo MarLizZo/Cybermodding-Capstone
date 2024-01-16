@@ -106,7 +106,7 @@ export class AuthService {
     );
   }
 
-  register(data: IRegisterData): Observable<IRegisterResponse> {
+  register(data: IRegisterData, tmpAvs: string): Observable<IRegisterResponse> {
     const formData = new FormData();
     formData.append('avatar', data.avatar as File);
     formData.append('username', data.username);
@@ -114,6 +114,7 @@ export class AuthService {
     formData.append('password', data.password);
     formData.append('description', data.description);
     formData.append('birthdate', data.birthdate.toString());
+    formData.append('tmpPaths', tmpAvs);
 
     return this.http
       .post<IRegisterResponse>(this.apiUrl + '/register', formData)

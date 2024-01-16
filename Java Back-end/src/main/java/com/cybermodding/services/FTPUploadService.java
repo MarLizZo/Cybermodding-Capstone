@@ -2,6 +2,8 @@ package com.cybermodding.services;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -20,16 +22,25 @@ public class FTPUploadService {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    public String uploadAvatar(MultipartFile file, String username, Boolean temp) {
+    private FTPClient connectFTP() {
+        FTPClient ftpClient = new FTPClient();
         try {
-            FTPClient ftpClient = new FTPClient();
             ftpClient.connect(ftpHost, 21);
-            boolean loginSuccess = ftpClient.login(ftpUsername, ftpPassword);
+            ftpClient.login(ftpUsername, ftpPassword);
 
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             ftpClient.enterLocalPassiveMode();
+        } catch (Exception ex) {
+            return ftpClient;
+        }
+        return ftpClient;
+    }
 
-            if (loginSuccess) {
+    public String uploadAvatar(MultipartFile file, String username, Boolean temp) {
+        try {
+            FTPClient ftpClient = connectFTP();
+
+            if (ftpClient.isConnected()) {
                 String tmp = temp ? "tmp/" : "";
                 String remoteFilePath = "avatars/" + tmp + LocalDateTime.now().toString() + "-" + username + "-"
                         + file.getOriginalFilename();
@@ -54,5 +65,39 @@ public class FTPUploadService {
         } catch (Exception ex) {
             return null;
         }
+    }
+
+    public Boolean deleteFile(List<String> paths) {
+        Boolean result = true;
+        FTPClient ftpClient = null;
+        try {
+            ftpClient = connectFTP();
+
+            if (ftpClient.isConnected()) {
+                for (String path : paths) {
+                    try {
+                        String fixedPath = path.replace("https://www.lizcybm.altervista.org/", "");
+                        boolean success = ftpClient.deleteFile(fixedPath);
+                    } catch (Exception ex) {
+                        System.out.println("Catch delete file" + ex.getMessage());
+                        result = false;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Catch intermezzo" + ex.getMessage());
+            return false;
+        } finally {
+            if (ftpClient != null && ftpClient.isConnected()) {
+                try {
+                    ftpClient.logout();
+                    ftpClient.disconnect();
+                } catch (Exception ex) {
+                    System.out.println("Catch finally" + ex.getMessage());
+                    return false;
+                }
+            }
+        }
+        return result;
     }
 }

@@ -36,6 +36,8 @@ export class ProfileComponent {
   tempAvatarBlob: File | null = null;
   errorsMsgs: string[] = [];
   isAvatarReady: boolean = false;
+  tempAvatarsArr: string[] = [];
+  isTempAvatarChanged: boolean = true;
   @ViewChild('fInfo') formInfo!: NgForm;
   @ViewChild('fPass') formPass!: NgForm;
   @ViewChild('usernameP') usernameP!: ElementRef<HTMLElement>;
@@ -296,6 +298,7 @@ export class ProfileComponent {
 
       this.tempAvatarBlob = resizedImg;
       this.isAvatarReady = true;
+      this.isTempAvatarChanged = true;
 
       if (this.tempAvatarBlob.name) {
         if (!/\.(jpeg|jpg|png)$/i.test(this.tempAvatarBlob.name)) {
@@ -366,55 +369,61 @@ export class ProfileComponent {
     });
   }
 
+  openModal(success: boolean) {
+    if (success) {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'lg',
+      });
+      modal.componentInstance.title = 'Anteprima Avatar';
+      modal.componentInstance.body = `
+    <div class="d-flex align-items-center">
+      <img src="${this.tempAvatarLink}" class="profile-img me-3">
+      <div>
+        <h1 class="mb-0 pb-1 txt-orange">${
+          this.userObject.username || 'Username'
+        }</h1>
+        <h6 class="m-0">${this.userObject.description || 'Descrizione'}</h6>
+      </div>
+    </div>
+  `;
+    } else {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'lg',
+      });
+      modal.componentInstance.title = 'Anteprima Avatar';
+      modal.componentInstance.body = `
+    <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+  `;
+    }
+  }
+
   showTeaser() {
     if (this.tempAvatarBlob != null) {
       const formData = new FormData();
       formData.append('file', this.tempAvatarBlob!);
 
-      this.avatarSub = this.authSvc
-        .uploadAvatarTest(formData)
-        .pipe(
-          catchError((err) => {
-            const modal = this.modalSvc.open(ModalComponent, {
-              size: 'lg',
-            });
-            modal.componentInstance.title = 'Anteprima Avatar';
-            modal.componentInstance.body = `
-            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
-          `;
-            return EMPTY;
-          })
-        )
-        .subscribe((res) => {
-          if (res.response.ok) {
-            this.tempAvatarLink = res.link;
-            const modal = this.modalSvc.open(ModalComponent, {
-              size: 'lg',
-            });
-            modal.componentInstance.title = 'Anteprima Avatar';
-            modal.componentInstance.body = `
-            <div class="d-flex align-items-center">
-              <img src="${this.tempAvatarLink}" class="profile-img me-3">
-              <div>
-                <h1 class="mb-0 pb-1 txt-orange">${
-                  this.userObject.username || 'Username'
-                }</h1>
-                <h6 class="m-0">${
-                  this.userObject.description || 'Descrizione'
-                }</h6>
-              </div>
-            </div>
-          `;
-          } else {
-            const modal = this.modalSvc.open(ModalComponent, {
-              size: 'lg',
-            });
-            modal.componentInstance.title = 'Anteprima Avatar';
-            modal.componentInstance.body = `
-            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
-          `;
-          }
-        });
+      if (this.isTempAvatarChanged) {
+        this.avatarSub = this.authSvc
+          .uploadAvatarTest(formData)
+          .pipe(
+            catchError((err) => {
+              this.openModal(false);
+              return EMPTY;
+            })
+          )
+          .subscribe((res) => {
+            if (res.response.ok) {
+              this.tempAvatarLink = res.link;
+              this.tempAvatarsArr.push(res.link!);
+              this.isTempAvatarChanged = false;
+              this.openModal(true);
+            } else {
+              this.openModal(false);
+            }
+          });
+      } else {
+        this.openModal(true);
+      }
     }
   }
 
@@ -455,6 +464,10 @@ export class ProfileComponent {
     if (this.checkAvatarInfo()) {
       const formData = new FormData();
       formData.append('file', this.tempAvatarBlob!);
+      if (this.userObject.avatar) {
+        this.tempAvatarsArr.push(this.userObject.avatar as string);
+      }
+      formData.append('tmpPaths', this.tempAvatarsArr.join(','));
       this.isSendingDataAvatar = true;
 
       this.updateAvatarSub = this.uSvc
@@ -471,7 +484,6 @@ export class ProfileComponent {
           })
         )
         .subscribe((res) => {
-          console.log(res);
           if (res.response!.ok) {
             setTimeout(() => {
               this.isSendingDataAvatar = false;

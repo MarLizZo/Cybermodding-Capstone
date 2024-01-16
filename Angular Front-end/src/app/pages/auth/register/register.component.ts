@@ -28,6 +28,8 @@ export class RegisterComponent {
   errorMessage: string = '';
   tempAvatarLink: string | null = null;
   tempAvatarBlob: File | null = null;
+  tempAvatarPathsArr: string[] = [];
+  isAvatarChanged: boolean = true;
   regSub!: Subscription;
   avatarSub!: Subscription;
   regData: IRegisterData = {
@@ -59,6 +61,7 @@ export class RegisterComponent {
 
   ngOnDestroy() {
     if (this.regSub) this.regSub.unsubscribe();
+    if (this.avatarSub) this.avatarSub.unsubscribe();
   }
 
   resetErrFields(): void {
@@ -131,6 +134,7 @@ export class RegisterComponent {
 
       this.tempAvatarBlob = resizedImg;
       this.regData.avatar = resizedImg;
+      this.isAvatarChanged = true;
 
       if (this.regData.avatar?.name) {
         if (!/\.(jpeg|jpg|png)$/i.test(this.regData.avatar!.name)) {
@@ -200,54 +204,62 @@ export class RegisterComponent {
     });
   }
 
-  showTeaser() {
-    const formData = new FormData();
-    formData.append('file', this.tempAvatarBlob!);
-
-    this.avatarSub = this.svc
-      .uploadAvatarTest(formData)
-      .pipe(
-        catchError((err) => {
-          const modal = this.modalSvc.open(ModalComponent, {
-            size: 'lg',
-          });
-          modal.componentInstance.title = 'Anteprima Avatar';
-          modal.componentInstance.body = `
-            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
-          `;
-          return EMPTY;
-        })
-      )
-      .subscribe((res) => {
-        if (res.response.ok) {
-          this.tempAvatarLink = res.link;
-          const modal = this.modalSvc.open(ModalComponent, {
-            size: 'lg',
-          });
-          modal.componentInstance.title = 'Anteprima Avatar';
-          modal.componentInstance.body = `
-            <div class="d-flex align-items-center">
-              <img src="${this.tempAvatarLink}" class="profile-img me-3">
-              <div>
-                <h1 class="mb-0 pb-1 txt-orange">${
-                  this.regData.username || 'Username'
-                }</h1>
-                <h6 class="m-0">${
-                  this.regData.description || 'Descrizione'
-                }</h6>
-              </div>
-            </div>
-          `;
-        } else {
-          const modal = this.modalSvc.open(ModalComponent, {
-            size: 'lg',
-          });
-          modal.componentInstance.title = 'Anteprima Avatar';
-          modal.componentInstance.body = `
-            <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
-          `;
-        }
+  openModal(success: boolean) {
+    if (success) {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'lg',
       });
+      modal.componentInstance.title = 'Anteprima Avatar';
+      modal.componentInstance.body = `
+        <div class="d-flex align-items-center">
+          <img src="${this.tempAvatarLink}" class="profile-img me-3">
+          <div>
+            <h1 class="mb-0 pb-1 txt-orange">${
+              this.regData.username || 'Username'
+            }</h1>
+            <h6 class="m-0">${this.regData.description || 'Descrizione'}</h6>
+          </div>
+        </div>
+      `;
+    } else {
+      const modal = this.modalSvc.open(ModalComponent, {
+        size: 'lg',
+      });
+      modal.componentInstance.title = 'Anteprima Avatar';
+      modal.componentInstance.body = `
+        <h3 class="my-1 text-danger text-center">Errore nel caricamento dell'immagine</h3>
+      `;
+    }
+  }
+
+  showTeaser() {
+    if (this.tempAvatarBlob) {
+      const formData = new FormData();
+      formData.append('file', this.tempAvatarBlob!);
+
+      if (this.isAvatarChanged) {
+        this.avatarSub = this.svc
+          .uploadAvatarTest(formData)
+          .pipe(
+            catchError((err) => {
+              this.openModal(false);
+              return EMPTY;
+            })
+          )
+          .subscribe((res) => {
+            if (res.response.ok) {
+              this.tempAvatarLink = res.link;
+              this.tempAvatarPathsArr.push(res.link!);
+              this.openModal(true);
+              this.isAvatarChanged = false;
+            } else {
+              this.openModal(false);
+            }
+          });
+      } else {
+        this.openModal(true);
+      }
+    }
   }
 
   doRegister() {
@@ -258,8 +270,12 @@ export class RegisterComponent {
       this.isRegisterOperationError = false;
       this.isWaitingRegistering = true;
       this.isRegistering = true;
+      let tmpPaths: string =
+        this.tempAvatarPathsArr.length > 0
+          ? this.tempAvatarPathsArr.join(',')
+          : '';
       this.regSub = this.svc
-        .register(this.regData)
+        .register(this.regData, tmpPaths)
         .pipe(
           catchError((err: IErrorResponse) => {
             this.isRegistering = false;

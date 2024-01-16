@@ -22,4 +22,5 @@ public class RegisterDto {
     private String description;
     private MultipartFile avatar;
     private LocalDate birthdate;
+    private String tmpPaths;
 }

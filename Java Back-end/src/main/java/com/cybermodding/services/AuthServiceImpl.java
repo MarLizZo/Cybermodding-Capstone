@@ -1,6 +1,7 @@
 package com.cybermodding.services;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -78,6 +79,12 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Email already exists **");
         }
 
+        if (!registerDto.getTmpPaths().isEmpty()) {
+            String[] arr = registerDto.getTmpPaths().split(",");
+            if (ftpSvc.deleteFile(Arrays.asList(arr))) {
+                System.out.println("Temp folder cleanup ok");
+            }
+        }
         String avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername(), false);
 
         if (avatarPath != null) {
