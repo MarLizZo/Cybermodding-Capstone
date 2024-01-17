@@ -9,16 +9,18 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
-<h4>Current Version: 1.2</h4>
+<h4>Current Version: 1.3</h4>
 
--   BE Responses improvements, Error management
+-   Contact us feature. Anyone can contact the admins for any reason. The administrators are able to see the messages from the Admin CP
+-   Now the user can upload an image as profile avatar from local machine. It will be stored on a real online server
+-   Minor graphic improvements
 
 <p></p>
 
-<h5>TO-DO after the v1.2:</h5>
+<h5>TO-DO after the v1.3:</h5>
 
--   Avatar upload
--   Contact us feature
+-   New custom WYSIWYG Editor? No ETA.
+-   General improvements. I have some ideas..
 
 <img src="Repo assets/my-hr.png" style="height:8px; width:100%">
 
