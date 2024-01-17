@@ -54,6 +54,18 @@ public class AuthController {
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam("description") String description,
+            @RequestParam("birthdate") LocalDate birthdate,
+            @RequestParam("tmpPaths") String tmpPaths) {
+        RegisterDto regDto = new RegisterDto(username, email, password, description, null, birthdate, tmpPaths);
+        User response = authService.register(regDto);
+        return new ResponseEntity<User>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/registerWAv")
+    public ResponseEntity<User> registerWithAvatar(@RequestParam("username") String username,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("description") String description,
             @RequestParam("avatar") MultipartFile avatar,
             @RequestParam("birthdate") LocalDate birthdate,
             @RequestParam("tmpPaths") String tmpPaths) {

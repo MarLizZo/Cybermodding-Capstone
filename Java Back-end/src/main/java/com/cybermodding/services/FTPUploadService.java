@@ -3,7 +3,6 @@ package com.cybermodding.services;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -75,17 +74,11 @@ public class FTPUploadService {
 
             if (ftpClient.isConnected()) {
                 for (String path : paths) {
-                    try {
-                        String fixedPath = path.replace("https://www.lizcybm.altervista.org/", "");
-                        boolean success = ftpClient.deleteFile(fixedPath);
-                    } catch (Exception ex) {
-                        System.out.println("Catch delete file" + ex.getMessage());
-                        result = false;
-                    }
+                    String fixedPath = path.replace("https://www.lizcybm.altervista.org/", "");
+                    ftpClient.deleteFile(fixedPath);
                 }
             }
         } catch (Exception ex) {
-            System.out.println("Catch intermezzo" + ex.getMessage());
             return false;
         } finally {
             if (ftpClient != null && ftpClient.isConnected()) {
@@ -93,7 +86,6 @@ public class FTPUploadService {
                     ftpClient.logout();
                     ftpClient.disconnect();
                 } catch (Exception ex) {
-                    System.out.println("Catch finally" + ex.getMessage());
                     return false;
                 }
             }

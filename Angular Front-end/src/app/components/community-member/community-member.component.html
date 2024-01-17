@@ -3,7 +3,7 @@
         <div *ngIf="user.avatar">
             <img [src]="user.avatar" class="profile-img me-2 me-md-3">
         </div>
-        <div *ngIf="!user.avatar" class="img-placeholder profile-img me-2 me-md-3"></div>
+        <div *ngIf="!user.avatar" class="profile-img me-2 me-md-3"></div>
         <div>
             <h5 *ngIf="user.level == 'BOSS' || user.level == 'MID'" class="m-0 selectable"
                 [ngClass]="{'text-danger' : user.level == 'BOSS', 'txt-mod' : user.level == 'MID' }"

@@ -5,16 +5,12 @@
   }
 }
 
-.img-placeholder {
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-}
-
 .profile-img {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  background-color: var(--near-black);
   border: 2px solid var(--orange);
+  border-radius: 50%;
 }
 
 .selectable {

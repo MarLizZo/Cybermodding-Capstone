@@ -58,13 +58,19 @@
                 <div *ngIf="postsData" class="posts-container mt-2 p-3 pb-5 rounded-1">
                     <h3 class="m-0">Sezione > {{ btnSectionsText }}</h3>
                     <div *ngFor="let post of postsData.content; let first = first" class="single-post mt-5">
-                        <div class="head-title pt-2 px-2 pb-3 rounded-1">
-                            <h4 class="mb-1 title-trunc">{{ post.title }}</h4>
-                            <h5 class="m-0 d-inline" [class]="getClassName(post.user_level!.toString())"
-                                (click)="goToProfile(post.author)">{{
-                                post.author.username
-                                }}</h5>
-                            <span>, il {{ post.publishedDate | date : 'dd-MM-YY' }}</span>
+                        <div class="d-flex align-items-center head-title pt-2 px-2 pb-3 rounded-1">
+                            <div *ngIf="post.author.avatar == null" class="profile-img"></div>
+                            <img *ngIf="post.author.avatar" class="profile-img" [src]="post.author.avatar">
+                            <div class="d-flex flex-column ms-3">
+                                <h4 class="mb-1 title-trunc">{{ post.title }}</h4>
+                                <div>
+                                    <h5 class="m-0 d-inline" [class]="getClassName(post.user_level!.toString())"
+                                        (click)="goToProfile(post.author)">{{
+                                        post.author.username
+                                        }}</h5>
+                                    <span class="d-inline">, il {{ post.publishedDate | date : 'dd-MM-YY' }}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="post-body d-flex flex-column px-2 pt-3 rounded-1">
                             <div class="flex-grow-1 body-trunc mb-4" [innerHTML]="post.body"></div>

@@ -28,10 +28,10 @@
                     class="col-12 d-flex flex-column flex-lg-row justify-content-lg-between align-items-lg-center p-3 p-lg-2">
                     <div class="col-11 col-lg-8 d-flex align-items-center mb-3 mb-lg-0">
                         <div class="d-flex">
-                            <div *ngIf="post.author.avatar == null || post.author.avatar == ''" class="placeholder-img">
+                            <div *ngIf="post.author.avatar == null || post.author.avatar == ''" class="profile-img">
                             </div>
                             <img *ngIf="post.author.avatar != null && post.author.avatar != ''"
-                                [src]="post.author.avatar">
+                                [src]="post.author.avatar" class="profile-img">
                         </div>
                         <div class="ms-2 pe-3">
                             <h6 class="m-0 selectable"

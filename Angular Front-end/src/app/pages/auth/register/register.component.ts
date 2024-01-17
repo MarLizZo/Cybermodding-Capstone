@@ -51,7 +51,6 @@ export class RegisterComponent {
   @ViewChild('avatarP') avatarP!: ElementRef<HTMLElement>;
   @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
   @ViewChild('birthdateP') birthdateP!: ElementRef<HTMLElement>;
-  @ViewChild('inlineRegIcon') inlineRegIcon!: ElementRef<HTMLElement>;
 
   ngOnInit() {
     setTimeout(() => {
@@ -265,7 +264,6 @@ export class RegisterComponent {
   doRegister() {
     this.resetErrFields();
     if (this.doChecks()) {
-      this.inlineRegIcon.nativeElement.classList.remove('d-none');
       this.isRegisterOperationSuccess = false;
       this.isRegisterOperationError = false;
       this.isWaitingRegistering = true;
@@ -283,7 +281,6 @@ export class RegisterComponent {
             this.isWaitingRegistering = false;
             this.errorMessage =
               'Errore nella registrazione. Contatta un Admin!';
-            this.inlineRegIcon.nativeElement.classList.add('d-none');
             throw err;
           })
         )
@@ -293,7 +290,6 @@ export class RegisterComponent {
           setTimeout(() => {
             this.isWaitingRegistering = false;
           }, 800);
-          this.inlineRegIcon.nativeElement.classList.add('d-none');
           setTimeout(() => {
             this.router.navigate(['/auth/login']);
           }, 2500);

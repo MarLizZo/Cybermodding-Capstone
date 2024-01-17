@@ -108,7 +108,9 @@ export class AuthService {
 
   register(data: IRegisterData, tmpAvs: string): Observable<IRegisterResponse> {
     const formData = new FormData();
-    formData.append('avatar', data.avatar as File);
+    if (data.avatar) {
+      formData.append('avatar', data.avatar as File);
+    }
     formData.append('username', data.username);
     formData.append('email', data.email);
     formData.append('password', data.password);
@@ -116,8 +118,10 @@ export class AuthService {
     formData.append('birthdate', data.birthdate.toString());
     formData.append('tmpPaths', tmpAvs);
 
+    let regEP = data.avatar ? '/registerWAv' : '/register';
+
     return this.http
-      .post<IRegisterResponse>(this.apiUrl + '/register', formData)
+      .post<IRegisterResponse>(this.apiUrl + regEP, formData)
       .pipe(
         tap((res) => {
           console.log(res);

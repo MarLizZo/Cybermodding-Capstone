@@ -85,27 +85,27 @@ public class AuthServiceImpl implements AuthService {
                 System.out.println("Temp folder cleanup ok");
             }
         }
-        String avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername(), false);
 
-        if (avatarPath != null) {
-            User user = new User();
-            user.setUsername(registerDto.getUsername());
-            user.setEmail(registerDto.getEmail());
-            user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-            user.setDescription(registerDto.getDescription());
-            user.setBirthdate(registerDto.getBirthdate());
-            user.setRegistrationDate(LocalDate.now());
-            user.setAvatar(avatarPath);
-
-            Set<Role> roles = new HashSet<>();
-            Role userRole = roleRepository.findByRoleName(ERole.ROLE_USER).get();
-            roles.add(userRole);
-
-            user.setRoles(roles);
-            return userRepository.save(user);
-        } else {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "** Error uploading the Avatar **");
+        String avatarPath = null;
+        if (registerDto.getAvatar() != null) {
+            avatarPath = ftpSvc.uploadAvatar(registerDto.getAvatar(), registerDto.getUsername(), false);
         }
+
+        User user = new User();
+        user.setUsername(registerDto.getUsername());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setDescription(registerDto.getDescription());
+        user.setBirthdate(registerDto.getBirthdate());
+        user.setRegistrationDate(LocalDate.now());
+        user.setAvatar(avatarPath);
+
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.findByRoleName(ERole.ROLE_USER).get();
+        roles.add(userRole);
+
+        user.setRoles(roles);
+        return userRepository.save(user);
     }
 
     public boolean isMod(String username) {
