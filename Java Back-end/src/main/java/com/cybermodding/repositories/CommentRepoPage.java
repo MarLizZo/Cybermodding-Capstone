@@ -11,4 +11,7 @@ public interface CommentRepoPage extends PagingAndSortingRepository<Comment, Lon
 
     @Query("SELECT c FROM Comment c JOIN c.post cp WHERE cp.id = :pid")
     public Page<Comment> findAllByPostId(Long pid, Pageable page);
+
+    @Query("SELECT c FROM Comment c WHERE LOWER(c.content) LIKE %:str%")
+    public Page<Comment> findAllByBodyPart(String str, Pageable page);
 }

@@ -47,7 +47,21 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/users/users.module').then((m) => m.UsersModule),
   },
-  { path: 'contacts', loadChildren: () => import('./pages/contacts/contacts.module').then(m => m.ContactsModule) },
+  {
+    path: 'contacts',
+    loadChildren: () =>
+      import('./pages/contacts/contacts.module').then((m) => m.ContactsModule),
+  },
+  {
+    path: 'search/:input',
+    loadChildren: () =>
+      import('./pages/search/search.module').then((m) => m.SearchModule),
+  },
+  {
+    path: '**',
+    loadChildren: () =>
+      import('./pages/forum/forum.module').then((m) => m.ForumModule),
+  },
 ];
 
 @NgModule({

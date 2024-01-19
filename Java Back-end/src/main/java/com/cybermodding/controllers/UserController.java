@@ -26,6 +26,7 @@ import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.responses.AdminModsRes;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.ProfileOut;
+import com.cybermodding.responses.SearchRes;
 import com.cybermodding.responses.UserResponse;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.UpdateUser;
@@ -110,5 +111,25 @@ public class UserController {
     @GetMapping("/profile/{id}")
     public ResponseEntity<ProfileOut> getProfileInfo(@PathVariable Long id) {
         return ResponseEntity.ok(u_svc.getProfile(id));
+    }
+
+    @GetMapping("/search/{str}")
+    public ResponseEntity<SearchRes> searchInit(@PathVariable String str) {
+        return ResponseEntity.ok(u_svc.searchStr(str));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<?>> searchUsers(@RequestParam(defaultValue = "users") String by, @RequestParam(defaultValue = "cyber") String input, Pageable pageable) {
+        Page<?> pageOut = Page.empty();
+        if (by.equals("users")) {
+            pageOut = u_svc.searchUsersPageByUsernamePart(input, pageable);
+        }
+        else if (by.equals("posts")) {
+            pageOut = u_svc.searchPostPageByTitlePart(input, pageable);
+        }
+        else if (by.equals("comments")) {
+            pageOut = u_svc.searchCommentPageByBodyPart(input, pageable);
+        }
+        return ResponseEntity.ok(pageOut);
     }
 }

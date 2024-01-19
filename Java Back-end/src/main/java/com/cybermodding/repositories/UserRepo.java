@@ -22,6 +22,9 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u ORDER BY RANDOM() LIMIT 1")
     User getRandomUser();
 
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :uname, '%')) ORDER BY u.id ASC")
+    List<User> getFromNamePart(String uname);
+
     @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :uname, '%')) ORDER BY u.id ASC LIMIT 6")
     List<User> getFromNameLimit(String uname);
 }

@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, EmptyError, Subscription, catchError } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IContactMessageBody } from 'src/app/interfaces/icontact-message-body';
 import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';

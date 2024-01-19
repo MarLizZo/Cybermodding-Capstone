@@ -9,6 +9,8 @@ export interface ICommentData {
   content: string;
   user: IUserData;
   publishedDate: Date;
-  user_level?: UserLevel;
+  user_name?: string;
+  user_level?: UserLevel | string;
+  user_id?: number;
   post?: IPostData;
 }

@@ -36,4 +36,7 @@ public interface PostPageableRepo extends PagingAndSortingRepository<Post, Long>
     public Page<Post> findAllByAuthorName(String username, Pageable pageable);
 
     public Page<Post> findAllByPublishedDateBetween(LocalDateTime date1, LocalDateTime date2, Pageable pageable);
+
+    @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE %:str%")
+    public Page<Post> findAllByTitlePart(String str, Pageable pageable);
 }

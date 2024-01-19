@@ -9,6 +9,6 @@ import com.cybermodding.entities.User;
 
 public interface UserPageRepo extends PagingAndSortingRepository<User, Long> {
 
-    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :name, '%'))")
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY u.id")
     Page<User> findAllByUsername(String name, Pageable pageable);
 }

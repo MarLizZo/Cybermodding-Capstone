@@ -135,7 +135,7 @@ export class SubsectionComponent {
     if (this.subSub) this.subSub.unsubscribe();
   }
 
-  getClassName(level: UserLevel): string {
+  getClassName(level: UserLevel | string): string {
     return level.toString() == 'BASE'
       ? 'txt-orange'
       : level.toString() == 'MID'

@@ -70,10 +70,10 @@ public class PostService {
             Post p = repo.findById(id).get();
             return new PostWithID(new ResponseBase(true, "", LocalDateTime.now()), p.getId(), p.getTitle(), p.getBody(),
                     p.getType(), p.getAuthor().getId(),
-                    p.getSub_section().getId(), p.getComments().size());
+                    p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), u_svc.getRank(p.getAuthor().getId()));
         } else {
             return new PostWithID(new ResponseBase(false, "** Post not found **", LocalDateTime.now()), null, null,
-                    null, null, null, null, null);
+                    null, null, null, null, null, null, null, null);
         }
     }
 

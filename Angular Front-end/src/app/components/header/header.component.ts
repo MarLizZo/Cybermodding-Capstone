@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IPMInformer } from 'src/app/interfaces/ipminformer';
@@ -21,6 +21,8 @@ export class HeaderComponent {
   isMod: boolean | undefined = false;
   isAdmin: boolean | undefined = false;
   isNewMessage: boolean = false;
+
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private router: Router,
@@ -64,6 +66,22 @@ export class HeaderComponent {
     });
   }
 
+  ngAfterViewInit() {
+    let input: HTMLInputElement = this.searchInput.nativeElement;
+    input.addEventListener('keypress', (event) => {
+      if (event.key == 'Enter') {
+        setTimeout(() => {
+          if (input.value == '') {
+            this.navigate('/search/' + 'noinput');
+          } else {
+            this.navigate('/search/' + input.value);
+          }
+          input.value = '';
+        }, 250);
+      }
+    });
+  }
+
   ngOnDestroy() {
     if (this.nameSub) this.nameSub.unsubscribe();
     if (this.privSub) this.privSub.unsubscribe();
@@ -86,7 +104,14 @@ export class HeaderComponent {
   isProfile(): boolean {
     return this.router.url.includes('/profile');
   }
-  navigate(url: string) {
+  navigate(url: string): void {
     this.router.navigateByUrl(url);
+  }
+
+  onSearch(): void {
+    let str = this.searchInput.nativeElement?.value;
+    if (str) {
+      this.navigate('/search?input=' + str);
+    }
   }
 }

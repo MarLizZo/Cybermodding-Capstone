@@ -3,7 +3,6 @@ package com.cybermodding.responses;
 import java.time.LocalDate;
 
 import com.cybermodding.enumerators.EUserLevel;
-import com.cybermodding.payload.CommentCompleteDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +25,6 @@ public class ProfileOut {
     private Integer posts_count;
     private Integer comments_count;
     private PostWithID last_post;
-    private CommentCompleteDTO last_comment;
+    private CommentCompleteOut last_comment;
     private EUserLevel level;
 }

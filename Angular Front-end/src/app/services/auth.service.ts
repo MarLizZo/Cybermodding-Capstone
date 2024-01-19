@@ -86,7 +86,7 @@ export class AuthService {
     return this.http.post<ILoginResponse>(this.apiUrl + '/login', data).pipe(
       take(1),
       tap((res) => {
-        console.log(res);
+        // console.log(res);
         this.subj.next(res);
         const obj: privObj = {
           isMod: res.accessToken.endsWith('2b'),
@@ -124,7 +124,7 @@ export class AuthService {
       .post<IRegisterResponse>(this.apiUrl + regEP, formData)
       .pipe(
         tap((res) => {
-          console.log(res);
+          // console.log(res);
         })
       );
   }

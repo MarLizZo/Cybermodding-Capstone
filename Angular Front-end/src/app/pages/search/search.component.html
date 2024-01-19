@@ -1,0 +1,202 @@
+<div class="h-100">
+    <app-hero></app-hero>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && isError" class="w-100 m-0 d-flex justify-content-center">
+        <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
+    </div>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && !isError && isNotValidString"
+        class="w-100 m-0 d-flex justify-content-center">
+        <h4 class="mt-4 mb-0 text-center">Stringa di ricerca non valida.</h4>
+    </div>
+    <div *ngIf="!isLoadingPage && !isWaitingPage && !isError && !isNotValidString" class="container-fluid">
+        <h4 class="mt-4 mb-0 text-center">Ricerca per <span></span><span class="input-string">{{ inputString
+                }}</span><span></span>
+        </h4>
+        <div class="btns-container d-flex flex-column flex-lg-row justify-content-lg-evenly align-items-center mt-5">
+            <button class="btn custom-btn" (click)="collapseOption(0)">Utenti<span class="span-count mx-1">{{
+                    pageResult?.users?.totalElements
+                    }}</span><i class="bi bi-arrow-bar-down ms-2"></i></button>
+            <button class="btn custom-btn my-4 my-lg-0" (click)="collapseOption(1)">Post<span class="span-count mx-1">{{
+                    pageResult?.posts?.totalElements
+                    }}</span><i class="bi bi-arrow-bar-down ms-2"></i></button>
+            <button class="btn custom-btn" (click)="collapseOption(2)">Commenti<span class="span-count mx-1">{{
+                    pageResult?.comments?.totalElements
+                    }}</span><i class="bi bi-arrow-bar-down ms-2"></i></button>
+        </div>
+        <div #collapseUser="ngbCollapse" [(ngbCollapse)]="isUsersCollapsed" class="mt-5">
+            <div class="arr-container rounded-top-1">
+                <h4 class="m-0 p-2 ps-3">Utenti trovati</h4>
+                <div class="row w-100 p-0 m-0 rounded-bottom-1">
+                    <div class="col-12 col-md-7 col-xl-5 p-0 ps-3 py-2">Informazioni utente</div>
+                    <div class="d-none d-xl-flex col-xl-3 ps-3 py-2">Data registrazione</div>
+                    <div class="d-none d-md-flex col-md-5 col-xl-4 ps-3 py-2">Statistiche</div>
+                </div>
+                <div *ngIf="pageResult!.users.content.length > 0" class="row w-100 p-0 m-0">
+                    <div *ngFor="let u of pageResult!.users.content"
+                        class="col-12 d-flex align-items-center shadow single-result px-0 py-2">
+                        <div class="d-flex align-items-center col-12 col-md-7 col-xl-5 px-2">
+                            <div *ngIf="!u.avatar" class="profile-img"></div>
+                            <img *ngIf="u.avatar" [src]="u.avatar" class="profile-img">
+                            <div class="ms-3">
+                                <h5 class="m-0 hov" (click)="goToUser(u.id!, u.username)"
+                                    [ngClass]="{'text-danger' : u.level == 'BOSS', 'text-mod' : u.level == 'MID'}">{{
+                                    u.username }}</h5>
+                                <p class="m-0">{{ u.description }}</p>
+                            </div>
+                        </div>
+                        <div class="d-none d-xl-flex flex-xl-column col-xl-3 ps-3 py-2">
+                            {{ u.registrationDate }}
+                        </div>
+                        <div class="d-none d-md-flex flex-md-column col-md-5 col-xl-4 ps-3 py-2">
+                            <p class="m-0">Numero di Post: {{ u.posts_count }}</p>
+                            <p class="m-0">Numero di Commenti: {{ u.comments_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="pageResult!.users.content.length == 0" class="mt-4 text-center fs-4 fw-medium">Nessun utente
+                trovato
+            </div>
+
+            <div *ngIf="pageResult!.users.content.length > 0"
+                class="row w-100 pageable-container mx-0 py-2 px-1 my-5 d-flex align-items-center">
+                <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
+                    <div class="previous rounded-1 px-2 d-flex" *ngIf="!pageResult!.users.first"
+                        (click)="searchCustomPage(0,  pageResult!.users!.number - 1)">
+                        <i class="bi bi-arrow-bar-left"></i>
+                        <p class="m-0 ms-2">Indietro</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex justify-content-center">
+                    <div class="pages d-flex rounded-1">
+                        <div *ngFor="let p of userPagesArr; let first = first;"
+                            [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == pageResult!.users.number}"
+                            class="btn-page px-2" (click)="searchCustomPage(0, p - 1)">
+                            <p class="m-0">{{ p }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
+                    <div class="next rounded-1 px-2 d-flex" *ngIf="!pageResult!.users.last"
+                        (click)="searchCustomPage(0, pageResult!.users.number + 1)">
+                        <p class="m-0 me-2">Avanti</p>
+                        <i class="bi bi-arrow-bar-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div #collapsePost="ngbCollapse" [(ngbCollapse)]="isPostsCollapsed" class="mt-5">
+            <div class="arr-container rounded-top-1">
+                <h4 class="m-0 p-2 ps-3">Post trovati</h4>
+                <div class="row w-100 p-0 m-0 rounded-bottom-1">
+                    <div class="col-12 col-md-8 col-xl-6 p-0 ps-3 py-2">Titolo del post</div>
+                    <div class="d-none d-md-flex col-md-4 col-xl-3 ps-3 py-2">Avviato da</div>
+                    <div class="d-none d-xl-flex col-xl-3 ps-3 py-2">Statistiche</div>
+                </div>
+                <div *ngIf="pageResult!.posts.content.length > 0" class="row w-100 p-0 m-0">
+                    <div *ngFor="let p of pageResult!.posts.content"
+                        class="col-12 d-flex align-items-center shadow single-result px-0 py-2">
+                        <div class="col-12 col-md-8 col-xl-6 px-3">
+                            <p (click)="goToPost(p.id!, p.title)" class="m-0 title-trunc hov">[{{ p.type }}] {{ p.title
+                                }}</p>
+                        </div>
+                        <div class="d-none d-md-flex flex-md-column col-md-4 col-xl-3 ps-3 py-2">
+                            <h5 class="m-0 hov" (click)="goToUser(p.user_id!, p.user_name!)"
+                                [ngClass]="{'text-danger' : p.user_level == 'BOSS', 'text-mod' : p.user_level == 'MID'}">
+                                {{ p.user_name }}</h5>
+                        </div>
+                        <div class="d-none d-xl-flex flex-xl-column col-xl-3 ps-3 py-2">
+                            <p class="m-0">Numero di Commenti: {{ p.comments_count }}</p>
+                            <p class="m-0">Numero di Reazioni: {{ p.reactions_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="pageResult!.posts.content.length == 0" class="mt-4 text-center fs-4 fw-medium">Nessun post
+                trovato</div>
+
+            <div *ngIf="pageResult!.posts.content.length > 0"
+                class="row w-100 pageable-container mx-0 py-2 px-1 my-5 d-flex align-items-center">
+                <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
+                    <div class="previous rounded-1 px-2 d-flex" *ngIf="!pageResult!.posts.first"
+                        (click)="searchCustomPage(1, pageResult!.posts.number - 1)">
+                        <i class="bi bi-arrow-bar-left"></i>
+                        <p class="m-0 ms-2">Indietro</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex justify-content-center">
+                    <div class="pages d-flex rounded-1">
+                        <div *ngFor="let p of postsPagesArr; let first = first;"
+                            [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == pageResult!.posts.number}"
+                            class="btn-page px-2" (click)="searchCustomPage(1, p - 1)">
+                            <p class="m-0">{{ p }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
+                    <div class="next rounded-1 px-2 d-flex" *ngIf="!pageResult!.posts.last"
+                        (click)="searchCustomPage(1, pageResult!.posts.number + 1)">
+                        <p class="m-0 me-2">Avanti</p>
+                        <i class="bi bi-arrow-bar-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div #collapseComment="ngbCollapse" [(ngbCollapse)]="isCommentsCollapsed" class="mt-5">
+            <div class="arr-container rounded-top-1">
+                <h4 class="m-0 p-2 ps-3">Commenti trovati</h4>
+                <div class="row w-100 p-0 m-0 rounded-bottom-1">
+                    <div class="col-12 col-md-9 col-xl-7 p-0 ps-3 py-2">Testo del commento</div>
+                    <div class="d-none d-md-flex col-md-3 col-xl-2 ps-3 py-2">Scritto da</div>
+                    <div class="d-none d-xl-flex col-xl-3 ps-3 py-2">Statistiche</div>
+                </div>
+                <div *ngIf="pageResult!.comments.content.length > 0" class="row w-100 p-0 m-0">
+                    <div *ngFor="let c of pageResult!.comments.content"
+                        class="col-12 d-flex align-items-center shadow single-result px-0 py-2">
+                        <div class="col-12 col-md-9 col-xl-7 px-3">
+                            <p class="m-0 title-trunc hov" (click)="goToComment(c)">{{ c.content }}</p>
+                        </div>
+                        <div class="d-none d-md-flex flex-md-column col-md-3 col-xl-2 ps-3 py-2">
+                            <h5 class="m-0 hov" (click)="goToUser(c.user_id!, c.user_name!)"
+                                [ngClass]="{'text-danger' : c.user_level == 'BOSS', 'text-mod' : c.user_level == 'MID'}">
+                                {{ c.user_name }}</h5>
+                        </div>
+                        <div class="d-none d-xl-flex flex-xl-column col-xl-3 ps-3 py-2">
+                            <p class="m-0">Inviato il:&nbsp;&nbsp;{{ c.publishedDate | date : 'dd/MM/yyyy hh:mm' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="pageResult!.comments.content.length == 0" class="mt-4 text-center fs-4 fw-medium">Nessun
+                commento
+                trovato</div>
+
+            <div *ngIf="pageResult!.comments.content.length > 0"
+                class="row w-100 pageable-container mx-0 py-2 px-1 my-5 d-flex align-items-center">
+                <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
+                    <div class="previous rounded-1 px-2 d-flex" *ngIf="!pageResult!.comments.first"
+                        (click)="searchCustomPage(2, pageResult!.comments.number - 1)">
+                        <i class="bi bi-arrow-bar-left"></i>
+                        <p class="m-0 ms-2">Indietro</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex justify-content-center">
+                    <div class="pages d-flex rounded-1">
+                        <div *ngFor="let c of commentsPagesArr; let first = first;"
+                            [ngClass]="{'ms-3' : !first, 'actual-page' : c - 1 == pageResult!.comments.number}"
+                            class="btn-page px-2" (click)="searchCustomPage(2, c - 1)">
+                            <p class="m-0">{{ c }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
+                    <div class="next rounded-1 px-2 d-flex" *ngIf="!pageResult!.comments.last"
+                        (click)="searchCustomPage(2, pageResult!.comments.number + 1)">
+                        <p class="m-0 me-2">Avanti</p>
+                        <i class="bi bi-arrow-bar-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

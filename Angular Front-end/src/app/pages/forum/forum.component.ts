@@ -1,13 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  BehaviorSubject,
-  EMPTY,
-  Subscription,
-  catchError,
-  from,
-  zip,
-} from 'rxjs';
+import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
 import { UserLevel } from 'src/app/enums/user-level';
 import { ISectionData } from 'src/app/interfaces/isection-data';

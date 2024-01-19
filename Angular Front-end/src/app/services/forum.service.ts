@@ -15,6 +15,7 @@ import { IUpdatePostDTO } from '../interfaces/iupdate-post-dto';
 import { IPostDataPaged } from '../interfaces/ipost-data-paged';
 import { IcontactDto } from '../interfaces/icontact-dto';
 import { IContactMessage } from '../interfaces/icontact-message-res';
+import { Isearchres } from '../interfaces/isearchres';
 
 type paramsPage = {
   size: number;
@@ -30,6 +31,7 @@ export class ForumService {
   sectionsApiUrl: string = 'http://localhost:8080/api/sections';
   contactsApiUrl: string = 'http://localhost:8080/api/contacts';
   subsectionsApiUrl: string = 'http://localhost:8080/api/subsections';
+  searchApiUrl: string = 'http://localhost:8080/api/users/search';
 
   constructor(private http: HttpClient) {}
 
@@ -105,5 +107,19 @@ export class ForumService {
 
   public sendContactMessage(data: IcontactDto): Observable<IContactMessage> {
     return this.http.post<IContactMessage>(this.contactsApiUrl + '/new', data);
+  }
+
+  public searchStringInit(str: string): Observable<Isearchres> {
+    return this.http.get<Isearchres>(this.searchApiUrl + '/' + str);
+  }
+
+  public searchStringCustom(
+    by: string,
+    str: string,
+    page: number
+  ): Observable<any> {
+    return this.http.get<any>(
+      this.searchApiUrl + `?by=${by}&input=${str}&size=8&page=${page}`
+    );
   }
 }

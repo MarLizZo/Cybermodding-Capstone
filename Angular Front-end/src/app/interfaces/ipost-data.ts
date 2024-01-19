@@ -14,7 +14,7 @@ export interface IPostData {
   publishedDate: Date;
   type: PostType;
   author: IUserData;
-  user_level?: UserLevel;
+  user_level?: UserLevel | string;
   sub_section: ISubSectionData;
   reactions: Ireaction[];
   comments: ICommentData[];
@@ -23,5 +23,8 @@ export interface IPostData {
   subsection_title?: string;
   subsection_id?: number;
   comments_count?: number;
+  reactions_count?: number;
+  user_id?: number;
+  user_name?: string;
   last_comment?: ICommentData;
 }

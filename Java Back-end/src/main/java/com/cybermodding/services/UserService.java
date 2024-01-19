@@ -23,18 +23,21 @@ import com.cybermodding.entities.Post;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
-import com.cybermodding.payload.CommentCompleteDTO;
 import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.UpdateUser;
+import com.cybermodding.repositories.CommentRepoPage;
+import com.cybermodding.repositories.PostPageableRepo;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserPageRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.AdminModsRes;
+import com.cybermodding.responses.CommentCompleteOut;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.PostWithID;
 import com.cybermodding.responses.ProfileOut;
 import com.cybermodding.responses.ResponseBase;
+import com.cybermodding.responses.SearchRes;
 import com.cybermodding.responses.UserResponse;
 
 @Service
@@ -50,6 +53,10 @@ public class UserService {
         AuthServiceImpl auth_svc;
         @Autowired
         FTPUploadService ftpSvc;
+        @Autowired
+        PostPageableRepo post_repo;
+        @Autowired
+        CommentRepoPage comment_repo;
 
         public User getById(Long id) {
                 if (u_repo.existsById(id))
@@ -94,16 +101,16 @@ public class UserService {
                         PostWithID pdto = p != null
                                         ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
                                                         p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size())
+                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
                                         : null;
-                        CommentCompleteDTO cc = c != null
-                                        ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                        CommentCompleteOut cc = c != null
+                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
                                                         new PostWithID(null, c.getId(), c.getPost().getTitle(),
                                                                         c.getPost().getBody(),
                                                                         c.getPost().getType(),
                                                                         c.getPost().getAuthor().getId(),
                                                                         c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size()))
+                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
                                         : null;
 
                         outAdmins.add(new ProfileOut(null, ad.getId(), ad.getUsername(), ad.getEmail(),
@@ -118,17 +125,17 @@ public class UserService {
                         PostWithID pdto = p != null
                                         ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
                                                         p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size())
+                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
                                         : null;
                         Comment c = mod.getComments().size() != 0 ? getLastComment(mod.getComments()) : null;
-                        CommentCompleteDTO cc = c != null
-                                        ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                        CommentCompleteOut cc = c != null
+                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
                                                         new PostWithID(null, c.getId(), c.getPost().getTitle(),
                                                                         c.getPost().getBody(),
                                                                         c.getPost().getType(),
                                                                         c.getPost().getAuthor().getId(),
                                                                         c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size()))
+                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
                                         : null;
 
                         outMods.add(new ProfileOut(null, mod.getId(), mod.getUsername(), mod.getEmail(),
@@ -153,10 +160,10 @@ public class UserService {
                                         ? new PostWithID(null, last_p.getId(), last_p.getTitle(), last_p.getBody(),
                                                         last_p.getType(),
                                                         last_p.getAuthor().getId(), last_p.getSub_section().getId(),
-                                                        last_p.getComments().size())
+                                                        last_p.getComments().size(), last_p.getReactions().size(), last_p.getAuthor().getUsername(), null)
                                         : null;
-                        CommentCompleteDTO cc = last != null
-                                        ? new CommentCompleteDTO(last.getId(), last.getContent(),
+                        CommentCompleteOut cc = last != null
+                                        ? new CommentCompleteOut(last.getId(), last.getContent(),
                                                         last_p != null
                                                                         ? new PostWithID(null, last_p.getId(),
                                                                                         last.getPost().getTitle(),
@@ -167,8 +174,8 @@ public class UserService {
                                                                                         last.getPost().getSub_section()
                                                                                                         .getId(),
                                                                                         last.getPost().getComments()
-                                                                                                        .size())
-                                                                        : null)
+                                                                                                        .size(), last.getPost().getReactions().size(), last.getPost().getAuthor().getUsername(), null)
+                                                                        : null, null, null, null, null)
                                         : null;
 
                         return new ProfileOut(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
@@ -355,17 +362,17 @@ public class UserService {
                         PostWithID pdto = p != null
                                         ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
                                                         p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size())
+                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
                                         : null;
                         Comment c = u.getComments().size() != 0 ? getLastComment(u.getComments()) : null;
-                        CommentCompleteDTO cc = c != null
-                                        ? new CommentCompleteDTO(c.getId(), c.getContent(),
+                        CommentCompleteOut cc = c != null
+                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
                                                         new PostWithID(null, c.getPost().getId(),
                                                                         c.getPost().getTitle(), c.getPost().getBody(),
                                                                         c.getPost().getType(),
                                                                         c.getPost().getAuthor().getId(),
                                                                         c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size()))
+                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
                                         : null;
 
                         return new ProfileOut(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
@@ -403,5 +410,53 @@ public class UserService {
 
         public User getRandom() {
                 return u_repo.getRandomUser();
+        }
+
+        public Page<ProfileOut> searchUsersPageByUsernamePart(String usernamePart, Pageable pageable) {
+                Page<User> page = u_page_repo.findAllByUsername(usernamePart, pageable);
+                Page<ProfileOut> profOut = page.map(pr -> {
+                        PostWithID last_pid = null;
+                        if (pr.getPosts().size() > 0) {
+                                Post last_post = getLastPost(pr.getPosts());
+                                last_pid = new PostWithID(null, last_post.getId(), last_post.getTitle(), last_post.getBody(), last_post.getType(), last_post.getAuthor().getId(), last_post.getSub_section().getId(), last_post.getComments().size(), last_post.getReactions().size(), last_post.getAuthor().getUsername(), null);
+                        }
+                        
+                        Comment last_comment = null;
+                        PostWithID last_c_pid = null;
+                        CommentCompleteOut last_complc = null;
+                        if (pr.getComments().size() > 0) {
+                                last_comment = getLastComment(pr.getComments());
+                                last_c_pid = new PostWithID(null, last_comment.getPost().getId(), last_comment.getPost().getTitle(), last_comment.getPost().getBody(), last_comment.getPost().getType(), last_comment.getPost().getAuthor().getId(), last_comment.getPost().getSub_section().getId(), last_comment.getPost().getComments().size(), last_comment.getPost().getReactions().size(), last_comment.getPost().getAuthor().getUsername(), null);
+                                last_complc = new CommentCompleteOut(last_comment.getId(), last_comment.getContent(), last_c_pid, null, null, last_comment.getPublishedDate(), null);
+                        }
+                        
+                        return new ProfileOut(null, pr.getId(), pr.getUsername(), pr.getEmail(), pr.getRegistrationDate(), pr.getDescription(), pr.getAvatar(), pr.getBirthdate(), pr.getPosts().size(), pr.getComments().size(), last_pid, last_complc, getRank(pr.getId()));
+                });
+                return profOut;
+        }
+
+        public Page<CommentCompleteOut> searchCommentPageByBodyPart(String bodyPart, Pageable pageable) {
+                Page<Comment> lsComment = comment_repo.findAllByBodyPart(bodyPart.toLowerCase(), pageable);
+                Page<CommentCompleteOut> com = lsComment.map(c -> {
+                        PostWithID p = new PostWithID(null, c.getPost().getId(), c.getPost().getTitle(), c.getPost().getBody(), c.getPost().getType(), c.getPost().getAuthor().getId(), c.getPost().getSub_section().getId(), c.getPost().getComments().size(),c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null);
+                        return new CommentCompleteOut(c.getId(), c.getContent(), p, c.getUser().getUsername(), getRank(c.getUser().getId()), c.getPublishedDate(), c.getUser().getId());
+                });
+                return com;
+        }
+
+        public Page<PostWithID> searchPostPageByTitlePart(String bodyPart, Pageable pageable) {
+                Page<Post> pid = post_repo.findAllByTitlePart(bodyPart.toLowerCase(), pageable);
+                Page<PostWithID> pout = pid.map(p -> {
+                        return new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(), p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), getRank(p.getAuthor().getId()));
+                });
+                return pout;
+        }
+
+        public SearchRes searchStr(String toSearch) {
+                Page<ProfileOut> lsUsers = searchUsersPageByUsernamePart(toSearch, Pageable.ofSize(8));
+                Page<PostWithID> lsPost = searchPostPageByTitlePart(toSearch, Pageable.ofSize(8));
+                Page<CommentCompleteOut> lsComment = searchCommentPageByBodyPart(toSearch, Pageable.ofSize(8));
+
+                return new SearchRes(lsUsers, lsPost, lsComment);
         }
 }
