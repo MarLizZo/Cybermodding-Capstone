@@ -9,11 +9,12 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
-<h4>Current Version: 1.3</h4>
+<h4>Current Version: 1.3.1</h4>
 
--   Contact us feature. Anyone can contact the admins for any reason. The administrators are able to see the messages from the Admin CP
--   Now the user can upload an image as profile avatar from local machine. It will be stored on a real online server
--   Minor graphic improvements
+-   1.3.1 - Search function available
+-   1.3 - Contact us feature. Anyone can contact the admins for any reason. The administrators are able to see the messages from the Admin CP
+-   1.3 - Avatar upload with preview. Now the user can upload an image as profile avatar from local machine. Preview available. The avatar will be stored on a real online server
+-   1.3 - Minor graphic improvements
 
 <p></p>
 
