@@ -17,6 +17,7 @@ import com.cybermodding.entities.Section;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.SubSectionDto;
 import com.cybermodding.repositories.SectionRepo;
 import com.cybermodding.repositories.SubSectionRepo;
@@ -29,6 +30,7 @@ import com.cybermodding.responses.SubSectionOut;
 import com.cybermodding.responses.SubSectionResponse;
 
 @Service
+@SuppressWarnings("null")
 public class SubSectionService {
     @Autowired
     SubSectionRepo repo;
@@ -65,12 +67,12 @@ public class SubSectionService {
                     Comment last = post.getComments().get(0);
                     CommentOut cmOut = CommentOut.builder().id(last.getId()).content(last.getContent())
                             .user(last.getUser()).publishedDate(last.getPublishedDate())
-                            .user_level(u_svc.getRank(last.getUser().getId())).build();
+                            .user_level(UserFactory.getRank(last.getUser())).build();
 
                     pout.add(PostOut.builder().id(post.getId()).title(post.getTitle())
                             .body(post.getBody()).publishedDate(post.getPublishedDate()).type(post.getType())
                             .author(post.getAuthor()).reactions(post.getReactions())
-                            .user_level(u_svc.getRank(post.getAuthor().getId()))
+                            .user_level(UserFactory.getRank(post.getAuthor()))
                             .main_section_title(post.getSub_section().getParent_section().getTitle())
                             .main_section_id(post.getSub_section().getParent_section().getId())
                             .subsection_title(post.getSub_section().getTitle())
@@ -80,7 +82,7 @@ public class SubSectionService {
                     pout.add(PostOut.builder().id(post.getId()).title(post.getTitle())
                             .body(post.getBody()).publishedDate(post.getPublishedDate()).type(post.getType())
                             .author(post.getAuthor()).reactions(post.getReactions())
-                            .user_level(u_svc.getRank(post.getAuthor().getId()))
+                            .user_level(UserFactory.getRank(post.getAuthor()))
                             .main_section_title(post.getSub_section().getParent_section().getTitle())
                             .main_section_id(post.getSub_section().getParent_section().getId())
                             .subsection_title(post.getSub_section().getTitle())
@@ -127,25 +129,34 @@ public class SubSectionService {
 
     public SubSectionResponse updateSubSection(Long id, SubSection ss) {
         if (repo.existsById(ss.getId())) {
-            if (u_repo.existsById(id) && u_svc.getRank(id).equals(EUserLevel.BOSS)) {
-                SubSection fromDB = repo.findById(ss.getId()).get();
-                fromDB.setActive(ss.getActive());
-                fromDB.setDescription(ss.getDescription());
-                fromDB.setOrder_number(ss.getOrder_number());
-                fromDB.setTitle(ss.getTitle());
-                repo.save(fromDB);
-                return new SubSectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                        fromDB.getTitle(),
-                        fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number(), fromDB.getPosts());
+            if (u_repo.existsById(id)) {
+                if (UserFactory.getRank(u_repo.findById(id).get()).equals(EUserLevel.BOSS)) {
+                    SubSection fromDB = repo.findById(ss.getId()).get();
+                    fromDB.setActive(ss.getActive());
+                    fromDB.setDescription(ss.getDescription());
+                    fromDB.setOrder_number(ss.getOrder_number());
+                    fromDB.setTitle(ss.getTitle());
+                    repo.save(fromDB);
+                    return new SubSectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                            fromDB.getTitle(),
+                            fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number(), fromDB.getPosts());
+                } else {
+                    return new SubSectionResponse(
+                            new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()), null,
+                            null,
+                            null,
+                            null, null, null);
+                }
             } else {
                 return new SubSectionResponse(
-                        new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()), null, null,
-                        null,
+                        new ResponseBase(false, "** Sub Section not found **", LocalDateTime.now()), null, null, null,
                         null, null, null);
             }
         } else {
             return new SubSectionResponse(
-                    new ResponseBase(false, "** Sub Section not found **", LocalDateTime.now()), null, null, null,
+                    new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()), null,
+                    null,
+                    null,
                     null, null, null);
         }
     }

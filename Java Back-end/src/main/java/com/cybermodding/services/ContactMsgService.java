@@ -17,6 +17,7 @@ import com.cybermodding.responses.ContactMsgResponse;
 import com.cybermodding.responses.ResponseBase;
 
 @Service
+@SuppressWarnings("null")
 public class ContactMsgService {
     @Autowired
     ContactMsgRepo repo;

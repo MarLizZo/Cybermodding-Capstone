@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.BlockDTO;
 import com.cybermodding.repositories.SideBlockRepo;
 import com.cybermodding.repositories.UserRepo;
@@ -20,6 +21,7 @@ import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.SideBlockResponse;
 
 @Service
+@SuppressWarnings("null")
 public class SideBlockService {
     @Autowired
     SideBlockRepo repo;
@@ -67,26 +69,32 @@ public class SideBlockService {
 
     public SideBlockResponse updateBlock(Long id, SideBlock s) {
         if (repo.existsById(s.getId())) {
-            if (u_repo.existsById(id) && u_svc.getRank(id).equals(EUserLevel.BOSS)) {
-                SideBlock fromDB = repo.findById(s.getId()).get();
-                fromDB.setActive(s.getActive());
-                fromDB.setContent(s.getContent());
-                fromDB.setE_block_type(s.getE_block_type());
-                fromDB.setOrder_number(s.getOrder_number());
-                fromDB.setTitle(s.getTitle());
-                repo.save(fromDB);
+            if (u_repo.existsById(id)) {
+                if (UserFactory.getRank(u_repo.findById(id).get()).equals(EUserLevel.BOSS)) {
+                    SideBlock fromDB = repo.findById(s.getId()).get();
+                    fromDB.setActive(s.getActive());
+                    fromDB.setContent(s.getContent());
+                    fromDB.setE_block_type(s.getE_block_type());
+                    fromDB.setOrder_number(s.getOrder_number());
+                    fromDB.setTitle(s.getTitle());
+                    repo.save(fromDB);
 
-                return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                        fromDB.getTitle(),
-                        fromDB.getContent(), fromDB.getActive(), fromDB.getE_block_type(),
-                        fromDB.getOrder_number());
+                    return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                            fromDB.getTitle(),
+                            fromDB.getContent(), fromDB.getActive(), fromDB.getE_block_type(),
+                            fromDB.getOrder_number());
+                } else {
+                    return new SideBlockResponse(
+                            new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
+                            null, null, null, null, null, null);
+                }
             } else {
-                return new SideBlockResponse(
-                        new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
+                return new SideBlockResponse(new ResponseBase(false, "** Block not found **", LocalDateTime.now()),
                         null, null, null, null, null, null);
             }
         } else {
-            return new SideBlockResponse(new ResponseBase(false, "** Block not found **", LocalDateTime.now()),
+            return new SideBlockResponse(
+                    new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
                     null, null, null, null, null, null);
         }
     }

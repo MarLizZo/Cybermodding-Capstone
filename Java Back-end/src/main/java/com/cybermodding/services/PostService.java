@@ -3,6 +3,7 @@ package com.cybermodding.services;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,9 @@ import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.EPostType;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.factory.PostsFactory;
+import com.cybermodding.factory.ReactionsFactory;
+import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.PostDTO;
 import com.cybermodding.payload.PostHome;
@@ -34,11 +38,11 @@ import com.cybermodding.responses.CommentOut;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.PostWithID;
 import com.cybermodding.responses.ReactionResponse;
-import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.PostOutCPaged;
 import com.cybermodding.responses.PostResponse;
 
 @Service
+@SuppressWarnings("null")
 public class PostService {
     @Autowired
     PostRepo repo;
@@ -58,22 +62,19 @@ public class PostService {
     CommentRepoPage comm_page;
 
     public Post getById(Long id) {
-        if (repo.existsById(id)) {
-            return repo.findById(id).get();
-        } else {
-            throw new CustomException(HttpStatus.NOT_FOUND, "** Post not found **");
-        }
+        return repo.existsById(id) ? repo.findById(id).get() : null;
+    }
+
+    public Reaction getReactById(Long id) {
+        return react_repo.existsById(id) ? react_repo.findById(id).get() : null;
     }
 
     public PostWithID getByIdPout(Long id) {
-        if (repo.existsById(id)) {
-            Post p = repo.findById(id).get();
-            return new PostWithID(new ResponseBase(true, "", LocalDateTime.now()), p.getId(), p.getTitle(), p.getBody(),
-                    p.getType(), p.getAuthor().getId(),
-                    p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), u_svc.getRank(p.getAuthor().getId()));
+        Post p = getById(id);
+        if (p != null) {
+            return PostsFactory.getPostWithID("", p);
         } else {
-            return new PostWithID(new ResponseBase(false, "** Post not found **", LocalDateTime.now()), null, null,
-                    null, null, null, null, null, null, null, null);
+            return PostsFactory.getPostWithID("** Post not found **", p);
         }
     }
 
@@ -83,38 +84,32 @@ public class PostService {
 
     public PostResponse updatePost(Long user_id, String mod, UpdatePostDTO p) {
         if (u_repo.existsById(user_id)) {
-            if (repo.existsById(p.getId())) {
-                Post fromDB = repo.findById(p.getId()).get();
-                if (user_id.equals(fromDB.getAuthor().getId()) || u_svc.getRank(user_id).equals(EUserLevel.BOSS)
-                        || u_svc.getRank(user_id).equals(EUserLevel.BOSS)) {
+            Post fromDB = getById(p.getId());
+            if (fromDB != null) {
+                if (user_id.equals(fromDB.getAuthor().getId())
+                        || UserFactory.getRank(fromDB.getAuthor()).equals(EUserLevel.BOSS)
+                        || UserFactory.getRank(fromDB.getAuthor()).equals(EUserLevel.BOSS)) {
                     if (mod.equals("false")) {
                         fromDB.setType(EPostType.valueOf(p.getType()));
                         fromDB.setBody(p.getBody());
                     }
                     fromDB.setTitle(p.getTitle());
                     repo.save(fromDB);
-                    return new PostResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                            fromDB.getTitle(),
-                            fromDB.getBody(), fromDB.getPublishedDate(), fromDB.getType(), fromDB.getAuthor(),
-                            fromDB.getReactions(), fromDB.getComments());
+                    return PostsFactory.getPostResponse("", fromDB);
                 } else {
-                    return new PostResponse(new ResponseBase(false, "** User not authorized **", LocalDateTime.now()),
-                            null, null,
-                            null, null, null, null, null, null);
+                    return PostsFactory.getPostResponse("** User not authorized **", fromDB);
                 }
             } else {
-                return new PostResponse(new ResponseBase(false, "** Post not found **", LocalDateTime.now()), null,
-                        null,
-                        null, null, null, null, null, null);
+                return PostsFactory.getPostResponse("** Post not found **", fromDB);
             }
         } else {
-            return new PostResponse(new ResponseBase(false, "** User not found **", LocalDateTime.now()), null, null,
-                    null, null, null, null, null, null);
+            return PostsFactory.getPostResponse("** User not found **", null);
         }
     }
 
     public CustomResponse deletePost(Long id) {
-        if (repo.existsById(id)) {
+        Post p = getById(id);
+        if (p != null) {
             repo.deleteById(id);
             return new CustomResponse(new Date(), "** Post deleted succesfully **", HttpStatus.OK);
         } else {
@@ -132,64 +127,55 @@ public class PostService {
             Post post = Post.builder().title(pd.getTitle()).body(pd.getBody()).type(ept).author(u)
                     .sub_section(ss).publishedDate(LocalDateTime.now()).build();
             try {
-                repo.save(post);
-                return new PostResponse(new ResponseBase(true, "", LocalDateTime.now()), post.getId(),
-                        post.getTitle(),
-                        post.getBody(), post.getPublishedDate(), post.getType(), post.getAuthor(),
-                        post.getReactions(), post.getComments());
+                return PostsFactory.getPostResponse("", repo.save(post));
             } catch (Exception ex) {
-                return new PostResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
-                        null, null,
-                        null, null, null, null, null, null);
+                return PostsFactory.getPostResponse("** " + ex.getMessage() + " **", null);
             }
 
         } else {
-            return new PostResponse(new ResponseBase(false, "** User or Sub section not found **", LocalDateTime.now()),
-                    null, null,
-                    null, null, null, null, null, null);
+            return PostsFactory.getPostResponse("** User or Sub section not found **", null);
         }
     }
 
     public ReactionResponse updateReaction(Long id, Reaction react) {
-        if (react_repo.existsById(react.getId())) {
-            Reaction fromDB = react_repo.findById(react.getId()).get();
+        Reaction fromDB = getReactById(react.getId());
+        if (fromDB != null) {
             if (fromDB.getUser().getId().equals(react.getUser().getId())) {
-                //
-            }
-            if (id.equals(react.getId())) {
-                react_repo.save(react);
-                return new ReactionResponse(new ResponseBase(true, "", LocalDateTime.now()), react.getId(),
-                        react.getUser(), react.getType());
+                if (id.equals(react.getId())) {
+                    fromDB.setType(react.getType());
+                    return ReactionsFactory.getReactionResponse("", react_repo.save(fromDB));
+                } else {
+                    return ReactionsFactory.getReactionResponse("** Bad request **", null);
+                }
             } else {
-                throw new CustomException(HttpStatus.BAD_REQUEST, "** ID and Reaction ID does not match **");
+                return ReactionsFactory.getReactionResponse("** User not Authorized **", null);
             }
         } else {
-            return new ReactionResponse(new ResponseBase(true, "** Reaction not found **", LocalDateTime.now()), null,
-                    null, null);
+            return ReactionsFactory.getReactionResponse("** Reaction not found **", null);
         }
     }
 
     public ReactionResponse addReaction(ReactionDTO r) {
-        Post post = repo.existsById(r.getPost_id()) ? repo.findById(r.getPost_id()).get() : null;
-        User u = u_repo.existsById(r.getUser_id()) ? u_repo.findById(r.getUser_id()).get() : null;
+        Post post = getById(r.getPost_id());
+        User u = u_svc.getById(r.getUser_id());
 
         if (post != null && u != null) {
-            if (post.getReactions().stream().anyMatch(re -> re.getUser().getId().equals(u.getId()))) {
-                react_repo.deleteById(post.getReactions().stream().filter(re -> re.getUser().getId() == u.getId())
-                        .findFirst().get().getId());
-            }
+            // remove if user already added a reaction. Should not happen tho
+            Optional<Reaction> reactOpt = post.getReactions().stream()
+                    .filter(re -> re.getUser().getId().equals(u.getId()))
+                    .findFirst();
+            reactOpt.ifPresent(reaction -> react_repo.deleteById(reaction.getId()));
+
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
-            react_repo.save(reaction);
-            return new ReactionResponse(new ResponseBase(true, "", LocalDateTime.now()), reaction.getId(),
-                    reaction.getUser(), reaction.getType());
+            return ReactionsFactory.getReactionResponse("", react_repo.save(reaction));
         } else {
-            return new ReactionResponse(new ResponseBase(true, "** Unexpected error **", LocalDateTime.now()), null,
-                    null, null);
+            return ReactionsFactory.getReactionResponse("** Bad request **", null);
         }
     }
 
     public CustomResponse removeReaction(Long id) {
-        if (react_repo.existsById(id)) {
+        Reaction r = getReactById(id);
+        if (r != null) {
             react_repo.deleteById(id);
             return new CustomResponse(new Date(), "** Reaction deleted succesfully **", HttpStatus.OK);
         } else {
@@ -206,7 +192,7 @@ public class PostService {
                     .publishedDate(LocalDateTime.now()).build());
             return CommentOut.builder().content(comm.getContent()).id(comm.getId())
                     .publishedDate(comm.getPublishedDate()).user(comm.getUser())
-                    .user_level(u_svc.getRank(comm.getUser().getId())).build();
+                    .user_level(UserFactory.getRank(comm.getUser())).build();
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Post or User not found **");
         }
@@ -227,90 +213,52 @@ public class PostService {
 
     public PostOutCPaged getPostOut(Long id, Pageable page) {
         Post p = getById(id);
-        EUserLevel level = u_svc.getRank(p.getAuthor().getId());
         Page<Comment> comments_page = comm_page.findAllByPostId(id, page);
-
-        Page<CommentOut> comments_page_out = comments_page
-                .map(c -> CommentOut.builder().id(c.getId()).content(c.getContent()).user(c.getUser())
-                        .publishedDate(c.getPublishedDate()).user_level(u_svc.getRank(c.getUser().getId())).build());
-
-        return new PostOutCPaged(new ResponseBase(true, "", LocalDateTime.now()), p.getId(), p.getTitle(), p.getBody(),
-                p.getPublishedDate(), p.getType(),
-                p.getAuthor(),
-                p.getReactions(), comments_page_out, level, p.getSub_section().getParent_section().getTitle(),
-                p.getSub_section().getParent_section().getId(), p.getSub_section().getTitle(),
-                p.getSub_section().getId());
+        return PostsFactory.getPostOutCPaged("", p, comments_page);
     }
 
     public Page<PostHome> getPostsForHomeOrderDate(Long id, Pageable page) {
         Page<Post> p = page_repo.getPostsHomeForSectionIdDate(id, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getPostsForHomeOrderReact(Long id, Pageable page) {
         Page<Post> p = page_repo.getPostsHomeForSectionIdReact(id, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getPostsForHomeOrderComments(Long id, Pageable page) {
         Page<Post> p = page_repo.getPostsHomeForSectionIdComments(id, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getAllPostsPaged(Pageable page) {
         Page<Post> p = page_repo.findAllOrderDate(page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getPagedByTitle(String title, Pageable page) {
         Page<Post> p = page_repo.findAllByTitle(title, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getPagedByUsername(String name, Pageable page) {
         Page<Post> p = page_repo.findAllByAuthorName(name, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getPagedByDate(LocalDateTime date1, LocalDateTime date2, Pageable page) {
         Page<Post> p = page_repo.findAllByPublishedDateBetween(date1, date2, page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getAllPostsPagedReact(Pageable page) {
         Page<Post> p = page_repo.findAllOrderReact(page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 
     public Page<PostHome> getAllPostsPagedComments(Pageable page) {
         Page<Post> p = page_repo.findAllOrderComments(page);
-        Page<PostHome> pout = p.map(post -> new PostHome(post.getId(), post.getTitle(), post.getBody(),
-                post.getPublishedDate(), post.getType(), post.getAuthor(), post.getReactions(), post.getComments(),
-                u_svc.getRank(post.getAuthor().getId())));
-        return pout;
+        return PostsFactory.getPagePostHome(p);
     }
 }

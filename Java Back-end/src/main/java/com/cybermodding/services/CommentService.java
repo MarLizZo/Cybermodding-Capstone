@@ -18,6 +18,7 @@ import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.ResponseBase;
 
 @Service
+@SuppressWarnings("null")
 public class CommentService {
     @Autowired
     CommentRepo repo;

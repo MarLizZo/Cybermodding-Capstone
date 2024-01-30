@@ -11,6 +11,7 @@ import com.cybermodding.runners.WSPMsHandler;
 
 @Configuration
 @EnableWebSocket
+@SuppressWarnings("null")
 public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired

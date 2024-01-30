@@ -16,6 +16,7 @@ import com.cybermodding.repositories.ChatRepo;
 import com.cybermodding.responses.CustomResponse;
 
 @Service
+@SuppressWarnings("null")
 public class ChatService {
     @Autowired
     ChatRepo repo;

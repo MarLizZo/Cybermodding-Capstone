@@ -12,6 +12,7 @@ import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.ResponsePM;
 
 @Service
+@SuppressWarnings("null")
 public class PMService {
     @Autowired
     PMRepo repo;

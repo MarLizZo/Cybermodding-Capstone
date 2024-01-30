@@ -18,6 +18,7 @@ import com.cybermodding.services.PMService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
+@SuppressWarnings("null")
 public class WSPMsHandler extends TextWebSocketHandler {
     @Autowired
     private ObjectMapper objectMapper;

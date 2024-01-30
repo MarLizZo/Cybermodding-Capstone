@@ -20,6 +20,7 @@ import com.cybermodding.services.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
+@SuppressWarnings("null")
 public class WSChatHandler extends TextWebSocketHandler {
 
     @Autowired

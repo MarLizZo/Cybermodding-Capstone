@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@SuppressWarnings("null")
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handle specific exceptions

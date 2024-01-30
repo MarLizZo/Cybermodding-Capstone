@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Section;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.SectionDto;
 import com.cybermodding.repositories.SectionRepo;
 import com.cybermodding.repositories.UserRepo;
@@ -20,6 +21,7 @@ import com.cybermodding.responses.SectionResponse;
 import com.cybermodding.responses.SectionWithSub;
 
 @Service
+@SuppressWarnings("null")
 public class SectionService {
     @Autowired
     SectionRepo repo;
@@ -63,19 +65,25 @@ public class SectionService {
     }
 
     public SectionResponse updateSection(Long id, Section s) {
-        if (u_repo.existsById(id) && u_svc.getRank(id).equals(EUserLevel.BOSS)) {
-            if (repo.existsById(s.getId())) {
-                Section fromDB = repo.findById(id).get();
-                fromDB.setTitle(s.getTitle());
-                fromDB.setDescription(s.getDescription());
-                fromDB.setActive(s.getActive());
-                fromDB.setOrder_number(s.getOrder_number());
-                repo.save(fromDB);
-                return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                        fromDB.getTitle(), fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number());
+        if (u_repo.existsById(id)) {
+            if (UserFactory.getRank(u_repo.findById(id).get()).equals(EUserLevel.BOSS)) {
+                if (repo.existsById(s.getId())) {
+                    Section fromDB = repo.findById(id).get();
+                    fromDB.setTitle(s.getTitle());
+                    fromDB.setDescription(s.getDescription());
+                    fromDB.setActive(s.getActive());
+                    fromDB.setOrder_number(s.getOrder_number());
+                    repo.save(fromDB);
+                    return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
+                            fromDB.getTitle(), fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number());
+                } else {
+                    return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()),
+                            null, null, null, null, null);
+                }
             } else {
-                return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()),
-                        null, null, null, null, null);
+                return new SectionResponse(
+                        new ResponseBase(false, "** User not found or authorized **", LocalDateTime.now()), null,
+                        null, null, null, null);
             }
         } else {
             return new SectionResponse(

@@ -3,7 +3,6 @@ package com.cybermodding.services;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +22,8 @@ import com.cybermodding.entities.Post;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.factory.PostsFactory;
+import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.UpdateUser;
@@ -41,6 +42,7 @@ import com.cybermodding.responses.SearchRes;
 import com.cybermodding.responses.UserResponse;
 
 @Service
+@SuppressWarnings("null")
 public class UserService {
 
         @Autowired
@@ -59,24 +61,12 @@ public class UserService {
         CommentRepoPage comment_repo;
 
         public User getById(Long id) {
-                if (u_repo.existsById(id))
-                        return u_repo.findById(id).get();
-                else
-                        return null;
+                return u_repo.existsById(id) ? u_repo.findById(id).get() : null;
         }
 
         public UserResponse getUserOut(Long id) {
                 User u = getById(id);
-                if (u != null) {
-                        return new UserResponse(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
-                                        u.getUsername(),
-                                        u.getEmail(), u.getRegistrationDate(), u.getDescription(), u.getAvatar(),
-                                        u.getBirthdate());
-                } else {
-                        return new UserResponse(new ResponseBase(false, "", LocalDateTime.now()), null, null, null,
-                                        null, null,
-                                        null, null);
-                }
+                return UserFactory.getUserResponse(u == null ? "** User not found **" : "", u);
         }
 
         public Page<User> getUsersPagination(Pageable pageable) {
@@ -89,60 +79,22 @@ public class UserService {
 
         public AdminModsRes getAdminMods() {
                 List<User> ls = u_repo.findAll();
-                List<User> admins = ls.stream().filter(u -> getRank(u.getId()).equals(EUserLevel.BOSS))
+                List<User> admins = ls.stream().filter(u -> UserFactory.getRank(u).equals(EUserLevel.BOSS))
                                 .collect(Collectors.toList());
                 List<User> mods = ls.stream()
-                                .filter(u -> getRank(u.getId()).equals(EUserLevel.MID)).collect(Collectors.toList());
+                                .filter(u -> UserFactory.getRank(u).equals(EUserLevel.MID))
+                                .collect(Collectors.toList());
 
                 List<ProfileOut> outAdmins = new ArrayList<ProfileOut>();
                 admins.forEach(ad -> {
-                        Post p = ad.getPosts().size() != 0 ? getLastPost(ad.getPosts()) : null;
-                        Comment c = ad.getComments().size() != 0 ? getLastComment(ad.getComments()) : null;
-                        PostWithID pdto = p != null
-                                        ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
-                                                        p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
-                                        : null;
-                        CommentCompleteOut cc = c != null
-                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
-                                                        new PostWithID(null, c.getId(), c.getPost().getTitle(),
-                                                                        c.getPost().getBody(),
-                                                                        c.getPost().getType(),
-                                                                        c.getPost().getAuthor().getId(),
-                                                                        c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
-                                        : null;
-
-                        outAdmins.add(new ProfileOut(null, ad.getId(), ad.getUsername(), ad.getEmail(),
-                                        ad.getRegistrationDate(),
-                                        ad.getDescription(), ad.getAvatar(), ad.getBirthdate(), ad.getPosts().size(),
-                                        ad.getComments().size(), pdto, cc, getRank(ad.getId())));
+                        ProfileOut pout = UserFactory.getProfileOut("", ad);
+                        outAdmins.add(pout);
                 });
 
                 List<ProfileOut> outMods = new ArrayList<ProfileOut>();
                 mods.forEach(mod -> {
-                        Post p = mod.getPosts().size() != 0 ? getLastPost(mod.getPosts()) : null;
-                        PostWithID pdto = p != null
-                                        ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
-                                                        p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
-                                        : null;
-                        Comment c = mod.getComments().size() != 0 ? getLastComment(mod.getComments()) : null;
-                        CommentCompleteOut cc = c != null
-                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
-                                                        new PostWithID(null, c.getId(), c.getPost().getTitle(),
-                                                                        c.getPost().getBody(),
-                                                                        c.getPost().getType(),
-                                                                        c.getPost().getAuthor().getId(),
-                                                                        c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
-                                        : null;
-
-                        outMods.add(new ProfileOut(null, mod.getId(), mod.getUsername(), mod.getEmail(),
-                                        mod.getRegistrationDate(),
-                                        mod.getDescription(), mod.getAvatar(), mod.getBirthdate(),
-                                        mod.getPosts().size(),
-                                        mod.getComments().size(), pdto, cc, getRank(mod.getId())));
+                        ProfileOut pout = UserFactory.getProfileOut("", mod);
+                        outMods.add(pout);
                 });
 
                 return AdminModsRes.builder().response(new ResponseBase(true, "", LocalDateTime.now()))
@@ -154,35 +106,7 @@ public class UserService {
                 Page<User> users = u_page_repo.findAll(page);
 
                 Page<ProfileOut> outPage = users.map(u -> {
-                        Comment last = u.getComments().size() != 0 ? getLastComment(u.getComments()) : null;
-                        Post last_p = u.getPosts().size() != 0 ? getLastPost(u.getPosts()) : null;
-                        PostWithID pdto = last_p != null
-                                        ? new PostWithID(null, last_p.getId(), last_p.getTitle(), last_p.getBody(),
-                                                        last_p.getType(),
-                                                        last_p.getAuthor().getId(), last_p.getSub_section().getId(),
-                                                        last_p.getComments().size(), last_p.getReactions().size(), last_p.getAuthor().getUsername(), null)
-                                        : null;
-                        CommentCompleteOut cc = last != null
-                                        ? new CommentCompleteOut(last.getId(), last.getContent(),
-                                                        last_p != null
-                                                                        ? new PostWithID(null, last_p.getId(),
-                                                                                        last.getPost().getTitle(),
-                                                                                        last.getPost().getBody(),
-                                                                                        last.getPost().getType(),
-                                                                                        last.getPost().getAuthor()
-                                                                                                        .getId(),
-                                                                                        last.getPost().getSub_section()
-                                                                                                        .getId(),
-                                                                                        last.getPost().getComments()
-                                                                                                        .size(), last.getPost().getReactions().size(), last.getPost().getAuthor().getUsername(), null)
-                                                                        : null, null, null, null, null)
-                                        : null;
-
-                        return new ProfileOut(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
-                                        u.getUsername(),
-                                        u.getEmail(), u.getRegistrationDate(),
-                                        u.getDescription(), u.getAvatar(), u.getBirthdate(), u.getPosts().size(),
-                                        u.getComments().size(), pdto, cc, getRank(u.getId()));
+                        return UserFactory.getProfileOut("", u);
                 });
                 return outPage;
         }
@@ -217,24 +141,15 @@ public class UserService {
                                 if (path != null) {
                                         fromDB.setAvatar(path);
                                         u_repo.save(fromDB);
-                                        return new UserResponse(new ResponseBase(true, "", LocalDateTime.now()),
-                                                        fromDB.getId(), fromDB.getUsername(), fromDB.getEmail(),
-                                                        fromDB.getRegistrationDate(), fromDB.getDescription(),
-                                                        fromDB.getAvatar(), fromDB.getBirthdate());
+                                        return UserFactory.getUserResponse("", fromDB);
                                 } else {
-                                        return new UserResponse(
-                                                        new ResponseBase(false, "** Upload error **",
-                                                                        LocalDateTime.now()),
-                                                        null, null, null, null, null, null, null);
+                                        return UserFactory.getUserResponse("** Upload error **", null);
                                 }
                         } else {
-                                return new UserResponse(
-                                                new ResponseBase(false, "** Invalid avatar **", LocalDateTime.now()),
-                                                null, null, null, null, null, null, null);
+                                return UserFactory.getUserResponse("** Invalid Avatar **", null);
                         }
                 } else {
-                        return new UserResponse(new ResponseBase(false, "** User not found **", LocalDateTime.now()),
-                                        null, null, null, null, null, null, null);
+                        return UserFactory.getUserResponse("** User not found **", null);
                 }
         }
 
@@ -254,24 +169,12 @@ public class UserService {
                                 fromDB.setBirthdate(u.getBirthdate());
 
                                 u_repo.save(fromDB);
-                                return new UserResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                                                fromDB.getUsername(),
-                                                fromDB.getEmail(), fromDB.getRegistrationDate(),
-                                                fromDB.getDescription(), fromDB.getAvatar(),
-                                                fromDB.getBirthdate());
+                                return UserFactory.getUserResponse("", fromDB);
                         } else {
-                                return new UserResponse(
-                                                new ResponseBase(false, "** Input ID and User ID do not match **",
-                                                                LocalDateTime.now()),
-                                                null,
-                                                null, null, null, null,
-                                                null, null);
+                                return UserFactory.getUserResponse("** Input ID and User ID do not match **", null);
                         }
                 } else {
-                        return new UserResponse(new ResponseBase(false, "** User not found **", LocalDateTime.now()),
-                                        null, null,
-                                        null, null, null,
-                                        null, null);
+                        return UserFactory.getUserResponse("** User not found **", null);
                 }
         }
 
@@ -293,43 +196,18 @@ public class UserService {
                                                 u.setPassword(auth_svc.passwordEncoder
                                                                 .encode(passDto.getNewPassword()));
                                                 u_repo.save(u);
-                                                return new UserResponse(new ResponseBase(true, "", LocalDateTime.now()),
-                                                                u.getId(),
-                                                                u.getUsername(),
-                                                                u.getEmail(), u.getRegistrationDate(),
-                                                                u.getDescription(), u.getAvatar(),
-                                                                u.getBirthdate());
+                                                return UserFactory.getUserResponse("", u);
                                         } else {
-                                                return new UserResponse(
-                                                                new ResponseBase(false, "** Credentials not valid **",
-                                                                                LocalDateTime.now()),
-                                                                null, null,
-                                                                null, null, null,
-                                                                null, null);
+                                                return UserFactory.getUserResponse("** Credentials not valid **", null);
                                         }
                                 } else {
-                                        return new UserResponse(
-                                                        new ResponseBase(false, "** Passwords do not match **",
-                                                                        LocalDateTime.now()),
-                                                        null, null,
-                                                        null, null, null,
-                                                        null, null);
+                                        return UserFactory.getUserResponse("** Passwords do not match **", null);
                                 }
                         } else {
-                                return new UserResponse(
-                                                new ResponseBase(false, "** Invalid Passwords **", LocalDateTime.now()),
-                                                null,
-                                                null,
-                                                null, null, null,
-                                                null, null);
+                                return UserFactory.getUserResponse("** Invalid Password **", null);
                         }
                 } else {
-                        return new UserResponse(
-                                        new ResponseBase(false, "** User ID do not match **", LocalDateTime.now()),
-                                        null,
-                                        null,
-                                        null, null, null,
-                                        null, null);
+                        return UserFactory.getUserResponse("** User IDs do not match **", null);
                 }
         }
 
@@ -344,68 +222,10 @@ public class UserService {
                 return ls_data;
         }
 
-        public EUserLevel getRank(Long id) {
-                User u = u_repo.findById(id).get();
-                return u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_ADMIN)) ? EUserLevel.BOSS
-                                : u.getRoles().stream().anyMatch(r -> r.getRoleName().equals(ERole.ROLE_MODERATOR))
-                                                ? EUserLevel.MID
-                                                : u.getRoles().stream().anyMatch(
-                                                                r -> r.getRoleName().equals(ERole.ROLE_BANNED))
-                                                                                ? EUserLevel.BANNED
-                                                                                : EUserLevel.BASE;
-        }
-
         public ProfileOut getProfile(Long id) {
                 User u = getById(id);
-                if (u != null) {
-                        Post p = u.getPosts().size() != 0 ? getLastPost(u.getPosts()) : null;
-                        PostWithID pdto = p != null
-                                        ? new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(),
-                                                        p.getAuthor().getId(),
-                                                        p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), null)
-                                        : null;
-                        Comment c = u.getComments().size() != 0 ? getLastComment(u.getComments()) : null;
-                        CommentCompleteOut cc = c != null
-                                        ? new CommentCompleteOut(c.getId(), c.getContent(),
-                                                        new PostWithID(null, c.getPost().getId(),
-                                                                        c.getPost().getTitle(), c.getPost().getBody(),
-                                                                        c.getPost().getType(),
-                                                                        c.getPost().getAuthor().getId(),
-                                                                        c.getPost().getSub_section().getId(),
-                                                                        c.getPost().getComments().size(), c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null), null, null, null, null)
-                                        : null;
-
-                        return new ProfileOut(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
-                                        u.getUsername(),
-                                        u.getEmail(), u.getRegistrationDate(), u.getDescription(),
-                                        u.getAvatar(), u.getBirthdate(), u.getPosts().size(), u.getComments().size(),
-                                        pdto, cc,
-                                        getRank(id));
-                } else {
-                        return new ProfileOut(new ResponseBase(false, "** User not found **", LocalDateTime.now()),
-                                        null, null,
-                                        null, null, null, null, null, null, null, null, null, null);
-                }
-        }
-
-        public Post getLastPost(List<Post> ls) {
-                ls.sort(new Comparator<Post>() {
-                        @Override
-                        public int compare(Post p1, Post p2) {
-                                return p2.getPublishedDate().compareTo(p1.getPublishedDate());
-                        }
-                });
-                return ls.get(0);
-        }
-
-        public Comment getLastComment(List<Comment> ls) {
-                ls.sort(new Comparator<Comment>() {
-                        @Override
-                        public int compare(Comment p1, Comment p2) {
-                                return p2.getPublishedDate().compareTo(p1.getPublishedDate());
-                        }
-                });
-                return ls.get(0);
+                return u == null ? UserFactory.getProfileOut("** User not found **", u)
+                                : UserFactory.getProfileOut("", u);
         }
 
         public User getRandom() {
@@ -415,22 +235,7 @@ public class UserService {
         public Page<ProfileOut> searchUsersPageByUsernamePart(String usernamePart, Pageable pageable) {
                 Page<User> page = u_page_repo.findAllByUsername(usernamePart, pageable);
                 Page<ProfileOut> profOut = page.map(pr -> {
-                        PostWithID last_pid = null;
-                        if (pr.getPosts().size() > 0) {
-                                Post last_post = getLastPost(pr.getPosts());
-                                last_pid = new PostWithID(null, last_post.getId(), last_post.getTitle(), last_post.getBody(), last_post.getType(), last_post.getAuthor().getId(), last_post.getSub_section().getId(), last_post.getComments().size(), last_post.getReactions().size(), last_post.getAuthor().getUsername(), null);
-                        }
-                        
-                        Comment last_comment = null;
-                        PostWithID last_c_pid = null;
-                        CommentCompleteOut last_complc = null;
-                        if (pr.getComments().size() > 0) {
-                                last_comment = getLastComment(pr.getComments());
-                                last_c_pid = new PostWithID(null, last_comment.getPost().getId(), last_comment.getPost().getTitle(), last_comment.getPost().getBody(), last_comment.getPost().getType(), last_comment.getPost().getAuthor().getId(), last_comment.getPost().getSub_section().getId(), last_comment.getPost().getComments().size(), last_comment.getPost().getReactions().size(), last_comment.getPost().getAuthor().getUsername(), null);
-                                last_complc = new CommentCompleteOut(last_comment.getId(), last_comment.getContent(), last_c_pid, null, null, last_comment.getPublishedDate(), null);
-                        }
-                        
-                        return new ProfileOut(null, pr.getId(), pr.getUsername(), pr.getEmail(), pr.getRegistrationDate(), pr.getDescription(), pr.getAvatar(), pr.getBirthdate(), pr.getPosts().size(), pr.getComments().size(), last_pid, last_complc, getRank(pr.getId()));
+                        return UserFactory.getProfileOut("", pr);
                 });
                 return profOut;
         }
@@ -438,8 +243,7 @@ public class UserService {
         public Page<CommentCompleteOut> searchCommentPageByBodyPart(String bodyPart, Pageable pageable) {
                 Page<Comment> lsComment = comment_repo.findAllByBodyPart(bodyPart.toLowerCase(), pageable);
                 Page<CommentCompleteOut> com = lsComment.map(c -> {
-                        PostWithID p = new PostWithID(null, c.getPost().getId(), c.getPost().getTitle(), c.getPost().getBody(), c.getPost().getType(), c.getPost().getAuthor().getId(), c.getPost().getSub_section().getId(), c.getPost().getComments().size(),c.getPost().getReactions().size(), c.getPost().getAuthor().getUsername(), null);
-                        return new CommentCompleteOut(c.getId(), c.getContent(), p, c.getUser().getUsername(), getRank(c.getUser().getId()), c.getPublishedDate(), c.getUser().getId());
+                        return PostsFactory.getCommentCompleteOut(c);
                 });
                 return com;
         }
@@ -447,7 +251,7 @@ public class UserService {
         public Page<PostWithID> searchPostPageByTitlePart(String bodyPart, Pageable pageable) {
                 Page<Post> pid = post_repo.findAllByTitlePart(bodyPart.toLowerCase(), pageable);
                 Page<PostWithID> pout = pid.map(p -> {
-                        return new PostWithID(null, p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(), p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(), p.getAuthor().getUsername(), getRank(p.getAuthor().getId()));
+                        return PostsFactory.getPostWithID("", p);
                 });
                 return pout;
         }
