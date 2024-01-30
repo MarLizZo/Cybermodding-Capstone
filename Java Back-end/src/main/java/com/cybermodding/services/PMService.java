@@ -1,14 +1,13 @@
 package com.cybermodding.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.PrivateMessage;
+import com.cybermodding.factory.MiscFactory;
 import com.cybermodding.repositories.PMRepo;
-import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.ResponsePM;
 
 @Service
@@ -25,31 +24,23 @@ public class PMService {
         if (repo.existsById(id)) {
             PrivateMessage pm = repo.findById(id).get();
             pm.setViewed(true);
-            PrivateMessage savedPM = repo.save(pm);
-            if (savedPM.getId() != null) {
-                return new ResponsePM(new ResponseBase(true, "", LocalDateTime.now()), savedPM.getId(),
-                        savedPM.getTitle(), savedPM.getContent(), savedPM.getSender_user(), savedPM.getRecipient_user(),
-                        savedPM.getDate(), savedPM.getViewed());
-            } else {
-                return new ResponsePM(new ResponseBase(false, "** Unexpected error **", LocalDateTime.now()), null,
-                        null,
-                        null, null, null, null, null);
+            try {
+                return MiscFactory.getResponsePM("", repo.save(pm));
+            } catch (Exception ex) {
+                return MiscFactory.getResponsePM("** " + ex.getMessage() + " **", null);
             }
         } else {
-            return new ResponsePM(new ResponseBase(false, "** Message not found **", LocalDateTime.now()), null, null,
-                    null, null, null, null, null);
+            return MiscFactory.getResponsePM("** Message not found **", null);
         }
     }
 
     public ResponsePM saveNewPM(PrivateMessage pm) {
-        PrivateMessage savedPM = repo.save(pm);
-        if (savedPM.getId() != null) {
-            return new ResponsePM(new ResponseBase(true, "", LocalDateTime.now()), savedPM.getId(), savedPM.getTitle(),
-                    savedPM.getContent(), savedPM.getSender_user(), savedPM.getRecipient_user(), savedPM.getDate(),
-                    savedPM.getViewed());
-        } else {
-            return new ResponsePM(new ResponseBase(false, "** Unexpected error **", LocalDateTime.now()), null, null,
-                    null, null, null, null, null);
+        try {
+            return MiscFactory.getResponsePM("", repo.save(pm));
+        } catch (IllegalArgumentException ex) {
+            return MiscFactory.getResponsePM("** Campi obbligatori mancanti **", null);
+        } catch (Exception ex) {
+            return MiscFactory.getResponsePM("** " + ex.getMessage() + " **", null);
         }
     }
 }

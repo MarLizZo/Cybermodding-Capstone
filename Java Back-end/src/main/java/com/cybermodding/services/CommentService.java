@@ -1,7 +1,6 @@
 package com.cybermodding.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -11,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Comment;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.factory.PostsFactory;
 import com.cybermodding.repositories.CommentRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.CommentResponse;
 import com.cybermodding.responses.CustomResponse;
-import com.cybermodding.responses.ResponseBase;
 
 @Service
 @SuppressWarnings("null")
@@ -28,11 +27,9 @@ public class CommentService {
     public CommentResponse getById(Long id) {
         if (repo.existsById(id)) {
             Comment c = repo.findById(id).get();
-            return new CommentResponse(new ResponseBase(true, "", LocalDateTime.now()), c.getId(), c.getContent(),
-                    c.getUser(), c.getPost(), c.getPublishedDate());
+            return PostsFactory.getCommentResponse("", c);
         } else {
-            return new CommentResponse(new ResponseBase(false, "** Comment not found **", LocalDateTime.now()), null,
-                    null, null, null, null);
+            return PostsFactory.getCommentResponse("** Comment not found **", null);
         }
     }
 
@@ -61,13 +58,12 @@ public class CommentService {
     }
 
     public CommentResponse saveComment(Comment c) {
-        Comment savedC = repo.save(c);
-        if (savedC.getId() != null) {
-            return new CommentResponse(new ResponseBase(true, "", LocalDateTime.now()), savedC.getId(),
-                    savedC.getContent(), savedC.getUser(), savedC.getPost(), savedC.getPublishedDate());
-        } else {
-            return new CommentResponse(new ResponseBase(false, "** Unexpected error **", LocalDateTime.now()), null,
-                    null, null, null, null);
+        try {
+            return PostsFactory.getCommentResponse("", repo.save(c));
+        } catch (IllegalArgumentException ex) {
+            return PostsFactory.getCommentResponse("** Campi obbligatori mancanti **", null);
+        } catch (Exception ex) {
+            return PostsFactory.getCommentResponse("** Unexpected error **", null);
         }
     }
 
@@ -75,17 +71,12 @@ public class CommentService {
         if (repo.existsById(id)) {
             if (id.equals(c.getId())) {
                 Comment com = repo.save(c);
-                return new CommentResponse(
-                        new ResponseBase(true, "** Comment updated correctly **", LocalDateTime.now()), com.getId(),
-                        com.getContent(), com.getUser(), com.getPost(), com.getPublishedDate());
+                return PostsFactory.getCommentResponse("", repo.save(com));
             } else {
-                return new CommentResponse(
-                        new ResponseBase(true, "** Input ID and Comment ID does not match **", LocalDateTime.now()),
-                        null, null, null, null, null);
+                return PostsFactory.getCommentResponse("** Input ID and Comment ID does not match **", null);
             }
         } else {
-            return new CommentResponse(new ResponseBase(true, "** Comment not found **", LocalDateTime.now()), null,
-                    null, null, null, null);
+            return PostsFactory.getCommentResponse("** Comment not found **", null);
         }
     }
 

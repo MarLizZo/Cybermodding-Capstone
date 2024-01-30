@@ -1,6 +1,5 @@
 package com.cybermodding.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -17,6 +16,8 @@ import com.cybermodding.entities.Section;
 import com.cybermodding.entities.SubSection;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
+import com.cybermodding.factory.MiscFactory;
+import com.cybermodding.factory.PostsFactory;
 import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.SubSectionDto;
 import com.cybermodding.repositories.SectionRepo;
@@ -25,7 +26,6 @@ import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.CommentOut;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.PostOut;
-import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.SubSectionOut;
 import com.cybermodding.responses.SubSectionResponse;
 
@@ -65,39 +65,19 @@ public class SubSectionService {
             sub.getPosts().forEach(post -> {
                 if (post.getComments().size() != 0) {
                     Comment last = post.getComments().get(0);
-                    CommentOut cmOut = CommentOut.builder().id(last.getId()).content(last.getContent())
-                            .user(last.getUser()).publishedDate(last.getPublishedDate())
-                            .user_level(UserFactory.getRank(last.getUser())).build();
-
-                    pout.add(PostOut.builder().id(post.getId()).title(post.getTitle())
-                            .body(post.getBody()).publishedDate(post.getPublishedDate()).type(post.getType())
-                            .author(post.getAuthor()).reactions(post.getReactions())
-                            .user_level(UserFactory.getRank(post.getAuthor()))
-                            .main_section_title(post.getSub_section().getParent_section().getTitle())
-                            .main_section_id(post.getSub_section().getParent_section().getId())
-                            .subsection_title(post.getSub_section().getTitle())
-                            .subsection_id(post.getSub_section().getId()).comments_count(post.getComments().size())
-                            .last_comment(cmOut).build());
+                    CommentOut cmOut = PostsFactory.getCommentOut(last);
+                    pout.add(PostsFactory.getPostOut(post, cmOut));
                 } else {
-                    pout.add(PostOut.builder().id(post.getId()).title(post.getTitle())
-                            .body(post.getBody()).publishedDate(post.getPublishedDate()).type(post.getType())
-                            .author(post.getAuthor()).reactions(post.getReactions())
-                            .user_level(UserFactory.getRank(post.getAuthor()))
-                            .main_section_title(post.getSub_section().getParent_section().getTitle())
-                            .main_section_id(post.getSub_section().getParent_section().getId())
-                            .subsection_title(post.getSub_section().getTitle())
-                            .subsection_id(post.getSub_section().getId()).comments_count(0).last_comment(null).build());
+                    pout.add(PostsFactory.getPostOut(post, null));
                 }
             });
         }
 
-        SubSectionOut ss = SubSectionOut.builder().id(sub.getId()).title(sub.getTitle())
+        return SubSectionOut.builder().id(sub.getId()).title(sub.getTitle())
                 .active(sub.getActive()).description(sub.getDescription()).order_number(sub.getOrder_number())
                 .posts(pout)
                 .parent_id(sub.getParent_section().getId()).parent_title(sub.getParent_section().getTitle())
                 .build();
-
-        return ss;
     }
 
     public List<SubSection> getAll() {
@@ -112,18 +92,12 @@ public class SubSectionService {
                     .order_number(ss.getOrder_number()).parent_section(parent.get()).build();
 
             try {
-                repo.save(s);
-                return new SubSectionResponse(new ResponseBase(true, "", LocalDateTime.now()), s.getId(), s.getTitle(),
-                        s.getDescription(), s.getActive(), s.getOrder_number(), s.getPosts());
+                return MiscFactory.getSubSectionResponse("", repo.save(s));
             } catch (Exception ex) {
-                return new SubSectionResponse(
-                        new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()), null, null, null,
-                        null, null, null);
+                return MiscFactory.getSubSectionResponse("** " + ex.getMessage() + " **", null);
             }
         } else {
-            return new SubSectionResponse(
-                    new ResponseBase(false, "** Parent Section not found **", LocalDateTime.now()), null, null, null,
-                    null, null, null);
+            return MiscFactory.getSubSectionResponse("** Parent section not found **", null);
         }
     }
 
@@ -136,28 +110,15 @@ public class SubSectionService {
                     fromDB.setDescription(ss.getDescription());
                     fromDB.setOrder_number(ss.getOrder_number());
                     fromDB.setTitle(ss.getTitle());
-                    repo.save(fromDB);
-                    return new SubSectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                            fromDB.getTitle(),
-                            fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number(), fromDB.getPosts());
+                    return MiscFactory.getSubSectionResponse("", repo.save(fromDB));
                 } else {
-                    return new SubSectionResponse(
-                            new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()), null,
-                            null,
-                            null,
-                            null, null, null);
+                    return MiscFactory.getSubSectionResponse("** User not found or Authorized **", null);
                 }
             } else {
-                return new SubSectionResponse(
-                        new ResponseBase(false, "** Sub Section not found **", LocalDateTime.now()), null, null, null,
-                        null, null, null);
+                return MiscFactory.getSubSectionResponse("** User not found or Authorized **", null);
             }
         } else {
-            return new SubSectionResponse(
-                    new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()), null,
-                    null,
-                    null,
-                    null, null, null);
+            return MiscFactory.getSubSectionResponse("** Sub Sectionnot found **", null);
         }
     }
 

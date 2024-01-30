@@ -12,6 +12,8 @@ import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.responses.CommentCompleteOut;
 import com.cybermodding.responses.CommentOut;
+import com.cybermodding.responses.CommentResponse;
+import com.cybermodding.responses.PostOut;
 import com.cybermodding.responses.PostOutCPaged;
 import com.cybermodding.responses.PostResponse;
 import com.cybermodding.responses.PostWithID;
@@ -87,8 +89,37 @@ public class PostsFactory {
                 p.getAuthor().getUsername(), null);
     }
 
+    public static PostOut getPostOut(Post post, CommentOut cmOut) {
+        return PostOut.builder().id(post.getId()).title(post.getTitle())
+                .body(post.getBody()).publishedDate(post.getPublishedDate()).type(post.getType())
+                .author(post.getAuthor()).reactions(post.getReactions())
+                .user_level(UserFactory.getRank(post.getAuthor()))
+                .main_section_title(post.getSub_section().getParent_section().getTitle())
+                .main_section_id(post.getSub_section().getParent_section().getId())
+                .subsection_title(post.getSub_section().getTitle())
+                .subsection_id(post.getSub_section().getId()).comments_count(post.getComments().size())
+                .last_comment(cmOut != null ? cmOut : null).build();
+    }
+
     public static CommentCompleteOut getCommentCompleteOut(Comment c) {
         return new CommentCompleteOut(c.getId(), c.getContent(), getPostWithID("", c.getPost()),
                 c.getUser().getUsername(), UserFactory.getRank(c.getUser()), c.getPublishedDate(), c.getUser().getId());
+    }
+
+    public static CommentOut getCommentOut(Comment c) {
+        return CommentOut.builder().id(c.getId()).content(c.getContent())
+                .user(c.getUser()).publishedDate(c.getPublishedDate())
+                .user_level(UserFactory.getRank(c.getUser())).build();
+    }
+
+    public static CommentResponse getCommentResponse(String errorMessage, Comment c) {
+        ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
+                LocalDateTime.now());
+
+        if (!errorMessage.isEmpty()) {
+            return new CommentResponse(resBase, c.getId(), c.getContent(),
+                    c.getUser(), c.getPost(), c.getPublishedDate());
+        }
+        return new CommentResponse(resBase, null, null, null, null, null);
     }
 }

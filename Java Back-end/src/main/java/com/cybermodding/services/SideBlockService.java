@@ -1,6 +1,5 @@
 package com.cybermodding.services;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -12,12 +11,12 @@ import org.springframework.stereotype.Service;
 import com.cybermodding.entities.SideBlock;
 import com.cybermodding.enumerators.ESideBlock;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.factory.MiscFactory;
 import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.BlockDTO;
 import com.cybermodding.repositories.SideBlockRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.CustomResponse;
-import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.SideBlockResponse;
 
 @Service
@@ -33,11 +32,9 @@ public class SideBlockService {
     public SideBlockResponse getById(Long id) {
         if (repo.existsById(id)) {
             SideBlock s = repo.findById(id).get();
-            return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), s.getId(), s.getTitle(),
-                    s.getContent(), s.getActive(), s.getE_block_type(), s.getOrder_number());
+            return MiscFactory.getSideBlockResponse("", s);
         } else {
-            return new SideBlockResponse(new ResponseBase(false, "** Side block not found **", LocalDateTime.now()),
-                    null, null, null, null, null, null);
+            return MiscFactory.getSideBlockResponse("** Side block not found **", null);
         }
     }
 
@@ -57,13 +54,9 @@ public class SideBlockService {
             SideBlock createdS = repo.save(SideBlock.builder().title(s.getTitle()).active(s.getActive())
                     .content(s.getContent()).e_block_type(s.getE_block_type()).order_number(s.getOrder_number())
                     .build());
-            return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), createdS.getId(),
-                    createdS.getTitle(),
-                    createdS.getContent(), createdS.getActive(), createdS.getE_block_type(),
-                    createdS.getOrder_number());
+            return MiscFactory.getSideBlockResponse("", createdS);
         } catch (Exception ex) {
-            return new SideBlockResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
-                    null, null, null, null, null, null);
+            return MiscFactory.getSideBlockResponse("** " + ex.getMessage() + " **", null);
         }
     }
 
@@ -77,25 +70,16 @@ public class SideBlockService {
                     fromDB.setE_block_type(s.getE_block_type());
                     fromDB.setOrder_number(s.getOrder_number());
                     fromDB.setTitle(s.getTitle());
-                    repo.save(fromDB);
 
-                    return new SideBlockResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                            fromDB.getTitle(),
-                            fromDB.getContent(), fromDB.getActive(), fromDB.getE_block_type(),
-                            fromDB.getOrder_number());
+                    return MiscFactory.getSideBlockResponse("", repo.save(fromDB));
                 } else {
-                    return new SideBlockResponse(
-                            new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
-                            null, null, null, null, null, null);
+                    return MiscFactory.getSideBlockResponse("** User not found or Authorized **", null);
                 }
             } else {
-                return new SideBlockResponse(new ResponseBase(false, "** Block not found **", LocalDateTime.now()),
-                        null, null, null, null, null, null);
+                return MiscFactory.getSideBlockResponse("** User not found or Authorized **", null);
             }
         } else {
-            return new SideBlockResponse(
-                    new ResponseBase(false, "** User not found or Authorized **", LocalDateTime.now()),
-                    null, null, null, null, null, null);
+            return MiscFactory.getSideBlockResponse("** Block not found **", null);
         }
     }
 

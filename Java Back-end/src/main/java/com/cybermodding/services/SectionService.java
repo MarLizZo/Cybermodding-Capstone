@@ -1,6 +1,5 @@
 package com.cybermodding.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.cybermodding.entities.Section;
 import com.cybermodding.enumerators.EUserLevel;
+import com.cybermodding.factory.MiscFactory;
 import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.SectionDto;
 import com.cybermodding.repositories.SectionRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.CustomResponse;
-import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.SectionResponse;
 import com.cybermodding.responses.SectionWithSub;
 
@@ -33,11 +32,9 @@ public class SectionService {
     public SectionResponse getById(Long id) {
         if (repo.existsById(id)) {
             Section s = repo.findById(id).get();
-            return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), s.getId(), s.getTitle(),
-                    s.getDescription(), s.getActive(), s.getOrder_number());
+            return MiscFactory.getSectionResponse("", s);
         } else {
-            return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()), null,
-                    null, null, null, null);
+            return MiscFactory.getSectionResponse("** Section not found **", null);
         }
     }
 
@@ -53,14 +50,11 @@ public class SectionService {
     public SectionResponse saveSection(SectionDto s) {
         try {
             Section sec = repo.save(new Section(s.getTitle(), s.getDescription(), s.getActive(), s.getOrder_number()));
-            return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), sec.getId(),
-                    sec.getTitle(), sec.getDescription(), sec.getActive(), sec.getOrder_number());
+            return MiscFactory.getSectionResponse("", sec);
         } catch (IllegalArgumentException ex) {
-            return new SectionResponse(new ResponseBase(false, "** Campi obbligatori mancanti **", LocalDateTime.now()),
-                    null, null, null, null, null);
+            return MiscFactory.getSectionResponse("** Campi obbligatori mancanti **", null);
         } catch (Exception ex) {
-            return new SectionResponse(new ResponseBase(false, "** " + ex.getMessage() + " **", LocalDateTime.now()),
-                    null, null, null, null, null);
+            return MiscFactory.getSectionResponse("** " + ex.getMessage() + " **", null);
         }
     }
 
@@ -73,22 +67,15 @@ public class SectionService {
                     fromDB.setDescription(s.getDescription());
                     fromDB.setActive(s.getActive());
                     fromDB.setOrder_number(s.getOrder_number());
-                    repo.save(fromDB);
-                    return new SectionResponse(new ResponseBase(true, "", LocalDateTime.now()), fromDB.getId(),
-                            fromDB.getTitle(), fromDB.getDescription(), fromDB.getActive(), fromDB.getOrder_number());
+                    return MiscFactory.getSectionResponse("", repo.save(fromDB));
                 } else {
-                    return new SectionResponse(new ResponseBase(false, "** Section not found **", LocalDateTime.now()),
-                            null, null, null, null, null);
+                    return MiscFactory.getSectionResponse("** Section not found **", null);
                 }
             } else {
-                return new SectionResponse(
-                        new ResponseBase(false, "** User not found or authorized **", LocalDateTime.now()), null,
-                        null, null, null, null);
+                return MiscFactory.getSectionResponse("** User not found or authorized **", null);
             }
         } else {
-            return new SectionResponse(
-                    new ResponseBase(false, "** User not found or authorized **", LocalDateTime.now()), null,
-                    null, null, null, null);
+            return MiscFactory.getSectionResponse("** User not found or authorized **", null);
         }
     }
 
