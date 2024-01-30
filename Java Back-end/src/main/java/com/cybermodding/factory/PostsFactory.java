@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 
 import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
+import com.cybermodding.entities.Reaction;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.payload.PostHome;
 import com.cybermodding.responses.CommentCompleteOut;
@@ -17,6 +18,7 @@ import com.cybermodding.responses.PostOut;
 import com.cybermodding.responses.PostOutCPaged;
 import com.cybermodding.responses.PostResponse;
 import com.cybermodding.responses.PostWithID;
+import com.cybermodding.responses.ReactionResponse;
 import com.cybermodding.responses.ResponseBase;
 
 public class PostsFactory {
@@ -33,7 +35,7 @@ public class PostsFactory {
     public static PostResponse getPostResponse(String errorMessage, Post p) {
         ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
                 LocalDateTime.now());
-        if (!errorMessage.isEmpty()) {
+        if (errorMessage.isEmpty()) {
             return new PostResponse(resBase, p.getId(), p.getTitle(), p.getBody(), p.getPublishedDate(), p.getType(),
                     p.getAuthor(), p.getReactions(), p.getComments());
         }
@@ -44,7 +46,7 @@ public class PostsFactory {
         ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
                 LocalDateTime.now());
 
-        if (!errorMessage.isEmpty()) {
+        if (errorMessage.isEmpty()) {
             EUserLevel level = UserFactory.getRank(p.getAuthor());
 
             Page<CommentOut> comments_page_out = comments_page
@@ -67,6 +69,15 @@ public class PostsFactory {
                 UserFactory.getRank(post.getAuthor())));
     }
 
+    public static ReactionResponse getReactionResponse(String errorMessage, Reaction r) {
+        ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
+                LocalDateTime.now());
+        if (errorMessage.isEmpty()) {
+            return new ReactionResponse(resBase, r.getId(), r.getUser(), r.getType());
+        }
+        return new ReactionResponse(resBase, null, null, null);
+    }
+
     public static Comment getLastComment(List<Comment> ls) {
         ls.sort(new Comparator<Comment>() {
             @Override
@@ -81,12 +92,12 @@ public class PostsFactory {
         ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
                 LocalDateTime.now());
 
-        if (!errorMessage.isEmpty()) {
-            return new PostWithID(resBase, null, null, null, null, null, null, null, null, null, null);
+        if (errorMessage.isEmpty()) {
+            return new PostWithID(resBase, p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
+                    p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(),
+                    p.getAuthor().getUsername(), null);
         }
-        return new PostWithID(resBase, p.getId(), p.getTitle(), p.getBody(), p.getType(), p.getAuthor().getId(),
-                p.getSub_section().getId(), p.getComments().size(), p.getReactions().size(),
-                p.getAuthor().getUsername(), null);
+        return new PostWithID(resBase, null, null, null, null, null, null, null, null, null, null);
     }
 
     public static PostOut getPostOut(Post post, CommentOut cmOut) {
@@ -116,7 +127,7 @@ public class PostsFactory {
         ResponseBase resBase = new ResponseBase(errorMessage.isEmpty() ? true : false, errorMessage,
                 LocalDateTime.now());
 
-        if (!errorMessage.isEmpty()) {
+        if (errorMessage.isEmpty()) {
             return new CommentResponse(resBase, c.getId(), c.getContent(),
                     c.getUser(), c.getPost(), c.getPublishedDate());
         }

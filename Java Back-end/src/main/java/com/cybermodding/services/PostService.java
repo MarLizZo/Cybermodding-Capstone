@@ -20,7 +20,6 @@ import com.cybermodding.enumerators.EPostType;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.factory.PostsFactory;
-import com.cybermodding.factory.ReactionsFactory;
 import com.cybermodding.factory.UserFactory;
 import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.PostDTO;
@@ -143,15 +142,15 @@ public class PostService {
             if (fromDB.getUser().getId().equals(react.getUser().getId())) {
                 if (id.equals(react.getId())) {
                     fromDB.setType(react.getType());
-                    return ReactionsFactory.getReactionResponse("", react_repo.save(fromDB));
+                    return PostsFactory.getReactionResponse("", react_repo.save(fromDB));
                 } else {
-                    return ReactionsFactory.getReactionResponse("** Bad request **", null);
+                    return PostsFactory.getReactionResponse("** Bad request **", null);
                 }
             } else {
-                return ReactionsFactory.getReactionResponse("** User not Authorized **", null);
+                return PostsFactory.getReactionResponse("** User not Authorized **", null);
             }
         } else {
-            return ReactionsFactory.getReactionResponse("** Reaction not found **", null);
+            return PostsFactory.getReactionResponse("** Reaction not found **", null);
         }
     }
 
@@ -167,9 +166,9 @@ public class PostService {
             reactOpt.ifPresent(reaction -> react_repo.deleteById(reaction.getId()));
 
             Reaction reaction = Reaction.builder().user(u).post(post).type(r.getType()).build();
-            return ReactionsFactory.getReactionResponse("", react_repo.save(reaction));
+            return PostsFactory.getReactionResponse("", react_repo.save(reaction));
         } else {
-            return ReactionsFactory.getReactionResponse("** Bad request **", null);
+            return PostsFactory.getReactionResponse("** Bad request **", null);
         }
     }
 
