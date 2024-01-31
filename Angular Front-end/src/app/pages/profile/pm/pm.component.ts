@@ -69,12 +69,16 @@ export class PmComponent {
                   this.errorsMsgs.push(
                     'Errore nel caricamento dei dati del profilo'
                   );
-
                   return EMPTY;
                 })
               )
               .subscribe((res) => {
-                this.profileData = res;
+                if (res.response?.ok) {
+                  this.profileData = res;
+                } else {
+                  this.errorsMsgs.push(res.response!.message);
+                }
+
                 const currentValues = this.subsBoolArr.value;
                 currentValues[0] = true;
                 this.subsBoolArr.next(currentValues);

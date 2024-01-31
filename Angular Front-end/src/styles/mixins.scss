@@ -1,0 +1,111 @@
+@mixin pageable-mixin {
+  .pageable-container {
+    border-top: 1px solid var(--orange-hover);
+    border-bottom: 1px solid var(--orange-hover);
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    .previous,
+    .next {
+      transition: all 0.2s;
+      cursor: pointer;
+      width: max-content;
+      p,
+      i {
+        cursor: pointer;
+      }
+      background-color: var(--bg-lighter);
+      border: 2px solid var(--near-black);
+      &:hover {
+        background-color: var(--near-black);
+        i,
+        p {
+          color: var(--orange-hover);
+        }
+      }
+    }
+
+    .pages {
+      .btn-page {
+        border: 2px solid var(--near-black);
+        background-color: var(--bg-lighter);
+        font-size: 1.1rem;
+        cursor: pointer;
+        p {
+          cursor: pointer;
+        }
+        &:hover {
+          background-color: var(--near-black);
+          p {
+            color: var(--orange-hover);
+          }
+        }
+      }
+
+      .actual-page {
+        background-color: var(--near-black);
+        p {
+          color: var(--orange-hover);
+        }
+      }
+    }
+  }
+}
+
+@mixin text-orange {
+  .txt-orange {
+    color: var(--orange);
+  }
+}
+
+@mixin text-mod {
+  .txt-mod {
+    color: var(--mod-color);
+  }
+}
+
+@mixin img-placeholder {
+  .img-placeholder {
+    background-color: var(--near-black);
+    border: 2px solid var(--orange);
+  }
+}
+
+@mixin profile-img($size: 48px) {
+  .profile-img {
+    width: 48px;
+    height: 48px;
+    background-color: var(--near-black);
+    border: 2px solid var(--orange);
+    border-radius: 50%;
+
+    @media screen and (min-width: 992px) {
+      width: $size;
+      height: $size;
+    }
+  }
+}
+
+@mixin truncate {
+  .trunc {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+}
+
+@mixin selectable {
+  .selectable {
+    color: var(--orange);
+    transition: 0.1s;
+    cursor: pointer;
+    &:hover {
+      color: var(--orange-hover);
+      text-decoration: underline;
+    }
+  }
+}

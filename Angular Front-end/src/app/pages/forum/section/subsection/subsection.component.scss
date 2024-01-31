@@ -1,3 +1,9 @@
+@import "mixins";
+
+@include text-mod;
+@include text-orange;
+@include profile-img(36px);
+
 .head-w-title {
   background-color: var(--bg-lighter);
   border-top: 1px solid var(--near-black);
@@ -13,14 +19,6 @@
   font-size: 1.2em;
 }
 
-.profile-img {
-  width: 36px;
-  height: 36px;
-  background-color: var(--near-black);
-  border: 1px solid var(--orange);
-  border-radius: 50%;
-}
-
 .small-f {
   font-size: 0.9em;
 }
@@ -34,14 +32,6 @@
 
 h6.selectable:hover {
   color: var(--orange-hover);
-}
-
-.txt-orange {
-  color: var(--orange);
-}
-
-.txt-mod {
-  color: var(--mod-color);
 }
 
 .txt-ban {

@@ -38,8 +38,8 @@
                                 [routerLink]="'/forum/showthread/' + post.id + '-' + post.title.replaceAll(' ', '-').replaceAll('/', '-').replaceAll('.', '').toLowerCase()">
                                 {{ post.type.toString() + ' > ' + post.title }}</h6>
                             <div class="d-flex flex-column flex-lg-row">
-                                <p class="m-0 small-f">Avviato da: <span [class]="getClassName(post.user_level!)"
-                                        class="selectable" (click)="goToProfile(post.author)">{{
+                                <p class="m-0 small-f">Avviato da: <span [class]="common.getClassName(post.user_level!)"
+                                        class="selectable" (click)="common.goToProfile(post.author)">{{
                                         post.author.username }}</span></p>
                                 <p class="m-0 small-f"><span class="d-none d-lg-inline small-f">&nbsp;•&nbsp;</span>il
                                     {{ post.publishedDate | date : ' dd-MM-Y' }}</p>
@@ -54,7 +54,7 @@
                     <div class="col-8 col-md-6 col-lg-2">
                         <p class="m-0 small-f">Ultimo commento</p>
                         <p class="m-0 small-f par-truncate" (click)="getCommentLink(i)">
-                            {{ post.comments_count != 0 ? removeTags(post.last_comment!.content) : post.title }}
+                            {{ post.comments_count != 0 ? common.removeTags(post.last_comment!.content) : post.title }}
                         </p>
                     </div>
                 </div>

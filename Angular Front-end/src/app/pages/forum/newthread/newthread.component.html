@@ -24,8 +24,11 @@
                 </div>
             </div>
         </div>
-        <app-editor-form class="d-block shadow-lg align-self-center" [type]="'post'" (submitPost)="postThread($event)"
+        <app-editor-form class="d-block shadow align-self-center" [type]="'post'" (submitPost)="postThread($event)"
             [postTitle]="threadTitle"
             [postBody]="editPostInitBody != '' ? editPostInitBody : undefined"></app-editor-form>
+    </div>
+    <div *ngIf="resError != ''" class="mt-4">
+        <p class="mb-1 fs-5">Errore inatteso: {{ resError }}</p>
     </div>
 </div>

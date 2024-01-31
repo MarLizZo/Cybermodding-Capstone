@@ -1,3 +1,8 @@
+@import "mixins";
+
+@include pageable-mixin;
+@include text-mod;
+
 .head-container {
   background-color: var(--bg-lighter);
   border-bottom: 2px solid var(--near-black);
@@ -79,64 +84,6 @@
   }
 }
 
-.pageable-container {
-  border-top: 1px solid var(--orange-hover);
-  border-bottom: 1px solid var(--orange-hover);
-
-  i {
-    font-size: 1.2rem;
-  }
-
-  .previous,
-  .next {
-    transition: all 0.2s;
-    cursor: pointer;
-    width: max-content;
-    p,
-    i {
-      cursor: pointer;
-    }
-    background-color: var(--bg-lighter);
-    border: 2px solid var(--near-black);
-    &:hover {
-      background-color: var(--near-black);
-      i,
-      p {
-        color: var(--orange-hover);
-      }
-    }
-  }
-
-  .pages {
-    .btn-page {
-      border: 2px solid var(--near-black);
-      background-color: var(--bg-lighter);
-      font-size: 1.1rem;
-      cursor: pointer;
-      p {
-        cursor: pointer;
-      }
-      &:hover {
-        background-color: var(--near-black);
-        p {
-          color: var(--orange-hover);
-        }
-      }
-    }
-
-    .actual-page {
-      background-color: var(--near-black);
-      p {
-        color: var(--orange-hover);
-      }
-    }
-  }
-}
-
 .disabled {
   pointer-events: none;
-}
-
-.text-mod {
-  color: var(--mod-color);
 }

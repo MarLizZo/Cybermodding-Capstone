@@ -212,8 +212,11 @@ public class PostService {
 
     public PostOutCPaged getPostOut(Long id, Pageable page) {
         Post p = getById(id);
-        Page<Comment> comments_page = comm_page.findAllByPostId(id, page);
-        return PostsFactory.getPostOutCPaged("", p, comments_page);
+        if (p != null) {
+            Page<Comment> comments_page = comm_page.findAllByPostId(id, page);
+            return PostsFactory.getPostOutCPaged("", p, comments_page);
+        }
+        return PostsFactory.getPostOutCPaged("** Post not found **", null, null);
     }
 
     public Page<PostHome> getPostsForHomeOrderDate(Long id, Pageable page) {

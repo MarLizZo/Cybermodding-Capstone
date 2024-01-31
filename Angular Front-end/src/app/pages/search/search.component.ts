@@ -5,6 +5,7 @@ import { ForumService } from '../../services/forum.service';
 import { Isearchres } from '../../interfaces/isearchres';
 import { AuthService } from '../../services/auth.service';
 import { ICommentData } from '../../interfaces/icomment-data';
+import { CommonService } from 'src/app/services/common.service';
 
 @Component({
   selector: 'app-search',
@@ -37,7 +38,8 @@ export class SearchComponent {
     private route: ActivatedRoute,
     private svc: ForumService,
     private router: Router,
-    private auth_svc: AuthService
+    private auth_svc: AuthService,
+    protected common: CommonService
   ) {}
 
   ngOnInit() {
@@ -206,33 +208,5 @@ export class SearchComponent {
               username.replaceAll(' ', '').replaceAll('.', '')
           );
     });
-  }
-
-  goToPost(id: number, title: string): void {
-    this.router.navigateByUrl(
-      `/forum/showthread/${id}-${title
-        .replaceAll(' ', '-')
-        .replaceAll('.', '-')
-        .replaceAll('/', '-')}`
-    );
-  }
-
-  goToComment(comment: ICommentData): void {
-    let baseUrl: string =
-      '/forum/showthread/' +
-      comment.post?.id +
-      '-' +
-      comment.post?.title
-        .replaceAll(' ', '-')
-        .replaceAll('/', '-')
-        .toLowerCase();
-
-    sessionStorage.setItem('scrolltonumber', comment.id!.toString());
-    if (comment.post!.comments_count! <= 8) {
-      this.router.navigateByUrl(baseUrl + '/1');
-    } else {
-      let pageIndex = Math.ceil(comment.post!.comments_count! / 8);
-      this.router.navigateByUrl(baseUrl + '/' + pageIndex);
-    }
   }
 }

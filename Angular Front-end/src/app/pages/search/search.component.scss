@@ -1,3 +1,10 @@
+@import "mixins";
+
+@include pageable-mixin;
+@include text-mod;
+@include profile-img;
+@include truncate;
+
 h4 {
   span:nth-of-type(1)::before {
     content: "> ";
@@ -56,83 +63,9 @@ h4 {
   }
 }
 
-.profile-img {
-  width: 44px;
-  height: 44px;
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-  border-radius: 50%;
-}
-
-.title-trunc {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-}
-
 .hov {
   cursor: pointer;
   &:hover {
     text-decoration: underline;
-  }
-}
-
-.text-mod {
-  color: var(--mod-color);
-}
-
-.pageable-container {
-  border-top: 1px solid var(--orange-hover);
-  border-bottom: 1px solid var(--orange-hover);
-
-  i {
-    font-size: 1.2rem;
-  }
-
-  .previous,
-  .next {
-    transition: all 0.2s;
-    cursor: pointer;
-    width: max-content;
-    p,
-    i {
-      cursor: pointer;
-    }
-    background-color: var(--bg-lighter);
-    border: 2px solid var(--near-black);
-    &:hover {
-      background-color: var(--near-black);
-      i,
-      p {
-        color: var(--orange-hover);
-      }
-    }
-  }
-
-  .pages {
-    .btn-page {
-      border: 2px solid var(--near-black);
-      background-color: var(--bg-lighter);
-      font-size: 1.1rem;
-      cursor: pointer;
-      p {
-        cursor: pointer;
-      }
-      &:hover {
-        background-color: var(--near-black);
-        p {
-          color: var(--orange-hover);
-        }
-      }
-    }
-
-    .actual-page {
-      background-color: var(--near-black);
-      p {
-        color: var(--orange-hover);
-      }
-    }
   }
 }

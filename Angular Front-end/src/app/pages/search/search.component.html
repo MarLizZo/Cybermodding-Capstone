@@ -96,7 +96,7 @@
                     <div *ngFor="let p of pageResult!.posts.content"
                         class="col-12 d-flex align-items-center shadow single-result px-0 py-2">
                         <div class="col-12 col-md-8 col-xl-6 px-3">
-                            <p (click)="goToPost(p.id!, p.title)" class="m-0 title-trunc hov">[{{ p.type }}] {{ p.title
+                            <p (click)="common.goToForumPost(p)" class="m-0 trunc hov">[{{ p.type }}] {{ p.title
                                 }}</p>
                         </div>
                         <div class="d-none d-md-flex flex-md-column col-md-4 col-xl-3 ps-3 py-2">
@@ -153,7 +153,7 @@
                     <div *ngFor="let c of pageResult!.comments.content"
                         class="col-12 d-flex align-items-center shadow single-result px-0 py-2">
                         <div class="col-12 col-md-9 col-xl-7 px-3">
-                            <p class="m-0 title-trunc hov" (click)="goToComment(c)">{{ c.content }}</p>
+                            <p class="m-0 trunc hov" (click)="common.goToComment(c)">{{ c.content }}</p>
                         </div>
                         <div class="d-none d-md-flex flex-md-column col-md-3 col-xl-2 ps-3 py-2">
                             <h5 class="m-0 hov" (click)="goToUser(c.user_id!, c.user_name!)"

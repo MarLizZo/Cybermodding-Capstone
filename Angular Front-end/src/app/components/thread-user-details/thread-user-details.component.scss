@@ -1,22 +1,12 @@
-.txt-orange {
-  color: var(--orange);
-}
+@import "mixins";
 
-.txt-mod {
-  color: var(--mod-color);
-}
+@include text-orange;
+@include text-mod;
+@include profile-img(64px);
 
 .txt-ban {
   color: var(--text-muted);
   text-decoration: line-through;
-}
-
-.profile-img {
-  width: 64px;
-  height: 64px;
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-  border-radius: 50%;
 }
 
 .selectable {

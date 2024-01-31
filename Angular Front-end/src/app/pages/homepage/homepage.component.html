@@ -62,10 +62,10 @@
                             <div *ngIf="post.author.avatar == null" class="profile-img"></div>
                             <img *ngIf="post.author.avatar" class="profile-img" [src]="post.author.avatar">
                             <div class="d-flex flex-column ms-3">
-                                <h4 class="mb-1 title-trunc">{{ post.title }}</h4>
+                                <h4 class="mb-1 trunc">{{ post.title }}</h4>
                                 <div>
-                                    <h5 class="m-0 d-inline" [class]="getClassName(post.user_level!.toString())"
-                                        (click)="goToProfile(post.author)">{{
+                                    <h5 class="m-0 d-inline" [class]="common.getClassName(post.user_level!.toString())"
+                                        (click)="common.goToProfile(post.author)">{{
                                         post.author.username
                                         }}</h5>
                                     <span class="d-inline">, il {{ post.publishedDate | date : 'dd-MM-YY' }}</span>
@@ -76,7 +76,7 @@
                             <div class="flex-grow-1 body-trunc mb-4" [innerHTML]="post.body"></div>
                             <div class="py-4 align-self-center">
                                 <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Leggi nel Forum'"
-                                    (click)="goToForumPost(post)"></app-orange-button>
+                                    (click)="common.goToForumPost(post)"></app-orange-button>
                             </div>
                         </div>
                     </div>

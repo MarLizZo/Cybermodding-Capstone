@@ -17,6 +17,11 @@
   --mod-color: #00a552;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   background-color: var(--bg);
   color: var(--txt);

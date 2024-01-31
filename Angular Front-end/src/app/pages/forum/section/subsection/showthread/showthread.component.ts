@@ -117,72 +117,75 @@ export class ShowthreadComponent {
           })
         )
         .subscribe((res) => {
-          this.postData = res;
-          this.mainSectionTitle = res.main_section_title!;
-          this.subSectionTitle = res.subsection_title!;
-          this.getReactionsCount();
-          this.hasUserReaction();
-          this.pagesArr = [];
-          this.setTopBarObj();
+          if (res.response.ok) {
+            this.postData = res;
+            this.mainSectionTitle = res.main_section_title!;
+            this.subSectionTitle = res.subsection_title!;
+            this.getReactionsCount();
+            this.hasUserReaction();
+            this.pagesArr = [];
+            this.setTopBarObj();
 
-          if (page + 1 <= 3) {
-            for (let i = 0; i < res.comments.totalPages; i++) {
-              i < 5 || i > res.comments.totalPages - 3
-                ? this.pagesArr.push(i + 1)
-                : null;
+            if (page + 1 <= 3) {
+              for (let i = 0; i < res.comments.totalPages; i++) {
+                i < 5 || i > res.comments.totalPages - 3
+                  ? this.pagesArr.push(i + 1)
+                  : null;
+              }
+            } else if (page + 1 >= res.comments.totalPages - 2) {
+              for (let i = 0; i < res.comments.totalPages; i++) {
+                i < 2 || i > res.comments.totalPages - 6
+                  ? this.pagesArr.push(i + 1)
+                  : null;
+              }
+            } else {
+              this.pagesArr.push(1);
+              for (let i = page - 2; i < page + 3; i++) {
+                this.pagesArr.push(i + 1);
+              }
+              this.pagesArr.push(res.comments.totalPages);
             }
-          } else if (page + 1 >= res.comments.totalPages - 2) {
-            for (let i = 0; i < res.comments.totalPages; i++) {
-              i < 2 || i > res.comments.totalPages - 6
-                ? this.pagesArr.push(i + 1)
-                : null;
+            if (refreshPage) {
+              this.router.navigateByUrl(
+                '/forum/showthread/' +
+                  this.route.snapshot.paramMap.get('hash')! +
+                  '/' +
+                  (page + 1)
+              );
+            }
+            if (sessionStorage.getItem('scrolltocomment')) {
+              sessionStorage.removeItem('scrolltocomment');
+              setTimeout(() => {
+                document
+                  .querySelector('app-comment:last-of-type')
+                  ?.scrollIntoView();
+              }, 1000);
+            } else if (sessionStorage.getItem('scrolltonumber')) {
+              let commentIndex: number = parseInt(
+                sessionStorage.getItem('scrolltonumber')!
+              );
+              sessionStorage.removeItem('scrolltonumber');
+
+              let toIndex: number = this.postData.comments.content.findIndex(
+                (el) => el.id == commentIndex
+              );
+              setTimeout(() => {
+                document
+                  .querySelector(`app-comment:nth-of-type(${toIndex + 1})`)
+                  ?.scrollIntoView();
+              }, 1000);
+            } else if (refreshPage) {
+              setTimeout(() => {
+                document.querySelector('app-comment')?.scrollIntoView();
+              }, 1000);
             }
           } else {
-            this.pagesArr.push(1);
-            for (let i = page - 2; i < page + 3; i++) {
-              this.pagesArr.push(i + 1);
-            }
-            this.pagesArr.push(res.comments.totalPages);
-          }
-          if (refreshPage) {
-            this.router.navigateByUrl(
-              '/forum/showthread/' +
-                this.route.snapshot.paramMap.get('hash')! +
-                '/' +
-                (page + 1)
-            );
+            this.errorsMsgs.push(res.response.message);
           }
 
           let currentValues = this.subsBoolArr.value;
           currentValues = true;
           this.subsBoolArr.next(currentValues);
-
-          if (sessionStorage.getItem('scrolltocomment')) {
-            sessionStorage.removeItem('scrolltocomment');
-            setTimeout(() => {
-              document
-                .querySelector('app-comment:last-of-type')
-                ?.scrollIntoView();
-            }, 1000);
-          } else if (sessionStorage.getItem('scrolltonumber')) {
-            let commentIndex: number = parseInt(
-              sessionStorage.getItem('scrolltonumber')!
-            );
-            sessionStorage.removeItem('scrolltonumber');
-
-            let toIndex: number = this.postData.comments.content.findIndex(
-              (el) => el.id == commentIndex
-            );
-            setTimeout(() => {
-              document
-                .querySelector(`app-comment:nth-of-type(${toIndex + 1})`)
-                ?.scrollIntoView();
-            }, 1000);
-          } else if (refreshPage) {
-            setTimeout(() => {
-              document.querySelector('app-comment')?.scrollIntoView();
-            }, 1000);
-          }
         });
     }
   }

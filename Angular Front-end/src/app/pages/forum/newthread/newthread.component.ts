@@ -32,6 +32,7 @@ export class NewthreadComponent {
   threadTitle = '';
   editPostId: number = 0;
   editPostInitBody: string = '';
+  resError: string = '';
   subSub!: Subscription;
   subsBoolArr = new BehaviorSubject<boolean>(false);
   subsArr$ = this.subsBoolArr.asObservable();
@@ -106,8 +107,14 @@ export class NewthreadComponent {
           })
         )
         .subscribe((res) => {
-          this.threadTitle = res.title;
-          this.editPostInitBody = res.body;
+          if (res.response!.ok) {
+            this.threadTitle = res.title;
+            this.editPostInitBody = res.body;
+          } else {
+            this.errorsMsgs.push(
+              'Errore nel caricamento delle informazioni sul post.'
+            );
+          }
           let currentValues = this.subsBoolArr.value;
           currentValues = true;
           this.subsBoolArr.next(currentValues);
@@ -200,6 +207,7 @@ export class NewthreadComponent {
   }
 
   postThread(data: string): void {
+    this.resError = '';
     if (this.editPostId == 0) {
       const postData: IPostDTO = {
         title: this.titleInput.nativeElement.value,
@@ -212,18 +220,23 @@ export class NewthreadComponent {
         .postNewThread(postData)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.resError = 'Errore inatteso, per favore ricarica e riprova.';
+            return EMPTY;
           })
         )
         .subscribe((res) => {
-          setTimeout(() => {
-            this.router.navigate([
-              '/forum/showthread/' +
-                res.id +
-                '-' +
-                res.title.replaceAll(' ', '-').replaceAll('/', '-'),
-            ]);
-          }, 1500);
+          if (res.response!.ok) {
+            setTimeout(() => {
+              this.router.navigate([
+                '/forum/showthread/' +
+                  res.id +
+                  '-' +
+                  res.title.replaceAll(' ', '-').replaceAll('/', '-'),
+              ]);
+            }, 1500);
+          } else {
+            this.resError = res.response!.message;
+          }
         });
     } else {
       const postData: IUpdatePostDTO = {
@@ -237,19 +250,24 @@ export class NewthreadComponent {
         .updatePost(this.user_id!, postData)
         .pipe(
           catchError((err) => {
-            throw err;
+            this.resError = 'Errore inatteso, per favore ricarica e riprova.';
+            return EMPTY;
           })
         )
         .subscribe((res) => {
-          this.router.navigateByUrl(
-            '/forum/showthread/' +
-              res.id +
-              '-' +
-              res.title
-                .replaceAll(' ', '-')
-                .replaceAll('/', '-')
-                .replaceAll('.', '-')
-          );
+          if (res.response?.ok) {
+            this.router.navigateByUrl(
+              '/forum/showthread/' +
+                res.id +
+                '-' +
+                res.title
+                  .replaceAll(' ', '-')
+                  .replaceAll('/', '-')
+                  .replaceAll('.', '-')
+            );
+          } else {
+            this.resError = res.response!.message;
+          }
         });
     }
   }

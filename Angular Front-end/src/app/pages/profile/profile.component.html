@@ -12,7 +12,7 @@
             </div>
             <div>
                 <h1 class="mb-0 pb-1" [innerText]="profileData ? profileData.username : ''"
-                    [class]="profileData ? getClassColor() : ''"></h1>
+                    [class]="profileData ? common.getClassName(profileData.level!) : ''"></h1>
                 <h6 class="m-0">{{ profileData?.description }}</h6>
             </div>
         </div>
@@ -30,7 +30,8 @@
                 <p class="m-0" [innerText]="profileData ? profileData.posts_count : 0"></p>
             </div>
             <div class="col-8 col-sm-4 d-flex my-2"><span>Ultimo:&nbsp;</span>
-                <p class="m-0 trunc" [class]="profileData?.last_post ? 'selectable' : ''" (click)="goToPost()">{{
+                <p class="m-0 trunc" [class]="profileData?.last_post ? 'selectable' : ''"
+                    (click)="common.goToForumPost(profileData?.last_post!)">{{
                     profileData?.last_post ? profileData?.last_post!.title : 'Nessun Post..' }}</p>
             </div>
 
@@ -42,8 +43,10 @@
             </div>
             <div class="col-8 col-sm-4 my-2 d-flex">
                 <span>Ultimo:&nbsp;</span>
-                <p class="m-0 trunc" [class]="profileData?.last_comment ? 'selectable' : ''" (click)="goToComment()">{{
-                    profileData?.last_comment ? removeTags(profileData?.last_comment!.content) : 'Nessun commento..' }}
+                <p class="m-0 trunc" [class]="profileData?.last_comment ? 'selectable' : ''"
+                    (click)="common.goToComment(profileData?.last_comment!)">
+                    {{ profileData?.last_comment ? common.removeTags(profileData?.last_comment!.content) :
+                    'Nessun commento..' }}
                 </p>
             </div>
         </div>

@@ -3,11 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
-import { UserLevel } from 'src/app/enums/user-level';
 import { IPostData } from 'src/app/interfaces/ipost-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
-import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { ForumService } from 'src/app/services/forum.service';
 
 @Component({
@@ -39,7 +38,8 @@ export class SubsectionComponent {
     private route: ActivatedRoute,
     private router: Router,
     private auth: AuthService,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    protected common: CommonService
   ) {}
 
   setTopBarObj() {
@@ -135,29 +135,6 @@ export class SubsectionComponent {
     if (this.subSub) this.subSub.unsubscribe();
   }
 
-  getClassName(level: UserLevel | string): string {
-    return level.toString() == 'BASE'
-      ? 'txt-orange'
-      : level.toString() == 'MID'
-      ? 'txt-mod'
-      : level.toString() == 'BOSS'
-      ? 'text-danger'
-      : 'txt-ban';
-  }
-
-  removeTags(str: string): string {
-    return str
-      .replaceAll('<blockquote>', '')
-      .replaceAll('</blockquote>', '')
-      .replaceAll('<b>', '')
-      .replaceAll('</b>', '')
-      .replaceAll('<i>', '')
-      .replaceAll('</i>', '')
-      .replaceAll('<p>', '')
-      .replaceAll('</p>', '')
-      .replaceAll('&nbsp;', ' ');
-  }
-
   getCommentLink(index: number): void {
     let baseUrl: string =
       '/forum/showthread/' +
@@ -179,19 +156,5 @@ export class SubsectionComponent {
       sessionStorage.setItem('scrolltocomment', 'true');
       this.router.navigateByUrl(baseUrl + '/' + page);
     }
-  }
-
-  goToProfile(user: IUserData) {
-    this.authSub = this.auth.user$.subscribe((res) => {
-      if (res?.user_id == user.id) {
-        this.router.navigateByUrl('/profile');
-      } else {
-        this.router.navigateByUrl(
-          `/users/${user.id}-${user.username
-            .replaceAll(' ', '')
-            .replaceAll('.', '')}`
-        );
-      }
-    });
   }
 }

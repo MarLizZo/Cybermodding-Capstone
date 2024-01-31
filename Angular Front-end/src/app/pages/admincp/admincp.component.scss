@@ -1,56 +1,9 @@
-.pageable-container {
-  border-top: 1px solid var(--orange-hover);
-  border-bottom: 1px solid var(--orange-hover);
+@import "mixins";
 
-  i {
-    font-size: 1.2rem;
-  }
-
-  .previous,
-  .next {
-    transition: all 0.2s;
-    cursor: pointer;
-    width: max-content;
-    p,
-    i {
-      cursor: pointer;
-    }
-    background-color: var(--bg-lighter);
-    border: 2px solid var(--near-black);
-    &:hover {
-      background-color: var(--near-black);
-      i,
-      p {
-        color: var(--orange-hover);
-      }
-    }
-  }
-
-  .pages {
-    .btn-page {
-      border: 2px solid var(--near-black);
-      background-color: var(--bg-lighter);
-      font-size: 1.1rem;
-      cursor: pointer;
-      p {
-        cursor: pointer;
-      }
-      &:hover {
-        background-color: var(--near-black);
-        p {
-          color: var(--orange-hover);
-        }
-      }
-    }
-
-    .actual-page {
-      background-color: var(--near-black);
-      p {
-        color: var(--orange-hover);
-      }
-    }
-  }
-}
+@include pageable-mixin;
+@include text-orange;
+@include text-mod;
+@include truncate;
 
 .main-container {
   background-color: var(--bg-lighter);
@@ -161,21 +114,6 @@
 .sections-view,
 .blocks-view {
   border-bottom: 2px solid var(--near-black);
-}
-
-.title-trunc {
-  overflow: hidden;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-}
-
-.text-mod {
-  color: var(--mod-color);
-}
-
-.text-orange {
-  color: var(--orange);
 }
 
 .bb-orange {

@@ -16,8 +16,7 @@ import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
 import { ISectionData } from 'src/app/interfaces/isection-data';
 import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
 import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
-import { IUserData } from 'src/app/interfaces/iuser-data';
-import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { HomeService } from 'src/app/services/home.service';
 
 @Component({
@@ -28,9 +27,8 @@ import { HomeService } from 'src/app/services/home.service';
 export class HomepageComponent {
   constructor(
     private svc: HomeService,
-    private auth_svc: AuthService,
-    private router: Router,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    protected common: CommonService
   ) {}
 
   newsSub!: Subscription;
@@ -212,35 +210,5 @@ export class HomepageComponent {
         });
         break;
     }
-  }
-
-  getClassName(level: string) {
-    return level == 'BOSS'
-      ? 'text-danger'
-      : level == 'MID'
-      ? 'text-mod'
-      : 'text-orange';
-  }
-
-  goToForumPost(post: IPostData) {
-    this.router.navigateByUrl(
-      `/forum/showthread/${post.id}-${post.title
-        .replaceAll(' ', '-')
-        .replaceAll('.', '-')
-        .replaceAll('/', '-')}`
-    );
-  }
-
-  goToProfile(user: IUserData) {
-    this.authSub = this.auth_svc.user$.subscribe((res) => {
-      res?.user_id == user.id
-        ? this.router.navigateByUrl('/profile')
-        : this.router.navigateByUrl(
-            '/users/' +
-              user.id +
-              '-' +
-              user.username.replaceAll(' ', '').replaceAll('.', '')
-          );
-    });
   }
 }

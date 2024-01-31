@@ -34,6 +34,10 @@
                 </div>
             </div>
         </div>
+        <div #afterMessageError class="mt-4 d-none">
+            <p class="mb-1 text-danger text-center fs-5">Si è verificato un errore inatteso, per favore ricarica e
+                riprova.</p>
+        </div>
         <div #afterMessageDiv class="mt-5 bg-container p-3 pb-4 shadow d-none">
             <p class="mb-1">Grazie per averci contattato!</p>
             <p [ngClass]="{'mb-0' : isUserLogged, 'mb-2' : !isUserLogged}">Un Admin si occuperà del messaggio prima

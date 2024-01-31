@@ -8,6 +8,7 @@ import { ICollapseable } from 'src/app/interfaces/icollapseable';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -47,7 +48,8 @@ export class UsersComponent {
     private route: ActivatedRoute,
     private auth_svc: AuthService,
     private router: Router,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    protected common: CommonService
   ) {}
 
   doCall(page: number) {
@@ -214,73 +216,6 @@ export class UsersComponent {
     if (this.paramSub) this.paramSub.unsubscribe();
     if (this.authSub) this.authSub.unsubscribe();
     if (this.subSub) this.subSub.unsubscribe();
-  }
-
-  getClassColor() {
-    return this.profileData?.level == 'BOSS'
-      ? 'text-danger'
-      : this.profileData?.level == 'MID'
-      ? 'txt-mod'
-      : this.profileData?.level == 'BASE'
-      ? 'txt-orange'
-      : '';
-  }
-
-  goToPost() {
-    if (this.profileData?.last_post) {
-      this.router.navigateByUrl(
-        '/forum/showthread/' +
-          this.profileData.last_post.id +
-          '-' +
-          this.profileData.last_post.title
-            .replaceAll(' ', '-')
-            .replaceAll('/', '-')
-            .toLowerCase()
-      );
-    }
-  }
-
-  goToComment() {
-    if (this.profileData?.last_comment) {
-      let baseUrl: string =
-        '/forum/showthread/' +
-        this.profileData.last_comment.post?.id +
-        '-' +
-        this.profileData.last_comment.post?.title
-          .replaceAll(' ', '-')
-          .replaceAll('/', '-')
-          .toLowerCase();
-
-      sessionStorage.setItem(
-        'scrolltonumber',
-        this.profileData.last_comment.id!.toString()
-      );
-      if (this.profileData.last_comment.post!.comments_count! <= 8) {
-        this.router.navigateByUrl(baseUrl + '/1');
-      } else {
-        let pageIndex = Math.ceil(
-          this.profileData.last_comment.post!.comments_count! / 8
-        );
-        this.router.navigateByUrl(baseUrl + '/' + pageIndex);
-      }
-    }
-  }
-
-  removeTags(str: string): string {
-    return str
-      .replaceAll('<blockquote>', '')
-      .replaceAll('</blockquote>', '')
-      .replaceAll('<b>', '')
-      .replaceAll('</b>', '')
-      .replaceAll('<i>', '')
-      .replaceAll('</i>', '')
-      .replaceAll('<p>', '')
-      .replaceAll('</p>', '')
-      .replaceAll('&nbsp;', ' ');
-  }
-
-  goToMessage() {
-    //
   }
 
   doCollapse(index: number) {

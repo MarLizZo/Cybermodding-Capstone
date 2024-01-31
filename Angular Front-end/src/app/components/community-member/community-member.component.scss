@@ -1,3 +1,9 @@
+@import "mixins";
+
+@include profile-img;
+@include text-orange;
+@include text-mod;
+
 .row {
   border-bottom: 2px solid var(--near-black);
   .col-12:first-of-type {
@@ -5,27 +11,11 @@
   }
 }
 
-.profile-img {
-  width: 48px;
-  height: 48px;
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-  border-radius: 50%;
-}
-
 .selectable {
   cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
-}
-
-.txt-mod {
-  color: var(--mod-color);
-}
-
-.txt-orange {
-  color: var(--orange);
 }
 
 .border-bgligth {

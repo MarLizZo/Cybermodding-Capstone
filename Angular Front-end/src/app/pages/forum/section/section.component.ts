@@ -74,9 +74,14 @@ export class SectionComponent {
         })
       )
       .subscribe((res) => {
-        this.sectionData = res;
-        this.sectionName = res.title;
-        this.setTopBarObject();
+        if (res.response?.ok) {
+          this.sectionData = res;
+          this.sectionName = res.title;
+          this.setTopBarObject();
+        } else {
+          this.errorsMsgs.push(res.response!.message);
+        }
+
         const currentValues = this.subsBoolArr.value;
         currentValues[0] = true;
         this.subsBoolArr.next(currentValues);

@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Subscription, catchError } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { IcontactDto } from 'src/app/interfaces/icontact-dto';
 import { AuthService } from 'src/app/services/auth.service';
 import { ForumService } from 'src/app/services/forum.service';
@@ -15,10 +15,6 @@ export class ContactsComponent {
   user_id: number = 0;
   authSub!: Subscription;
   contactSub!: Subscription;
-  // subSub!: Subscription;
-  // subsBoolArr = new BehaviorSubject<boolean>(false);
-  // subsArr$ = this.subsBoolArr.asObservable();
-  // errorsMsgs: string[] = [];
   reasonsArr: string[] = [
     "Problemi con l'account",
     'Consigli',
@@ -33,6 +29,7 @@ export class ContactsComponent {
   @ViewChild('titleInput') titleInput!: ElementRef<HTMLInputElement>;
   @ViewChild('messageP') messageP!: ElementRef<HTMLElement>;
   @ViewChild('afterMessageDiv') afterMessageDiv!: ElementRef<HTMLElement>;
+  @ViewChild('afterMessageError') afterMessageError!: ElementRef<HTMLElement>;
 
   constructor(private authSvc: AuthService, private forumSvc: ForumService) {}
 
@@ -46,15 +43,6 @@ export class ContactsComponent {
       }
       this.isLoadingPage = false;
     });
-
-    // this.subSub = this.subsArr$.subscribe((res) => {
-    //   if (res == true) {
-    //     this.isLoadingPage = false;
-    //     if (this.errorsMsgs.length) {
-    //       this.showModal();
-    //     }
-    //   }
-    // });
   }
 
   ngOnDestroy() {
@@ -82,15 +70,19 @@ export class ContactsComponent {
       .sendContactMessage(obj)
       .pipe(
         catchError((err) => {
-          throw err;
+          this.afterMessageError?.nativeElement.classList.remove('d-none');
+          return EMPTY;
         })
       )
       .subscribe((res) => {
-        console.log(res);
-        this.afterMessageDiv?.nativeElement.classList.remove('d-none');
-        setTimeout(() => {
-          this.afterMessageDiv?.nativeElement.scrollIntoView();
-        }, 500);
+        if (res.response.ok) {
+          this.afterMessageDiv?.nativeElement.classList.remove('d-none');
+          setTimeout(() => {
+            this.afterMessageDiv?.nativeElement.scrollIntoView();
+          }, 500);
+        } else {
+          this.afterMessageError?.nativeElement.classList.remove('d-none');
+        }
       });
   }
 
@@ -100,6 +92,7 @@ export class ContactsComponent {
     this.titleP?.nativeElement.classList.add('d-none');
     this.messageP.nativeElement.classList.add('d-none');
     this.afterMessageDiv?.nativeElement.classList.add('d-none');
+    this.afterMessageError?.nativeElement.classList.add('d-none');
     let err: boolean = false;
 
     if (this.reason == '-1') {

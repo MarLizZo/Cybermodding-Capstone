@@ -1,6 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, Subscription, catchError } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
@@ -8,6 +7,7 @@ import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IPasswordChange } from 'src/app/interfaces/ipassword-change';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -77,8 +77,8 @@ export class ProfileComponent {
   constructor(
     private authSvc: AuthService,
     private uSvc: UserService,
-    private router: Router,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    protected common: CommonService
   ) {}
 
   ngOnInit() {
@@ -103,13 +103,18 @@ export class ProfileComponent {
                 })
               )
               .subscribe((res) => {
-                this.profileData = res;
-                this.userObject.id = res.id;
-                this.userObject.username = res.username;
-                this.userObject.email = res.email;
-                this.userObject.description = res.description;
-                this.userObject.avatar = res.avatar;
-                this.userObject.birthdate = res.birthdate;
+                if (res.response?.ok) {
+                  this.profileData = res;
+                  this.userObject.id = res.id;
+                  this.userObject.username = res.username;
+                  this.userObject.email = res.email;
+                  this.userObject.description = res.description;
+                  this.userObject.avatar = res.avatar;
+                  this.userObject.birthdate = res.birthdate;
+                } else {
+                  this.errorsMsgs.push(res.response!.message);
+                }
+
                 this.isLoadingPage = false;
               });
           } else {
@@ -136,69 +141,6 @@ export class ProfileComponent {
     if (this.initSub) this.initSub.unsubscribe();
     if (this.avatarSub) this.avatarSub.unsubscribe();
     if (this.updateAvatarSub) this.updateAvatarSub.unsubscribe();
-  }
-
-  getClassColor() {
-    return this.profileData?.level == 'BOSS'
-      ? 'text-danger'
-      : this.profileData?.level == 'MID'
-      ? 'txt-mod'
-      : this.profileData?.level == 'BASE'
-      ? 'txt-orange'
-      : '';
-  }
-
-  goToPost() {
-    if (this.profileData?.last_post) {
-      this.router.navigateByUrl(
-        '/forum/showthread/' +
-          this.profileData.last_post.id +
-          '-' +
-          this.profileData.last_post.title
-            .replaceAll(' ', '-')
-            .replaceAll('/', '-')
-            .toLowerCase()
-      );
-    }
-  }
-
-  goToComment() {
-    if (this.profileData?.last_comment) {
-      let baseUrl: string =
-        '/forum/showthread/' +
-        this.profileData.last_comment.post?.id +
-        '-' +
-        this.profileData.last_comment.post?.title
-          .replaceAll(' ', '-')
-          .replaceAll('/', '-')
-          .toLowerCase();
-
-      sessionStorage.setItem(
-        'scrolltonumber',
-        this.profileData.last_comment.id!.toString()
-      );
-      if (this.profileData.last_comment.post!.comments_count! <= 8) {
-        this.router.navigateByUrl(baseUrl + '/1');
-      } else {
-        let pageIndex = Math.ceil(
-          this.profileData.last_comment.post!.comments_count! / 8
-        );
-        this.router.navigateByUrl(baseUrl + '/' + pageIndex);
-      }
-    }
-  }
-
-  removeTags(str: string): string {
-    return str
-      .replaceAll('<blockquote>', '')
-      .replaceAll('</blockquote>', '')
-      .replaceAll('<b>', '')
-      .replaceAll('</b>', '')
-      .replaceAll('<i>', '')
-      .replaceAll('</i>', '')
-      .replaceAll('<p>', '')
-      .replaceAll('</p>', '')
-      .replaceAll('&nbsp;', ' ');
   }
 
   checkInputInfos(): boolean {
@@ -446,14 +388,22 @@ export class ProfileComponent {
           })
         )
         .subscribe((res) => {
-          setTimeout(() => {
-            this.isSendingData = false;
-            this.userObject = res;
-            this.accountUpd.nativeElement.classList.remove('opacity-0');
+          if (res.response?.ok) {
             setTimeout(() => {
-              this.accountUpd.nativeElement.classList.add('opacity-0');
-            }, 3500);
-          }, 500);
+              this.isSendingData = false;
+              this.userObject = res;
+              this.accountUpd.nativeElement.classList.remove('opacity-0');
+              setTimeout(() => {
+                this.accountUpd.nativeElement.classList.add('opacity-0');
+              }, 3500);
+            }, 500);
+          } else {
+            setTimeout(() => {
+              this.isSendingData = false;
+              this.accountUpd.nativeElement.innerText = res.response!.message;
+              this.accountUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+          }
         });
     }
   }
@@ -496,8 +446,7 @@ export class ProfileComponent {
           } else {
             setTimeout(() => {
               this.isSendingDataAvatar = false;
-              this.avatarUpd.nativeElement.innerText =
-                "Errore nell'aggiornamento dell'account.";
+              this.avatarUpd.nativeElement.innerText = res.response!.message;
               this.avatarUpd.nativeElement.classList.remove('opacity-0');
             }, 500);
           }
@@ -527,14 +476,22 @@ export class ProfileComponent {
           })
         )
         .subscribe((res) => {
-          this.isSendingDataPass = false;
-          setTimeout(() => {
-            this.isSendingData = false;
-            this.passUpd.nativeElement.classList.remove('opacity-0');
+          if (res.response?.ok) {
+            this.isSendingDataPass = false;
             setTimeout(() => {
-              this.passUpd.nativeElement.classList.add('opacity-0');
-            }, 3500);
-          }, 500);
+              this.isSendingData = false;
+              this.passUpd.nativeElement.classList.remove('opacity-0');
+              setTimeout(() => {
+                this.passUpd.nativeElement.classList.add('opacity-0');
+              }, 3500);
+            }, 500);
+          } else {
+            setTimeout(() => {
+              this.isSendingData = false;
+              this.passUpd.nativeElement.innerText = res.response!.message;
+              this.passUpd.nativeElement.classList.remove('opacity-0');
+            }, 500);
+          }
         });
     }
   }

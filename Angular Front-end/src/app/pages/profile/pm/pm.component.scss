@@ -1,22 +1,10 @@
-.txt-mod {
-  color: var(--mod-color);
-}
+@import "mixins";
 
-.txt-orange {
-  color: var(--orange);
-}
-
-.img-placeholder {
-  background-color: var(--near-black);
-  border: 2px solid var(--orange);
-}
-
-.profile-img {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: 2px solid var(--orange);
-}
+@include text-orange;
+@include text-mod;
+@include img-placeholder;
+@include profile-img;
+@include truncate;
 
 .head {
   background-color: var(--bg-lighter);
@@ -74,12 +62,4 @@
     font-size: 1.2rem;
     cursor: pointer;
   }
-}
-
-.title-trunc {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
 }

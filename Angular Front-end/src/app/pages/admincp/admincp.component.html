@@ -32,7 +32,7 @@
                     <div *ngFor="let m of openContactMessagesArr; let i = index; let first = first"
                         class="single-result contact-message" [ngClass]="{'mt-3' : !first}" (click)="showMsg(i)">
                         <div class="w-100 py-2 px-3 rounded-1">
-                            <p class="mb-0 fs-5 title-trunc">{{ m.title }}</p>
+                            <p class="mb-0 fs-5 trunc">{{ m.title }}</p>
                             <p class="mb-0">Da: <span class="fw-medium"
                                     [ngClass]="{'text-orange' : m.fromUser != null}">{{
                                     m.name != '' ? m.name :
@@ -229,7 +229,7 @@
                             class="single-result" [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
                                 <div class="flex-grow-1">
-                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ threadTitleCustomArr[i] }}</p>
+                                    <p class="m-0 fw-medium fs-5 trunc">{{ threadTitleCustomArr[i] }}</p>
                                     <p class="m-0">Avviato da: <span
                                             [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
                                             {{ t.author.username }}</span>
@@ -328,7 +328,7 @@
                             class="single-result" [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
                                 <div class="flex-grow-1">
-                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ threadTitleArr[i] }}</p>
+                                    <p class="m-0 fw-medium fs-5 trunc">{{ threadTitleArr[i] }}</p>
                                     <p class="m-0">Avviato da: <span
                                             [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
                                             {{ t.author.username }}</span>
@@ -572,7 +572,7 @@
                             [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
                                 <div class="flex-grow-1">
-                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ sectionsTitleArr[i] }}</p>
+                                    <p class="m-0 fw-medium fs-5 trunc">{{ sectionsTitleArr[i] }}</p>
                                     <p class="m-0" [innerText]="s.active ? 'Attiva' : 'Disattiva'"
                                         [ngClass]="{'text-danger' : !s.active, 'text-mod' : s.active}"></p>
                                 </div>
@@ -863,7 +863,7 @@
                             [ngClass]="{'mt-3' : !first}">
                             <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
                                 <div class="flex-grow-1">
-                                    <p class="m-0 fw-medium fs-5 title-trunc">{{ b.title }}</p>
+                                    <p class="m-0 fw-medium fs-5 trunc">{{ b.title }}</p>
                                     <span [innerText]="b.e_block_type + ' | '"></span><span
                                         [innerText]="b.active ? 'Attivo' : 'Disattivo'"
                                         [ngClass]="{'text-danger' : !b.active, 'text-mod' : b.active}"></span>
