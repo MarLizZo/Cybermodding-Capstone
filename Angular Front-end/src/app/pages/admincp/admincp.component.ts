@@ -581,6 +581,11 @@ export class AdmincpComponent {
     return bool;
   }
 
+  canBeModerated(user: IUserData): boolean {
+    if (user.id == 1 || user.id == 87) return false;
+    else return true;
+  }
+
   doUserModerate(data: NgForm, index: number): void {
     this.resetUsersFields(index);
 
@@ -597,7 +602,7 @@ export class AdmincpComponent {
             : data.controls['role'].value == 2
             ? [{ id: 2, roleName: 'ROLE_MODERATOR' }]
             : data.controls['role'].value == 3
-            ? [{ id: 2, roleName: 'ROLE_ADMIN' }]
+            ? [{ id: 3, roleName: 'ROLE_ADMIN' }]
             : [{ id: 1, roleName: 'ROLE_USER' }],
       };
 
@@ -622,7 +627,10 @@ export class AdmincpComponent {
                 ?.classList.add('opacity-0');
             }, 3000);
           }, 1000);
+          console.log(res);
         });
+    } else {
+      console.log('Checks not ok');
     }
   }
 

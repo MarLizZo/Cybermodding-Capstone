@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cybermodding.entities.Comment;
 import com.cybermodding.entities.Post;
+import com.cybermodding.entities.Role;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
@@ -153,7 +155,7 @@ public class UserService {
                 }
         }
 
-        public UserResponse updateUser(Long id, UpdateUser u) {
+        public UserResponse updateUser(Long id, UpdateUser u, Set<Role> roles) {
                 boolean hasPriviliges = u_repo.findById(id).get().getRoles().stream()
                                 .anyMatch(
                                                 r -> r.getRoleName().equals(ERole.ROLE_ADMIN)
@@ -167,6 +169,12 @@ public class UserService {
                                 fromDB.setDescription(u.getDescription());
                                 // fromDB.setAvatar(avatarPath);
                                 fromDB.setBirthdate(u.getBirthdate());
+
+                                if (hasPriviliges) {
+                                        if (roles != null) {
+                                                fromDB.setRoles(roles);
+                                        }
+                                }
 
                                 u_repo.save(fromDB);
                                 return UserFactory.getUserResponse("", fromDB);

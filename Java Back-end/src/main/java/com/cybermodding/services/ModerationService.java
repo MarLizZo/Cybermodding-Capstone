@@ -14,6 +14,7 @@ import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.CustomResponse;
+import com.cybermodding.responses.UserResponse;
 
 @Service
 public class ModerationService {
@@ -26,15 +27,14 @@ public class ModerationService {
 
     public UserModerationData moderateUser(Long id, ModerateUserInDTO data) {
         User fromDB = u_svc.getById(data.getId());
-        fromDB.setUsername(data.getUsername());
-        fromDB.setEmail(data.getEmail());
-        fromDB.setDescription(data.getDescription());
-        fromDB.setRoles(data.getRoles());
-        u_svc.updateUser(id, new UpdateUser(id, fromDB.getUsername(), fromDB.getEmail(), fromDB.getDescription(),
-                fromDB.getBirthdate()));
-        return new UserModerationData(fromDB.getId(), fromDB.getUsername(), fromDB.getEmail(),
-                fromDB.getRegistrationDate(), fromDB.getDescription(), fromDB.getAvatar(), fromDB.getBirthdate(),
-                fromDB.getRoles(), fromDB.getPosts().size(), fromDB.getComments().size());
+        UserResponse ur = u_svc.updateUser(id,
+                new UpdateUser(fromDB.getId(), fromDB.getUsername(), fromDB.getEmail(), fromDB.getDescription(),
+                        fromDB.getBirthdate()),
+                data.getRoles());
+        User fromDBUpd = u_svc.getById(data.getId());
+        return new UserModerationData(ur.getId(), ur.getUsername(), ur.getEmail(),
+                ur.getRegistrationDate(), ur.getDescription(), ur.getAvatar(), ur.getBirthdate(),
+                fromDBUpd.getRoles(), fromDBUpd.getPosts().size(), fromDBUpd.getComments().size());
     }
 
     public CustomResponse banUser(Long id) {

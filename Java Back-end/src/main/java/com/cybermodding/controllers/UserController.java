@@ -63,7 +63,7 @@ public class UserController {
     @PatchMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UpdateUser u) {
-        return ResponseEntity.ok(u_svc.updateUser(id, u));
+        return ResponseEntity.ok(u_svc.updateUser(id, u, null));
     }
 
     @PostMapping("/{id}/updateAvatar")
@@ -104,7 +104,7 @@ public class UserController {
 
     @PostMapping("/moderate/{id}")
     @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
-    public ResponseEntity<UserModerationData> banUser(@PathVariable Long id, @RequestBody ModerateUserInDTO data) {
+    public ResponseEntity<UserModerationData> moderateUser(@PathVariable Long id, @RequestBody ModerateUserInDTO data) {
         return ResponseEntity.ok(m_svc.moderateUser(id, data));
     }
 
