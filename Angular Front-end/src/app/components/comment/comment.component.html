@@ -8,7 +8,10 @@
         <p class="m-0 selectable">#{{ commentIndex }}</p>
     </div>
     <div class="m-0 flex-grow-1 px-2 pt-2 pb-4" [innerHTML]="commentData.content"></div>
-    <div class="subcomment-container p-2 d-flex justify-content-center">
+    <div
+        class="subcomment-container p-2 d-flex flex-column flex-sm-row align-items-center justify-content-center justify-content-lg-end">
         <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
+        <button class="mt-2 mt-sm-0 ms-sm-3 custom-btn del-btn px-4 fw-medium rounded-4" (click)="sendDelete()">Elimina
+            Commento</button>
     </div>
 </div>

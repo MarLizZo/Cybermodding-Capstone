@@ -105,6 +105,16 @@ export class ForumService {
     return this.http.post<IPostData>(this.threadsApiUrl, data);
   }
 
+  public deleteThread(id: number): Observable<ICustomResponse> {
+    return this.http.delete<ICustomResponse>(this.threadsApiUrl + '/' + id);
+  }
+
+  public deleteComment(id: number): Observable<ICustomResponse> {
+    return this.http.delete<ICustomResponse>(
+      this.threadsApiUrl + '/comment/' + id
+    );
+  }
+
   public sendContactMessage(data: IcontactDto): Observable<IContactMessage> {
     return this.http.post<IContactMessage>(this.contactsApiUrl + '/new', data);
   }

@@ -119,15 +119,14 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<?>> searchUsers(@RequestParam(defaultValue = "users") String by, @RequestParam(defaultValue = "cyber") String input, Pageable pageable) {
+    public ResponseEntity<Page<?>> searchUsers(@RequestParam(defaultValue = "users") String by,
+            @RequestParam(defaultValue = "cyber") String input, Pageable pageable) {
         Page<?> pageOut = Page.empty();
         if (by.equals("users")) {
             pageOut = u_svc.searchUsersPageByUsernamePart(input, pageable);
-        }
-        else if (by.equals("posts")) {
+        } else if (by.equals("posts")) {
             pageOut = u_svc.searchPostPageByTitlePart(input, pageable);
-        }
-        else if (by.equals("comments")) {
+        } else if (by.equals("comments")) {
             pageOut = u_svc.searchCommentPageByBodyPart(input, pageable);
         }
         return ResponseEntity.ok(pageOut);

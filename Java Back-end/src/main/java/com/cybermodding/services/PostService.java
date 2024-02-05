@@ -37,6 +37,9 @@ import com.cybermodding.responses.CommentOut;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.PostWithID;
 import com.cybermodding.responses.ReactionResponse;
+
+import jakarta.transaction.Transactional;
+
 import com.cybermodding.responses.PostOutCPaged;
 import com.cybermodding.responses.PostResponse;
 
@@ -106,10 +109,22 @@ public class PostService {
         }
     }
 
+    private void clearPostEntity(Post p) {
+        User u = p.getAuthor();
+        u.getPosts().remove(p);
+        u_repo.save(u);
+
+        SubSection ss = p.getSub_section();
+        ss.getPosts().remove(p);
+        ss_repo.save(ss);
+    }
+
+    @Transactional
     public CustomResponse deletePost(Long id) {
         Post p = getById(id);
         if (p != null) {
-            repo.deleteById(id);
+            clearPostEntity(p);
+            repo.delete(p);
             return new CustomResponse(new Date(), "** Post deleted succesfully **", HttpStatus.OK);
         } else {
             return new CustomResponse(new Date(), "** Post not found **", HttpStatus.NOT_FOUND);
@@ -197,9 +212,22 @@ public class PostService {
         }
     }
 
+    private void clearCommentEntity(Comment c) {
+        User u = c.getUser();
+        u.getComments().remove(c);
+        u_repo.save(u);
+
+        Post p = c.getPost();
+        p.getComments().remove(c);
+        repo.save(p);
+    }
+
+    @Transactional
     public CustomResponse deleteComment(Long id) {
         if (comm_repo.existsById(id)) {
-            comm_repo.deleteById(id);
+            Comment c = comm_repo.findById(id).get();
+            clearCommentEntity(c);
+            comm_repo.delete(c);
             return new CustomResponse(new Date(), "** Comment deleted succesfully **", HttpStatus.OK);
         } else {
             throw new CustomException(HttpStatus.BAD_REQUEST, "** Comment not found **");

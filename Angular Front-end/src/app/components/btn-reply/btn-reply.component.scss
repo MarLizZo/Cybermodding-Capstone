@@ -4,4 +4,9 @@
   padding-top: 3px;
   padding-bottom: 3px;
   color: var(--txt);
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--bg-lighter);
+  }
 }

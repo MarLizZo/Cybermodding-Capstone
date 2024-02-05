@@ -89,6 +89,7 @@ public class Runner implements CommandLineRunner {
         @Override
         public void run(String... args) throws Exception {
                 System.out.println("** ..Running.. **");
+                // p_repo.deleteById(155l);
 
                 // create roles columns
                 // setRoleDefault();

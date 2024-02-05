@@ -16,6 +16,7 @@ export class CommentComponent {
   @Input() commentIndex!: number;
 
   @Output() onReply = new EventEmitter();
+  @Output() onDelete = new EventEmitter();
 
   constructor() {}
 
@@ -29,5 +30,9 @@ export class CommentComponent {
 
   goToReply(): void {
     this.onReply.emit(this.commentData);
+  }
+
+  sendDelete(): void {
+    this.onDelete.emit(this.commentData);
   }
 }

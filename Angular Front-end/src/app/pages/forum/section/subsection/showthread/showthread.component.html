@@ -19,12 +19,16 @@
                     class="d-flex flex-column align-items-center"></app-thread-user-details>
             </div>
             <div class="col-12 col-lg-9 col-xxl-10 d-flex flex-column pt-2 px-0">
-                <div class="flex-grow-1 px-2 pb-5">
+                <div class="flex-grow-1 px-2 pb-4">
                     <p class="m-0 fw-medium fs-4">{{ postData.title }}</p>
                     <div class="m-0 mt-3 post-content" [innerHTML]="postData.body"></div>
+                    <div *ngIf="canDelete()" class="d-flex justify-content-center mt-4">
+                        <button class="custom-btn del-btn px-5 fw-medium rounded-4" (click)="deletePost()">Elimina
+                            Post</button>
+                    </div>
                 </div>
                 <div
-                    class="subpost-container p-2 d-flex flex-column flex-md-row align-items-center justify-content-md-between mt-5">
+                    class="subpost-container p-2 d-flex flex-column flex-md-row align-items-center justify-content-md-between mt-2">
                     <div class="d-flex mb-3 mb-md-0">
                         <div #likeField class="single-react-container py-1 px-3 rounded-4" (click)="addReaction(0)"
                             [ngClass]="{'reaction-sel' : hasUserLike}">
@@ -40,9 +44,10 @@
                             <span class="me-2" [innerHTML]="thumbDown"></span><span>{{ dislikeCount }}</span>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex flex-column flex-sm-row align-items-center">
                         <button *ngIf="canEdit || userID == postData.author.id"
-                            class="mod-btn px-4 fw-medium rounded-4 me-3" (click)="goToEdit()">Modifica
+                            class="mb-2 mb-sm-0 custom-btn mod-btn px-4 fw-medium rounded-4 me-sm-3"
+                            (click)="goToEdit()">Modifica
                             Post</button>
                         <app-btn-reply [text]="'Rispondi citando'" (emitter)="goToReply()"></app-btn-reply>
                     </div>
@@ -50,10 +55,11 @@
             </div>
         </div>
         <app-comment *ngFor="let comment of postData.comments.content; let i = index" [commentData]="comment"
-            [commentIndex]="getCommentNumber(i + 1)" class="row w-100 mt-3 rounded-1"
-            (onReply)="goToReply($event)"></app-comment>
+            [commentIndex]="getCommentNumber(i + 1)" class="row w-100 mt-3 rounded-1" (onReply)="goToReply($event)"
+            (onDelete)="deleteComment($event)"></app-comment>
         <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
-            <div *ngIf="!postData.comments.content.length" class="d-flex justify-content-center">
+            <div *ngIf="!postData.comments.content.length && postData.comments.number == 0"
+                class="d-flex justify-content-center">
                 <p class="m-0">Nessun Commento.. Sii il primo a rispondere!</p>
             </div>
             <div class="col-3">

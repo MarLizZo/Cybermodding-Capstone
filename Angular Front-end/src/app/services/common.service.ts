@@ -5,6 +5,7 @@ import { IPostData } from '../interfaces/ipost-data';
 import { AuthService } from './auth.service';
 import { UserLevel } from '../enums/user-level';
 import { ICommentData } from '../interfaces/icomment-data';
+import { IPostDataPaged } from '../interfaces/ipost-data-paged';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class CommonService {
       : 'txt-ban';
   }
 
-  goToForumPost(post: IPostData) {
+  goToForumPost(post: IPostData | IPostDataPaged) {
     this.router.navigateByUrl(
       `/forum/showthread/${post.id}-${post.title
         .replaceAll(' ', '-')

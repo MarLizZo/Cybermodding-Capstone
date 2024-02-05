@@ -24,8 +24,8 @@
                 </div>
             </div>
         </div>
-        <app-editor-form class="d-block shadow align-self-center" [type]="'post'" (submitPost)="postThread($event)"
-            [postTitle]="threadTitle"
+        <app-editor-form class="d-block shadow align-self-center" [type]="editPostId == 0 ? 'post' : 'editpost'"
+            (submitPost)="postThread($event)" [postTitle]="threadTitle"
             [postBody]="editPostInitBody != '' ? editPostInitBody : undefined"></app-editor-form>
     </div>
     <div *ngIf="resError != ''" class="mt-4">

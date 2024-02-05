@@ -9,6 +9,7 @@ import { IPostDataPaged } from 'src/app/interfaces/ipost-data-paged';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
 import { Ireaction } from 'src/app/interfaces/ireaction';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { ForumService } from 'src/app/services/forum.service';
 
 @Component({
@@ -25,6 +26,8 @@ export class ShowthreadComponent {
   authSub!: Subscription;
   privSub!: Subscription;
   postSub!: Subscription;
+  delSub!: Subscription;
+  delCommSub!: Subscription;
   reactSub!: Subscription;
   postData!: IPostDataPaged;
   thumbUp: string = '&#x1F44D;';
@@ -43,6 +46,7 @@ export class ShowthreadComponent {
   postId: number = 0;
   topBObj: any = [];
   canEdit: boolean | undefined = false;
+  isMod: boolean | undefined = false;
   subSub!: Subscription;
   subsBoolArr = new BehaviorSubject<boolean>(false);
   subsArr$ = this.subsBoolArr.asObservable();
@@ -55,7 +59,8 @@ export class ShowthreadComponent {
     private auth: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    private common: CommonService
   ) {}
 
   setTopBarObj() {
@@ -210,6 +215,7 @@ export class ShowthreadComponent {
 
       this.privSub = this.auth.privileges$.subscribe((res) => {
         this.canEdit = res?.isAdmin || res?.isMod;
+        this.isMod = res?.isMod ? true : false;
       });
     }
 
@@ -237,6 +243,8 @@ export class ShowthreadComponent {
   ngOnDestroy() {
     if (this.authSub) this.authSub.unsubscribe();
     if (this.postSub) this.postSub.unsubscribe();
+    if (this.delSub) this.delSub.unsubscribe();
+    if (this.delCommSub) this.delCommSub.unsubscribe();
     if (this.reactSub) this.reactSub.unsubscribe();
     if (this.subSub) this.subSub.unsubscribe();
   }
@@ -427,6 +435,11 @@ export class ShowthreadComponent {
     if (comment.content.length) {
       this.postData.comments.content.push(comment);
     }
+    if (this.postData.comments.totalElements == 0) {
+      this.postData.comments.number = 0;
+      this.pagesArr = [1];
+    }
+    this.postData.comments.numberOfElements += 1;
   }
 
   getCommentNumber(index: number): number {
@@ -486,5 +499,70 @@ export class ShowthreadComponent {
     this.router.navigateByUrl(
       '/forum/newthread/' + this.postData.subsection_id
     );
+  }
+
+  canDelete(): boolean {
+    if (!this.canEdit) {
+      return this.postData.author.id == this.userID ? true : false;
+    }
+
+    if (this.isMod) {
+      return this.postData.user_level!.toString() == 'BOSS' ? false : true;
+    }
+
+    return true;
+  }
+
+  deletePost() {
+    if (this.canDelete()) {
+      let ssLink =
+        'forum/subsection/' +
+        this.postData.subsection_id +
+        '-' +
+        this.postData.subsection_title
+          ?.toLowerCase()
+          .replaceAll(' ', '-')
+          .replaceAll('/', '-');
+      this.delSub = this.svc
+        .deleteThread(this.postData.id)
+        .pipe(
+          catchError((err) => {
+            return EMPTY;
+          })
+        )
+        .subscribe((res) => {
+          this.router.navigate([ssLink]);
+        });
+    }
+  }
+
+  deleteComment(comment: ICommentData) {
+    this.delCommSub = this.svc
+      .deleteComment(comment.id!)
+      .pipe(
+        catchError((err) => {
+          return EMPTY;
+        })
+      )
+      .subscribe((res) => {
+        let index = this.postData.comments.content.findIndex(
+          (el) => el.id == comment.id
+        );
+        let arr = this.postData.comments.content.splice(index, 1);
+        if (arr.length) {
+          if (this.postData.comments.number != 0) {
+            if (this.postData.comments.numberOfElements <= 1) {
+              this.common.goToForumPost(this.postData);
+            }
+          } else {
+            if (this.postData.comments.numberOfElements <= 1) {
+              this.pagesArr = [];
+            }
+          }
+          if (this.postData.comments.numberOfElements > 0) {
+            this.postData.comments.numberOfElements--;
+          }
+        }
+      });
   }
 }

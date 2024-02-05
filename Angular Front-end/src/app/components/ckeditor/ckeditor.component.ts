@@ -37,6 +37,7 @@ export class CkeditorComponent {
   @Input() postBody!: string | undefined;
   @Output() onSubmit = new EventEmitter();
   @ViewChild('editor') editorComponent!: CKEditorComponent;
+  btnString: string = '';
   finalPlaceholderText: string = '';
   Editor = ClassicEditor;
   editorData: string = '';
@@ -95,6 +96,21 @@ export class CkeditorComponent {
     ) {
       this.editorData = changes['postBody'].currentValue;
       this.hasReceivedBody = true;
+    }
+  }
+
+  getButtonString(): string {
+    switch (this.type) {
+      case 'newpm':
+        return 'Invia';
+      case 'comment':
+        return 'Rispondi';
+      case 'post':
+        return 'Posta Thread';
+      case 'editpost':
+        return 'Modifica Post';
+      default:
+        return 'Posta Thread';
     }
   }
 

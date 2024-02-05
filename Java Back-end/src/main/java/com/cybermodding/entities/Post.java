@@ -7,6 +7,7 @@ import java.util.List;
 import com.cybermodding.enumerators.EPostType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -57,11 +58,11 @@ public class Post {
     @JsonIgnore
     private SubSection sub_section;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Reaction> reactions = new ArrayList<Reaction>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Comment> comments = new ArrayList<Comment>();
 

@@ -77,6 +77,7 @@ export class LoginComponent {
           catchError((err: IErrorResponse) => {
             this.isLoggingIn = false;
             this.isLoginOperationError = true;
+            this.isWaitingLoggingIn = false;
             this.errorMessage = err.error.message;
             throw err;
           })

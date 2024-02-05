@@ -10,3 +10,19 @@
 .comm-info {
   border-bottom: 1px solid var(--near-black);
 }
+
+.custom-btn {
+  border: 1px solid var(--bg);
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.del-btn {
+  background-color: var(--bs-danger-text-emphasis);
+  color: var(--txt);
+  border: 1px solid var(--bg);
+  transition: background-color 0.3s;
+  &:hover {
+    background-color: rgb(180, 42, 56);
+  }
+}

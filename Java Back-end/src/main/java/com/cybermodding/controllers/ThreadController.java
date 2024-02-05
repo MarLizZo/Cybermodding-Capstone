@@ -78,6 +78,11 @@ public class ThreadController {
     }
 
     @DeleteMapping("/{id}")
+    public ResponseEntity<CustomResponse> deletePost(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.deletePost(id));
+    }
+
+    @DeleteMapping("/comment/{id}")
     public ResponseEntity<CustomResponse> deleteComment(@PathVariable Long id) {
         return ResponseEntity.ok(svc.deleteComment(id));
     }

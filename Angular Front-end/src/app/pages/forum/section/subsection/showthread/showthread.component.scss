@@ -28,12 +28,30 @@
   }
 }
 
+.custom-btn {
+  border: 1px solid var(--bg);
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
 .mod-btn {
   background-color: var(--near-black);
-  border: 1px solid var(--bg);
-  padding-top: 3px;
-  padding-bottom: 3px;
   color: var(--txt);
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: var(--bg);
+    border: 1px solid var(--near-black);
+  }
+}
+
+.del-btn {
+  background-color: var(--bs-danger-text-emphasis);
+  color: var(--txt);
+  border: 1px solid var(--bg-tert);
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: rgb(180, 42, 56);
+  }
 }
 
 app-comment {
