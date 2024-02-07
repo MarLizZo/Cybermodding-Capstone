@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, EMPTY, Subscription, catchError } from 'rxjs';
 import { ErrorModalComponent } from 'src/app/components/error-modal/error-modal.component';
@@ -46,7 +46,8 @@ export class NewpmComponent {
     private pmSvc: PmService,
     private route: ActivatedRoute,
     private u_svc: UserService,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -158,13 +159,15 @@ export class NewpmComponent {
         sender_id: this.sender_id,
         recipient_id: this.recipient_user!.id!,
       };
+
       // console.log(obj);
+
       this.pmSub = this.pmSvc
         .getMessages()
         .pipe(
           catchError((err) => {
             this.errorsMsgs.push(
-              'Errore di connessione o nel sistema di messaggistica.'
+              'Errore di connessione al sistema di messaggistica.'
             );
             return EMPTY;
           })
@@ -181,9 +184,11 @@ export class NewpmComponent {
             this.isMessageSent = true;
             setTimeout(() => {
               this.isMessageTriggered = false;
+              this.router.navigateByUrl('/profile/pm');
             }, 3000);
           }
         });
+
       this.pmSvc.sendMessage(obj);
     }
   }

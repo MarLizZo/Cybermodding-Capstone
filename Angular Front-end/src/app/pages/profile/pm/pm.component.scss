@@ -3,7 +3,7 @@
 @include text-orange;
 @include text-mod;
 @include img-placeholder;
-@include profile-img;
+@include profile-img(56px);
 @include truncate;
 
 .head {

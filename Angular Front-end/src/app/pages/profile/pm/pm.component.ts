@@ -141,29 +141,8 @@ export class PmComponent {
                 let ms = newpm as IPrivateMessageData;
 
                 if (ms.recipient_user?.id == res.user_id) {
-                  let obj: IPMInformer = {
-                    id: ms.id!,
-                    sender_id: ms.sender_user!.id!,
-                    recipient_id: ms.recipient_user!.id!,
-                  };
-
                   this.collapseableRArr.unshift(true);
                   this.receivedMessages.unshift(ms);
-
-                  if (localStorage.getItem('newpm')) {
-                    let fromLS: IPMInformer[] = JSON.parse(
-                      localStorage.getItem('newpm')!
-                    );
-                    fromLS.push(obj);
-                    localStorage.setItem('newpm', JSON.stringify(obj));
-                    this.pmSvc.newPmsPresent.next(fromLS);
-                  } else {
-                    localStorage.setItem(
-                      'newpm',
-                      JSON.stringify(Array.of(obj))
-                    );
-                    this.pmSvc.newPmsPresent.next(Array.of(obj));
-                  }
                 }
                 if (ms.sender_user?.id == res.user_id) {
                   this.collapseableSArr.unshift(true);
@@ -314,8 +293,6 @@ export class PmComponent {
     let inputStr = supportInputDiv.lastElementChild?.innerHTML;
 
     let finalStr: string = `<blockquote><p class="mb-1">${this.receivedMessages[index].sender_user?.username}:</p><p class="mb-1">${strQuote}</p><p class="mb-1"></p></blockquote><p>${inputStr}</p>`;
-
-    console.log(finalStr);
 
     this.pmSvc.sendMessage({
       title: this.receivedMessages[index].title,

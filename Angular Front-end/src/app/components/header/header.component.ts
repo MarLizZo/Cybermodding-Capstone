@@ -1,7 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subscription, catchError } from 'rxjs';
 import { IPMInformer } from 'src/app/interfaces/ipminformer';
+import { IPrivateMessageData } from 'src/app/interfaces/iprivate-message-data';
 import { AuthService } from 'src/app/services/auth.service';
 import { PmService } from 'src/app/services/pm.service';
 
@@ -15,6 +16,7 @@ export class HeaderComponent {
   privSub!: Subscription;
   pmSub!: Subscription;
   newPmSub!: Subscription;
+  connSub!: Subscription;
   isMenuCollapsed: boolean = true;
   username: string | undefined = undefined;
   usernameColor: string = '';
@@ -38,6 +40,37 @@ export class HeaderComponent {
     this.nameSub = this.authSvc.user$.subscribe((res) => {
       if (res) {
         this.username = res?.username;
+
+        this.connSub = this.pmSvc
+          .connect(res.user_id)
+          .pipe(
+            catchError((err) => {
+              return EMPTY;
+            })
+          )
+          .subscribe((msg) => {
+            let ms = msg as IPrivateMessageData;
+            console.log('received message', msg);
+            if (ms.recipient_user?.id == res.user_id) {
+              let obj: IPMInformer = {
+                id: ms.id!,
+                sender_id: ms.sender_user!.id!,
+                recipient_id: ms.recipient_user!.id!,
+              };
+
+              if (localStorage.getItem('newpm')) {
+                let fromLS: IPMInformer[] = JSON.parse(
+                  localStorage.getItem('newpm')!
+                );
+                fromLS.push(obj);
+                localStorage.setItem('newpm', JSON.stringify(obj));
+                this.pmSvc.newPmsPresent.next(fromLS);
+              } else {
+                localStorage.setItem('newpm', JSON.stringify(Array.of(obj)));
+                this.pmSvc.newPmsPresent.next(Array.of(obj));
+              }
+            }
+          });
 
         this.newPmSub = this.pmSvc.pmsPresent$.subscribe((pm) => {
           if (pm != null) {
@@ -83,6 +116,7 @@ export class HeaderComponent {
   }
 
   ngOnDestroy() {
+    this.pmSvc.disconnect();
     if (this.nameSub) this.nameSub.unsubscribe();
     if (this.privSub) this.privSub.unsubscribe();
     if (this.pmSub) this.pmSub.unsubscribe();

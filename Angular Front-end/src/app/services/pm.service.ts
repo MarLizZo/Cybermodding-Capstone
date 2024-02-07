@@ -11,9 +11,7 @@ import { IPMInformer } from '../interfaces/ipminformer';
 })
 export class PmService {
   private apiUrl: string = 'http://localhost:8080/api/pms';
-  private socket$!: WebSocketSubject<
-    IPrivateMessageData | IPrivateMessageDTO | IPMInformer
-  >;
+  private socket$!: WebSocketSubject<IPrivateMessageData | IPrivateMessageDTO>;
   public subj = new BehaviorSubject<
     IPrivateMessageData | IPrivateMessageDTO | null
   >(null);
@@ -22,18 +20,22 @@ export class PmService {
   public pmsPresent$ = this.newPmsPresent.asObservable();
 
   constructor(private http: HttpClient) {
-    this.socket$ = webSocket('ws://localhost:8080/ws/pms');
     if (localStorage.getItem('newpm')) {
       this.newPmsPresent.next(JSON.parse(localStorage.getItem('newpm')!));
     }
   }
 
-  sendMessage(data: IPrivateMessageDTO) {
-    this.socket$.next(data);
+  connect(id: number) {
+    this.socket$ = webSocket('ws://localhost:8080/ws/pms/' + id);
+    return this.socket$;
   }
 
   getMessages() {
     return this.socket$;
+  }
+
+  sendMessage(data: IPrivateMessageDTO) {
+    this.socket$.next(data);
   }
 
   getInitMessages(id: number): Observable<IPrivateMessageData[]> {
@@ -42,5 +44,11 @@ export class PmService {
 
   markAsViewed(id: number): Observable<IPrivateMessageData> {
     return this.http.get<IPrivateMessageData>(this.apiUrl + '/viewed/' + id);
+  }
+
+  disconnect(): void {
+    if (this.socket$) {
+      this.socket$.complete();
+    }
   }
 }

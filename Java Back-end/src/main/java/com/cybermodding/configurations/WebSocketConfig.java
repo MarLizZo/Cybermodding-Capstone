@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
         String[] domains = { "http://localhost:4200", "*.devtunnels.ms" };
 
         registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns(domains);
-        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns(domains);
+        registry.addHandler(wsPmsHandler, "/ws/pms/{userId}").setAllowedOriginPatterns(domains);
         registry.addHandler(wsOnlineSpyHandler, "/ws/online/{userId}").setAllowedOriginPatterns(domains);
     }
 }
