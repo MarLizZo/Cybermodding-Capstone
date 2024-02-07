@@ -6,11 +6,11 @@
     <div #collapse="ngbCollapse" [(ngbCollapse)]="isChatCollapsed">
         <div class="chat-container d-flex flex-column flex-grow-1 py-3">
             <div #msgContainer class="messages-container d-flex flex-column flex-grow-1 mb-2">
-                <div *ngFor="let msg of messages" class="mb-2">
+                <div *ngFor="let msg of messages" class="mb-3">
                     <div class="d-flex flex-wrap px-2">
-                        <p class="m-0">{{ msg.date | date: 'dd/MM' }} ⋅<span class="m-0 me-1"
+                        <p class="m-0">{{ msg.date | date: 'dd/MM' }} ⋅<span class="m-0"
                                 [ngClass]="{'text-danger' : msg.level?.toString() == 'BOSS', 'txt-mod' : msg.level?.toString() == 'MID', 'txt-orange': msg.level?.toString() == 'BASE'}">
-                                {{ msg.username }}:</span> {{ msg.content }}</p>
+                                {{ msg.username }}</span>&nbsp;: {{ msg.content }}</p>
                     </div>
                 </div>
                 <div *ngIf="!userLogged"

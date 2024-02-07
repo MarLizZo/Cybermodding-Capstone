@@ -73,6 +73,8 @@ export class AuthService {
           this.initalizedInfo.next(true);
           this.checkValSub.unsubscribe();
         });
+    } else {
+      this.initalizedInfo.next(true);
     }
   }
 

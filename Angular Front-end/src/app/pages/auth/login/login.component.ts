@@ -4,6 +4,7 @@ import { Subscription, catchError } from 'rxjs';
 import { IErrorResponse } from 'src/app/interfaces/ierror-response';
 import { ILoginData } from 'src/app/interfaces/ilogin-data';
 import { AuthService } from 'src/app/services/auth.service';
+import { OnlinespyService } from 'src/app/services/onlinespy.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,8 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private acRoute: ActivatedRoute,
-    private svc: AuthService
+    private svc: AuthService,
+    private wsSpy: OnlinespyService
   ) {}
 
   isLoadingPage: boolean = true;
@@ -24,6 +26,7 @@ export class LoginComponent {
   isLoginOperationError: boolean = false;
   errorMessage: string = '';
   logSub!: Subscription;
+  spySub!: Subscription;
   invalidTokenReason: boolean = false;
   loginData: ILoginData = {
     username: '',
@@ -71,27 +74,32 @@ export class LoginComponent {
       this.isLoggingIn = true;
       this.isWaitingLoggingIn = true;
 
-      this.logSub = this.svc
-        .login(this.loginData)
-        .pipe(
-          catchError((err: IErrorResponse) => {
+      this.wsSpy.sendDisconnectInfo('remove');
+
+      setTimeout(() => {
+        this.logSub = this.svc
+          .login(this.loginData)
+          .pipe(
+            catchError((err: IErrorResponse) => {
+              this.isLoggingIn = false;
+              this.isLoginOperationError = true;
+              this.isWaitingLoggingIn = false;
+              this.errorMessage = err.error.message;
+              OnlinespyService.loggingFlag = false;
+              throw err;
+            })
+          )
+          .subscribe((res) => {
             this.isLoggingIn = false;
-            this.isLoginOperationError = true;
-            this.isWaitingLoggingIn = false;
-            this.errorMessage = err.error.message;
-            throw err;
-          })
-        )
-        .subscribe((res) => {
-          this.isLoggingIn = false;
-          this.isLoginOperationSuccess = true;
-          setTimeout(() => {
-            this.isWaitingLoggingIn = false;
-          }, 800);
-          setTimeout(() => {
-            this.router.navigate(['/forum']);
-          }, 2500);
-        });
+            this.isLoginOperationSuccess = true;
+            setTimeout(() => {
+              this.isWaitingLoggingIn = false;
+            }, 800);
+            setTimeout(() => {
+              this.router.navigate(['/forum']);
+            }, 2500);
+          });
+      }, 1500);
     }
   }
 }

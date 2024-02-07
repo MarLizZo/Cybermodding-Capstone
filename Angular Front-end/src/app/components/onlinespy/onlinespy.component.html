@@ -1,0 +1,18 @@
+<div class="main-container p-3">
+    <h4>Chi è Online</h4>
+    <div *ngIf="onlineUsers.length && !areAllGuests()">
+        <p class="m-0" *ngFor="let u of onlineUsers; let lastEl = last" class="fw-medium fs-5 mb-0">
+            <span
+                [ngClass]="{'text-danger' : u.level == 'BOSS', 'txt-mod': u.level == 'MID', 'txt-orange' : u.level == 'BASE'}">{{
+                u.username }}</span>
+            <span *ngIf="!lastEl">,&nbsp;</span>
+        </p>
+        <p *ngIf="onlineUsers.length > 1" class="m-0 mt-1">Ci sono anche <span class="txt-orange">{{ onlineUsers.length
+                - 1 }}</span> visitatori anonimi
+        </p>
+    </div>
+    <div *ngIf="areAllGuests()">
+        <p class="m-0">Ci sono <span class="txt-orange">{{ onlineUsers.length }}</span> visitatori anonimi al momento..
+        </p>
+    </div>
+</div>

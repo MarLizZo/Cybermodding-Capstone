@@ -7,6 +7,7 @@ import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import com.cybermodding.runners.WSChatHandler;
+import com.cybermodding.runners.WSOnlineSpyHandler;
 import com.cybermodding.runners.WSPMsHandler;
 
 @Configuration
@@ -18,11 +19,15 @@ public class WebSocketConfig implements WebSocketConfigurer {
     protected WSChatHandler wsChatHandler;
     @Autowired
     protected WSPMsHandler wsPmsHandler;
+    @Autowired
+    WSOnlineSpyHandler wsOnlineSpyHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns("http://localhost:4200");
         registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns("http://localhost:4200");
+        registry.addHandler(wsOnlineSpyHandler, "/ws/online/{userId}")
+                .setAllowedOriginPatterns("http://localhost:4200");
     }
 }
 

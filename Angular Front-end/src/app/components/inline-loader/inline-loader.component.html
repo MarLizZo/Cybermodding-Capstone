@@ -1,5 +1,5 @@
 <div class="spinner-box" [ngClass]="size ? size : ''">
     <div class="circle-border" [ngClass]="size ? size : ''">
-        <div class="circle-core" [ngClass]="{'lighter' : !bg}" [class]="bg"></div>
+        <div class="circle-core" [ngClass]="{'lighter' : !bg}" [ngClass]="[bg]"></div>
     </div>
 </div>

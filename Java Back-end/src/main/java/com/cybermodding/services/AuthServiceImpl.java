@@ -16,9 +16,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cybermodding.entities.ChatMessage;
 import com.cybermodding.entities.Role;
 import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
+import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.exception.CustomException;
 import com.cybermodding.payload.LoginDto;
 import com.cybermodding.payload.RegisterDto;
@@ -30,6 +32,8 @@ import com.cybermodding.security.JwtTokenProvider;
 public class AuthServiceImpl implements AuthService {
     @Autowired
     FTPUploadService ftpSvc;
+    @Autowired
+    ChatService chat_svc;
 
     AuthenticationManager authenticationManager;
     PasswordEncoder passwordEncoder;
@@ -66,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
         return ftpSvc.uploadAvatar(file, "Username", true);
     }
 
+    @SuppressWarnings("null")
     @Override
     public User register(RegisterDto registerDto) {
 
@@ -105,7 +110,14 @@ public class AuthServiceImpl implements AuthService {
         roles.add(userRole);
 
         user.setRoles(roles);
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        ChatMessage chat = ChatMessage.builder().content("Benvenuto al nuovo utente > " + user.getUsername() + " <")
+                .date(LocalDate.now()).level(EUserLevel.BOSS)
+                .user(userRepository.findById(87l).get()).build();
+        chat_svc.saveMessage(chat);
+        chat_svc.cleanDB();
+        return user;
     }
 
     public boolean isMod(String username) {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
+import { OnlinespyService } from 'src/app/services/onlinespy.service';
 
 @Component({
   selector: 'app-logout',
@@ -9,7 +10,11 @@ import { AuthService } from 'src/app/services/auth.service';
   styleUrls: ['./logout.component.scss'],
 })
 export class LogoutComponent {
-  constructor(private svc: AuthService, private router: Router) {}
+  constructor(
+    private svc: AuthService,
+    private router: Router,
+    private wsSpy: OnlinespyService
+  ) {}
 
   isLoadingPage: boolean = true;
   username: string | undefined = undefined;
@@ -20,27 +25,32 @@ export class LogoutComponent {
 
   ngOnInit() {
     this.userSub = this.svc.user$.subscribe((res) => {
-      this.username = res?.username;
+      if (!this.username) this.username = res?.username;
     });
 
     this.privSub = this.svc.privileges$.subscribe((res) => {
-      this.usernameColor = res?.isAdmin
-        ? 'text-danger'
-        : res?.isMod
-        ? 'text-green'
-        : '';
+      if (this.usernameColor == '') {
+        this.usernameColor = res?.isAdmin
+          ? 'text-danger'
+          : res?.isMod
+          ? 'text-green'
+          : '';
+      }
     });
 
     setTimeout(() => {
       this.isLoadingPage = false;
       this.timer = setTimeout(() => {
         this.router.navigate(['']);
-      }, 3000);
+      }, 3500);
     }, 500);
   }
 
   ngAfterViewInit() {
-    this.svc.logout();
+    this.wsSpy.sendDisconnectInfo('remove');
+    setTimeout(() => {
+      this.svc.logout();
+    }, 2000);
   }
 
   ngOnDestroy() {

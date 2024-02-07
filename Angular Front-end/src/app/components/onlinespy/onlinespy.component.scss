@@ -1,0 +1,11 @@
+@import "mixins";
+@include text-orange;
+@include text-mod;
+
+.main-container {
+  border-top: 2px solid var(--near-black);
+
+  p span:first-of-type {
+    cursor: pointer;
+  }
+}

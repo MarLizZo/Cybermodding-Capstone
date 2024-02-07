@@ -27,12 +27,11 @@
         width: 8px;
       }
       &::-webkit-scrollbar-thumb {
-        background: var(--bg-lighter);
+        background: var(--bg);
         border-radius: 8px;
       }
       &::-webkit-scrollbar-track {
         background: var(--near-black);
-        //border-radius: 8px;
       }
 
       .txt-mod {

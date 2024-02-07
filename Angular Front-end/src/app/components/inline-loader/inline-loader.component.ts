@@ -9,6 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./inline-loader.component.scss'],
 })
 export class InlineLoaderComponent {
-  @Input() bg!: string;
+  @Input() bg: string = 'darker';
   @Input() size!: string;
 }
