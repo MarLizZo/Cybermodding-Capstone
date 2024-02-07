@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IOnlineSpy } from 'src/app/interfaces/ionline-spy';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { OnlinespyService } from 'src/app/services/onlinespy.service';
 
 @Component({
@@ -14,7 +15,11 @@ export class OnlinespyComponent {
   onlineUsers: IOnlineSpy[] = [];
   user_id: number = 0;
 
-  constructor(private svc: OnlinespyService, private auth_svc: AuthService) {}
+  constructor(
+    private svc: OnlinespyService,
+    private auth_svc: AuthService,
+    private common: CommonService
+  ) {}
 
   ngOnInit() {
     this.auth_svc.intialized$.subscribe((init) => {
@@ -29,7 +34,7 @@ export class OnlinespyComponent {
             }
             this.svc.getOnlineUsers(this.user_id).subscribe((on) => {
               this.onlineUsers = on;
-              console.log(this.user_id, this.onlineUsers);
+              // console.log(this.user_id, this.onlineUsers);
             });
           }
         });
@@ -53,5 +58,9 @@ export class OnlinespyComponent {
 
   guestsOnlineCount(): number {
     return this.onlineUsers.filter((el) => el.id == 0).length;
+  }
+
+  goToProfile(id: number, username: string) {
+    this.common.goToProfile({ id: id, username: username });
   }
 }

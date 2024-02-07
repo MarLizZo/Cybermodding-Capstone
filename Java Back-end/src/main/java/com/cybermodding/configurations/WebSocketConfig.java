@@ -16,34 +16,18 @@ import com.cybermodding.runners.WSPMsHandler;
 public class WebSocketConfig implements WebSocketConfigurer {
 
     @Autowired
-    protected WSChatHandler wsChatHandler;
+    WSChatHandler wsChatHandler;
     @Autowired
-    protected WSPMsHandler wsPmsHandler;
+    WSPMsHandler wsPmsHandler;
     @Autowired
     WSOnlineSpyHandler wsOnlineSpyHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns("http://localhost:4200",
-                "https://43p5wxpp-4200.euw.devtunnels.ms");
-        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns("http://localhost:4200",
-                "https://43p5wxpp-4200.euw.devtunnels.ms");
-        registry.addHandler(wsOnlineSpyHandler, "/ws/online/{userId}")
-                .setAllowedOriginPatterns("http://localhost:4200", "https://43p5wxpp-4200.euw.devtunnels.ms");
+        String[] domains = { "http://localhost:4200", "*.devtunnels.ms" };
+
+        registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns(domains);
+        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns(domains);
+        registry.addHandler(wsOnlineSpyHandler, "/ws/online/{userId}").setAllowedOriginPatterns(domains);
     }
 }
-
-// @Configuration
-// @EnableWebSocketMessageBroker
-// public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-
-// @Override
-// public void configureMessageBroker(MessageBrokerRegistry config) {
-// config.enableSimpleBroker("/topic");
-// }
-
-// @Override
-// public void registerStompEndpoints(StompEndpointRegistry registry) {
-// registry.addEndpoint("/ws").setAllowedOriginPatterns("http://localhost:4200");
-// }
-// }

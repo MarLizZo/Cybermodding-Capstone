@@ -7,7 +7,7 @@ import { IOnlineSpy } from '../interfaces/ionline-spy';
 })
 export class OnlinespyService {
   private socket$!: WebSocketSubject<any>;
-  public static loggingFlag: boolean = false;
+  public static loggingFlag: boolean = false; // not used atm
 
   constructor() {}
 

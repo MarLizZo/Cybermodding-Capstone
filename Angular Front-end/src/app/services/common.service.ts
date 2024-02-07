@@ -7,6 +7,11 @@ import { UserLevel } from '../enums/user-level';
 import { ICommentData } from '../interfaces/icomment-data';
 import { IPostDataPaged } from '../interfaces/ipost-data-paged';
 
+type minimalUserData = {
+  id: number;
+  username: string;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -64,7 +69,7 @@ export class CommonService {
       .replaceAll('&nbsp;', ' ');
   }
 
-  goToProfile(user: IUserData) {
+  goToProfile(user: IUserData | minimalUserData) {
     this.auth_svc.user$.subscribe((res) => {
       if (res?.user_id == user.id) {
         this.router.navigateByUrl('/profile');

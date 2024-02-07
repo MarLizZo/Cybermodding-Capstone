@@ -2,7 +2,7 @@
     <h4>Chi è Online</h4>
     <div *ngIf="onlineUsers.length && !areAllGuests()">
         <p class="m-0" *ngFor="let u of onlineUsers" class="fw-medium mb-0 me-2 d-inline">
-            <span
+            <span (click)="goToProfile(u.id, u.username)"
                 [ngClass]="{'text-danger' : u.level == 'BOSS', 'txt-mod': u.level == 'MID', 'txt-orange' : u.level == 'BASE'}">{{
                 u.username }}</span>
         </p>
