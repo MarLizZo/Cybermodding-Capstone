@@ -19,7 +19,6 @@ export class OnlinespyComponent {
   ngOnInit() {
     this.auth_svc.intialized$.subscribe((init) => {
       if (init) {
-        console.log('initialized');
         if (this.connectSub) this.connectSub.unsubscribe();
         this.connectSub = this.auth_svc.user$.subscribe((res) => {
           if (!OnlinespyService.loggingFlag) {
@@ -30,6 +29,7 @@ export class OnlinespyComponent {
             }
             this.svc.getOnlineUsers(this.user_id).subscribe((on) => {
               this.onlineUsers = on;
+              console.log(this.user_id, this.onlineUsers);
             });
           }
         });
@@ -45,5 +45,13 @@ export class OnlinespyComponent {
 
   areAllGuests(): boolean {
     return this.onlineUsers.every((el) => el.id == 0);
+  }
+
+  areSomeGuestsOnline(): boolean {
+    return this.onlineUsers.some((el) => el.id == 0);
+  }
+
+  guestsOnlineCount(): number {
+    return this.onlineUsers.filter((el) => el.id == 0).length;
   }
 }

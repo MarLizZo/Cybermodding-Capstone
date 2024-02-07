@@ -5,6 +5,10 @@
 .main-container {
   border-top: 2px solid var(--near-black);
 
+  p {
+    width: max-content;
+  }
+
   p span:first-of-type {
     cursor: pointer;
   }

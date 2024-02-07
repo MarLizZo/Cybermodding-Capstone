@@ -24,10 +24,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns("http://localhost:4200");
-        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns("http://localhost:4200");
+        registry.addHandler(wsChatHandler, "/ws/chat").setAllowedOriginPatterns("http://localhost:4200",
+                "https://43p5wxpp-4200.euw.devtunnels.ms");
+        registry.addHandler(wsPmsHandler, "/ws/pms").setAllowedOriginPatterns("http://localhost:4200",
+                "https://43p5wxpp-4200.euw.devtunnels.ms");
         registry.addHandler(wsOnlineSpyHandler, "/ws/online/{userId}")
-                .setAllowedOriginPatterns("http://localhost:4200");
+                .setAllowedOriginPatterns("http://localhost:4200", "https://43p5wxpp-4200.euw.devtunnels.ms");
     }
 }
 
