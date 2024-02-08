@@ -9,19 +9,22 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
-<h4>Current Version: 1.3.1</h4>
+<h4>Current Version: 1.4</h4>
 
--   1.3.1 - Search function available
--   1.3 - Contact us feature. Anyone can contact the admins for any reason. The administrators are able to see the messages from the Admin CP
--   1.3 - Avatar upload with preview. Now the user can upload an image as profile avatar from local machine. Preview available. The avatar will be stored on a real online server
--   1.3 - Minor graphic improvements
+- Huge improvements on the WebSocket communications
+- Chi è Online > Real-time online users detection
+- Big improvements on the Private messages feature
+- Lots of Back-end optimizations such as payloads generation with some factory-like classes
+- Front-end optimizations such as a Common Service, Mixins, and graphic improvements
+- Users are now able to delete their own posts and comments.
+- More? Probably..
 
 <p></p>
 
-<h5>TO-DO after the v1.3:</h5>
+<h5>TO-DO after the v1.4:</h5>
 
--   New custom WYSIWYG Editor? No ETA.
--   General improvements. I have some ideas..
+- New custom WYSIWYG Editor? No ETA.
+- Some new magic features
 
 <img src="Repo assets/my-hr.png" style="height:8px; width:100%">
 
@@ -31,13 +34,13 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 
 `If you only use VS Code:`
 
--   The Java Extension Pack. The official one from Microsoft!
--   Springboot Extension Pack
--   Angular Language Server Extension
+- The Java Extension Pack. The official one from Microsoft!
+- Springboot Extension Pack
+- Angular Language Server Extension
 
 `If you use Eclipse and VS Code:`
 
--   Only Angular Language Server on VS Code
+- Only Angular Language Server on VS Code
 
 <img src="Repo assets/my-hr.png" style="height:8px; width:100%">
 
