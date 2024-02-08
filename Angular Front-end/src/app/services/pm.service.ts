@@ -19,11 +19,7 @@ export class PmService {
   public newPmsPresent = new BehaviorSubject<IPMInformer[] | null>(null);
   public pmsPresent$ = this.newPmsPresent.asObservable();
 
-  constructor(private http: HttpClient) {
-    if (localStorage.getItem('newpm')) {
-      this.newPmsPresent.next(JSON.parse(localStorage.getItem('newpm')!));
-    }
-  }
+  constructor(private http: HttpClient) {}
 
   connect(id: number) {
     this.socket$ = webSocket('ws://localhost:8080/ws/pms/' + id);

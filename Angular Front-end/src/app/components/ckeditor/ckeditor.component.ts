@@ -104,6 +104,7 @@ export class CkeditorComponent {
       case 'newpm':
         return 'Invia';
       case 'comment':
+      case 'pm':
         return 'Rispondi';
       case 'post':
         return 'Posta Thread';

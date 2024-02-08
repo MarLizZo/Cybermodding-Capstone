@@ -12,6 +12,7 @@ import { OnlinespyService } from 'src/app/services/onlinespy.service';
 })
 export class OnlinespyComponent {
   connectSub!: Subscription;
+  onlineSessions: IOnlineSpy[] = [];
   onlineUsers: IOnlineSpy[] = [];
   user_id: number = 0;
 
@@ -33,8 +34,8 @@ export class OnlinespyComponent {
               this.user_id = 0;
             }
             this.svc.getOnlineUsers(this.user_id).subscribe((on) => {
-              this.onlineUsers = on;
-              // console.log(this.user_id, this.onlineUsers);
+              this.onlineSessions = on;
+              this.clearDuplicate();
             });
           }
         });
@@ -49,18 +50,26 @@ export class OnlinespyComponent {
   }
 
   areAllGuests(): boolean {
-    return this.onlineUsers.every((el) => el.id == 0);
+    return this.onlineSessions.every((el) => el.id == 0);
   }
 
   areSomeGuestsOnline(): boolean {
-    return this.onlineUsers.some((el) => el.id == 0);
+    return this.onlineSessions.some((el) => el.id == 0);
   }
 
   guestsOnlineCount(): number {
-    return this.onlineUsers.filter((el) => el.id == 0).length;
+    return this.onlineSessions.filter((el) => el.id == 0).length;
   }
 
   goToProfile(id: number, username: string) {
     this.common.goToProfile({ id: id, username: username });
+  }
+
+  clearDuplicate() {
+    this.onlineSessions.forEach((el) => {
+      if (el.id == 0) return;
+      if (this.onlineUsers.findIndex((ou) => ou.id == el.id) != -1) return;
+      this.onlineUsers.push(el);
+    });
   }
 }

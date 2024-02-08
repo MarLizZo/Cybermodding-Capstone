@@ -28,17 +28,34 @@ export class PmComponent {
   isLoadingPage: boolean = true;
   isReceivedView: boolean = true;
   isSentView: boolean = false;
+  isSingleMsgView: boolean = false;
+  isReplyToMsgView: boolean = false;
+  singleMsg: IPrivateMessageData | null = null;
   profileData: IUserData | null = null;
   receivedMessages: IPrivateMessageData[] = [];
   sentMessages: IPrivateMessageData[] = [];
-  collapseableRArr: boolean[] = [];
-  collapseableSArr: boolean[] = [];
-  replyArr: boolean[] = [];
   quotedMessage: IQuoteInfo | undefined;
   subSub!: Subscription;
   subsBoolArr = new BehaviorSubject<boolean[]>([false, false]);
   subsArr$ = this.subsBoolArr.asObservable();
   errorsMsgs: string[] = [];
+  _msgSentCorrectly: boolean = false;
+
+  get msgSentCorrectly(): boolean {
+    return this._msgSentCorrectly;
+  }
+  set msgSentCorrectly(value: boolean) {
+    this._msgSentCorrectly = value;
+    if (value) {
+      setTimeout(() => {
+        this._msgSentCorrectly = false;
+        this.isReplyToMsgView = false;
+        this.isSingleMsgView = false;
+        this.singleMsg = null;
+        this.isReceivedView = true;
+      }, 2500);
+    }
+  }
 
   @ViewChild('sentBtn') sentBtn!: ElementRef<HTMLButtonElement>;
   @ViewChild('receivedBtn') receivedBtn!: ElementRef<HTMLButtonElement>;
@@ -105,15 +122,6 @@ export class PmComponent {
                   (el) => el.sender_user!.id == res.user_id
                 );
 
-                for (let i = 0; i < this.receivedMessages.length; i++) {
-                  this.collapseableRArr.push(true);
-                  this.replyArr.push(false);
-                }
-
-                for (let i = 0; i < this.sentMessages.length; i++) {
-                  this.collapseableSArr.push(true);
-                }
-
                 const currentValues = this.subsBoolArr.value;
                 currentValues[1] = true;
                 this.subsBoolArr.next(currentValues);
@@ -133,20 +141,16 @@ export class PmComponent {
                 })
               )
               .subscribe((newpm) => {
-                for (let i = 0; i < this.collapseableRArr.length; i++) {
-                  this.collapseableRArr[i] = true;
-                  this.replyArr[i] = false;
-                }
-
                 let ms = newpm as IPrivateMessageData;
 
                 if (ms.recipient_user?.id == res.user_id) {
-                  this.collapseableRArr.unshift(true);
                   this.receivedMessages.unshift(ms);
                 }
                 if (ms.sender_user?.id == res.user_id) {
-                  this.collapseableSArr.unshift(true);
                   this.sentMessages.unshift(ms);
+                  if (this.isReplyToMsgView) {
+                    this.msgSentCorrectly = true;
+                  }
                 }
                 const currentValues = this.subsBoolArr.value;
                 currentValues[2] = true;
@@ -206,64 +210,85 @@ export class PmComponent {
     if (flag == 0) {
       this.isReceivedView = true;
       this.isSentView = false;
+      this.isSingleMsgView = false;
+      this.isReplyToMsgView = false;
+      this.singleMsg = null;
       this.sentBtn.nativeElement.classList.add('btn-selected');
       this.receivedBtn.nativeElement.classList.remove('btn-selected');
     } else {
       this.isSentView = true;
       this.isReceivedView = false;
+      this.isSingleMsgView = false;
+      this.isReplyToMsgView = false;
+      this.singleMsg = null;
       this.receivedBtn.nativeElement.classList.add('btn-selected');
       this.sentBtn.nativeElement.classList.remove('btn-selected');
     }
   }
 
-  replyClick(index: number) {
-    this.replyArr[index] = true;
-  }
+  setSingleMsgView(msg: IPrivateMessageData) {
+    this.singleMsg = msg;
+    this.isReceivedView = false;
+    this.isSentView = false;
+    this.isSingleMsgView = true;
 
-  collapseMark(index: number) {
-    this.collapseableRArr[index] = !this.collapseableRArr[index];
-    if (this.collapseableRArr[index]) {
-      this.replyArr[index] = false;
-    }
-    if (!this.receivedMessages[index].viewed && !this.isOpPending) {
-      this.isOpPending = true;
+    if (!msg.viewed) {
+      if (this.pmOps) this.pmOps.unsubscribe();
+
       this.pmOps = this.pmSvc
-        .markAsViewed(this.receivedMessages[index].id!)
+        .markAsViewed(msg.id)
         .pipe(
           catchError((err) => {
-            this.isOpPending = false;
-            throw err;
+            return EMPTY;
           })
         )
         .subscribe((res) => {
-          this.isOpPending = false;
-          this.receivedMessages[index] = res;
-
-          if (localStorage.getItem('newpm')) {
-            let fromLS: IPMInformer[] = JSON.parse(
-              localStorage.getItem('newpm')!
+          if (res.viewed) {
+            this.singleMsg = res;
+            let recIndex = this.receivedMessages.findIndex(
+              (el) => el.id == res.id
             );
-            if (fromLS.length == 1) {
-              localStorage.removeItem('newpm');
-              this.pmSvc.newPmsPresent.next(null);
-            } else {
-              let foundIndex: number = fromLS.findIndex(
-                (el) => el.id == res.id
-              );
-              if (foundIndex != -1) {
-                fromLS.splice(foundIndex, 1);
+            if (recIndex != -1) {
+              this.receivedMessages[recIndex] = res;
+            }
+            let pmPresents: IPMInformer[] | null =
+              this.pmSvc.newPmsPresent.getValue();
+            if (pmPresents != null) {
+              if (pmPresents.length == 1) {
+                this.pmSvc.newPmsPresent.next(null);
+              } else {
+                pmPresents.splice(
+                  pmPresents.findIndex((pm) => pm.id == res.id),
+                  1
+                );
+                this.pmSvc.newPmsPresent.next(pmPresents);
               }
-              localStorage.setItem('newpm', JSON.stringify(fromLS));
-              this.pmSvc.newPmsPresent.next(fromLS);
             }
           }
         });
     }
   }
 
-  getQuoteMsg(index: number): IQuoteInfo {
+  resetSingleMsgView() {
+    if (this.isReplyToMsgView) {
+      this.isReplyToMsgView = false;
+      this.isSingleMsgView = true;
+      return;
+    }
+    if (this.singleMsg!.sender_user.id != this.profileData!.id) {
+      this.isSingleMsgView = false;
+      this.isReceivedView = true;
+      this.singleMsg = null;
+    } else {
+      this.isSingleMsgView = false;
+      this.isSentView = true;
+      this.singleMsg = null;
+    }
+  }
+
+  getQuoteMsg(): IQuoteInfo {
     let supportDiv: HTMLDivElement = document.createElement('div');
-    supportDiv.innerHTML = this.receivedMessages[index].content;
+    supportDiv.innerHTML = this.singleMsg!.content;
     let firstBlockQuote: string | undefined =
       supportDiv.querySelector('blockquote')?.nextElementSibling?.innerHTML;
     let strQuote =
@@ -273,14 +298,14 @@ export class PmComponent {
 
     return (this.quotedMessage = {
       content: strQuote || 'N.A.',
-      username: this.receivedMessages[index].sender_user!.username,
-      user_id: this.receivedMessages[index].sender_user!.id!,
+      username: this.singleMsg!.sender_user!.username,
+      user_id: this.singleMsg!.sender_user!.id!,
     });
   }
 
-  doReply(text: string, index: number) {
+  doReply(text: string) {
     let supportDiv: HTMLDivElement = document.createElement('div');
-    supportDiv.innerHTML = this.receivedMessages[index].content;
+    supportDiv.innerHTML = this.singleMsg!.content;
     let firstBlockQuote: string | undefined =
       supportDiv.querySelector('blockquote')?.nextElementSibling?.innerHTML;
     let strQuote =
@@ -292,13 +317,15 @@ export class PmComponent {
     supportInputDiv.innerHTML = text;
     let inputStr = supportInputDiv.lastElementChild?.innerHTML;
 
-    let finalStr: string = `<blockquote><p class="mb-1">${this.receivedMessages[index].sender_user?.username}:</p><p class="mb-1">${strQuote}</p><p class="mb-1"></p></blockquote><p>${inputStr}</p>`;
+    let finalStr: string = `<blockquote><p class="mb-1">${
+      this.singleMsg!.sender_user?.username
+    }:</p><p class="mb-1">${strQuote}</p><p class="mb-1"></p></blockquote><p>${inputStr}</p>`;
 
     this.pmSvc.sendMessage({
-      title: this.receivedMessages[index].title,
+      title: this.singleMsg!.title,
       content: finalStr,
-      sender_id: this.receivedMessages[index].recipient_user!.id!,
-      recipient_id: this.receivedMessages[index].sender_user!.id!,
+      sender_id: this.singleMsg!.recipient_user!.id!,
+      recipient_id: this.singleMsg!.sender_user!.id!,
     });
   }
 }

@@ -43,23 +43,28 @@
   .single-msg {
     .sm-head {
       background-color: var(--bg-lighter);
-    }
 
-    .sm-container {
-      border: 1px solid var(--near-black);
-      .date-info {
-        border-bottom: 1px solid var(--orange-hover);
-      }
-
-      .sm-content {
-        border-bottom: 2px solid var(--near-black);
+      .title {
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
+}
 
-  i.bi-arrow-bar-down {
+.sm-container {
+  i {
     color: var(--orange);
-    font-size: 1.2rem;
     cursor: pointer;
+  }
+  border: 1px solid var(--near-black);
+  .date-info {
+    border-bottom: 1px solid var(--orange-hover);
+  }
+
+  .sm-content {
+    border-bottom: 2px solid var(--near-black);
   }
 }

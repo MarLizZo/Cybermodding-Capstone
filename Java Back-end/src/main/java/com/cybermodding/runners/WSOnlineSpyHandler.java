@@ -97,6 +97,10 @@ public class WSOnlineSpyHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sendOnlineUsersToClientAfterDisconnect(session.getId());
+        try {
+            sendOnlineUsersToClientAfterDisconnect(session.getId());
+        } catch (Exception ex) {
+            System.out.println("Exception on Spy disconnected > " + ex.getMessage());
+        }
     }
 }

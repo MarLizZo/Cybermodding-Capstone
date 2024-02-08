@@ -1,4 +1,8 @@
 .container-fluid {
+  i {
+    color: var(--orange);
+    cursor: pointer;
+  }
   input,
   span {
     background-color: var(--bg-lighter);

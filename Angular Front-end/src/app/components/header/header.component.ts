@@ -17,6 +17,7 @@ export class HeaderComponent {
   pmSub!: Subscription;
   newPmSub!: Subscription;
   connSub!: Subscription;
+  initMsgSub!: Subscription;
   isMenuCollapsed: boolean = true;
   username: string | undefined = undefined;
   usernameColor: string = '';
@@ -50,7 +51,6 @@ export class HeaderComponent {
           )
           .subscribe((msg) => {
             let ms = msg as IPrivateMessageData;
-            console.log('received message', msg);
             if (ms.recipient_user?.id == res.user_id) {
               let obj: IPMInformer = {
                 id: ms.id!,
@@ -58,16 +58,13 @@ export class HeaderComponent {
                 recipient_id: ms.recipient_user!.id!,
               };
 
-              if (localStorage.getItem('newpm')) {
-                let fromLS: IPMInformer[] = JSON.parse(
-                  localStorage.getItem('newpm')!
-                );
-                fromLS.push(obj);
-                localStorage.setItem('newpm', JSON.stringify(obj));
-                this.pmSvc.newPmsPresent.next(fromLS);
-              } else {
-                localStorage.setItem('newpm', JSON.stringify(Array.of(obj)));
+              let arrPresent: IPMInformer[] | null =
+                this.pmSvc.newPmsPresent.getValue();
+              if (arrPresent == null || !arrPresent.length) {
                 this.pmSvc.newPmsPresent.next(Array.of(obj));
+              } else {
+                arrPresent.push(obj);
+                this.pmSvc.newPmsPresent.next(arrPresent);
               }
             }
           });
@@ -79,6 +76,31 @@ export class HeaderComponent {
             this.isNewMessage = false;
           }
         });
+
+        this.initMsgSub = this.pmSvc
+          .getInitMessages(res.user_id)
+          .pipe(
+            catchError((err) => {
+              return EMPTY;
+            })
+          )
+          .subscribe((messages) => {
+            let receivedMsg = messages.filter(
+              (rMess) => rMess.recipient_user.id == res.user_id
+            );
+            if (receivedMsg.some((m) => !m.viewed)) {
+              let toReadArr = messages.filter((els) => !els.viewed);
+              let informerArr: IPMInformer[] = [];
+              toReadArr.forEach((sMsg) => {
+                informerArr.push({
+                  id: sMsg.id,
+                  sender_id: sMsg.sender_user.id!,
+                  recipient_id: sMsg.recipient_user.id!,
+                });
+              });
+              this.pmSvc.newPmsPresent.next(informerArr);
+            }
+          });
       } else {
         this.username = undefined;
         this.isAdmin = undefined;
@@ -121,6 +143,7 @@ export class HeaderComponent {
     if (this.privSub) this.privSub.unsubscribe();
     if (this.pmSub) this.pmSub.unsubscribe();
     if (this.newPmSub) this.newPmSub.unsubscribe();
+    if (this.initMsgSub) this.initMsgSub.unsubscribe();
   }
 
   isHome(): boolean {

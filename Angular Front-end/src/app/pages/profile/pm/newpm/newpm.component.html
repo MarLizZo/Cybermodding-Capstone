@@ -4,7 +4,10 @@
         <h4 class="mt-4 mb-0 text-center">Errori nel caricamento della pagina... Per favore riprova!</h4>
     </div>
     <div *ngIf="!isLoadingPage && !isWaitingPage && errorsMsgs.length == 0" class="container-fluid mt-4">
-        <h2 class="m-0">Nuovo Messaggio Privato</h2>
+        <div class="d-flex align-items-center">
+            <i class="bi bi-arrow-left-circle fs-2 me-4" [routerLink]="'/profile/pm'"></i>
+            <h2 class="m-0">Nuovo Messaggio Privato</h2>
+        </div>
 
         <div class="d-flex flex-column align-items-center mt-5">
             <form #f>
@@ -24,9 +27,9 @@
                 </div>
 
                 <input #titleInput type="text"
-                    class="form-control border-0 rounded-0 rounded-end-1 px-2 shadow-none mt-5" placeholder="Title.."
+                    class="form-control border-0 rounded-0 rounded-end-1 px-2 shadow-none mt-4" placeholder="Title.."
                     name="title" [(ngModel)]="pm_title">
-                <div class="editor-container mt-3 w-100 shadow">
+                <div class="editor-container mt-5 w-100 shadow">
                     <app-editor-form [type]="'newpm'" (submitPost)="sendMessage($event)"></app-editor-form>
                 </div>
             </form>

@@ -21,67 +21,76 @@
                 Messaggio</button>
             <button #sentBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0 btn-selected my-2 my-md-0"
                 (click)="switchView(0)">Messaggi
-                Ricevuti</button>
+                Ricevuti <{{ receivedMessages.length }}></button>
             <button #receivedBtn class="btn custom-btn btn-sm px-4 py-2 rounded-1 border-0"
-                (click)="switchView(1)">Messaggi Inviati</button>
+                (click)="switchView(1)">Messaggi Inviati <{{ sentMessages.length }}></button>
         </div>
         <div *ngIf="isReceivedView" class="msgs-container p-3 pb-4">
-            <div *ngIf="receivedMessages.length == 0" class="d-flex justify-content-center">Nessun messaggio ricevuto..
+            <div *ngIf="receivedMessages.length == 0" class="d-flex justify-content-center">
+                Nessun messaggio ricevuto..
             </div>
             <div *ngFor="let msg of receivedMessages; let i = index; let first = first" class="single-msg shadow"
                 [ngClass]="{'new-msg' : !msg.viewed, 'mt-4' : !first}">
-                <div class="sm-head px-3 pb-1 d-flex justify-content-between align-items-center rounded-1">
+                <div class="sm-head px-3 pb-1 rounded-1">
                     <div class="info">
-                        <div class="tit d-flex align-items-center">
+                        <div class="d-flex align-items-center">
                             <span *ngIf="msg.viewed" class="txt-orange fs-5 fw-medium">>&nbsp;</span>
                             <span *ngIf="!msg.viewed"><i
                                     class="bi bi-exclamation-circle text-danger"></i>&nbsp;&nbsp;</span>
-                            <p class="m-0 fw-medium fs-5 trunc">{{ msg.title }}</p>
+                            <p class="title m-0 fw-medium fs-5 trunc" (click)="setSingleMsgView(msg)">{{ msg.title }}
+                            </p>
                         </div>
                         <p class="m-0">Da:&nbsp;<span class="fw-medium">{{ msg.sender_user!.username
                                 }}</span>&nbsp;il:&nbsp;{{ msg.date | date : 'dd-MM-YY' }}</p>
                     </div>
-                    <i class="bi bi-arrow-bar-down" (click)="collapseMark(i)"></i>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableRArr[i]" class="sm-container p-3 pb-4">
-                    <div *ngIf="!replyArr[i]">
-                        <div class="mb-2 fs-5 fw-medium">{{ msg.title }}</div>
-                        <div class="mb-3 pb-2 date-info">Messaggio Inviato il: {{ msg.date | date : 'dd-MM-YY' }} alle
-                            ore
-                            {{ msg.date | date :
-                            'HH:mm' }}</div>
-                        <div class="sm-content pb-4" [innerHTML]="msg.content"></div>
-                        <div *ngIf="!replyArr[i]" class="d-flex justify-content-center mt-4">
-                            <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Rispondi'"
-                                (click)="replyClick(i)"></app-orange-button>
-                        </div>
-                    </div>
-                    <div *ngIf="replyArr[i]" class="mt-5">
-                        <app-editor-form [type]="'pm'" [quoted]="getQuoteMsg(i)"
-                            (submitPost)="doReply($event, i)"></app-editor-form>
-                    </div>
                 </div>
             </div>
         </div>
+
         <div *ngIf="isSentView" class="msgs-container p-3 pb-4">
             <div *ngIf="sentMessages.length == 0" class="d-flex justify-content-center">Nessun messaggio inviato..</div>
             <div *ngFor="let msg of sentMessages; let i = index; let first = first" class="single-msg shadow"
                 [ngClass]="{'mt-4' : !first}">
-                <div class="sm-head px-3 py-0 pb-1 d-flex justify-content-between align-items-center rounded-1">
+                <div class="sm-head px-3 py-0 pb-1 rounded-1">
                     <div class="info">
-                        <p class="m-0 fw-medium fs-5 trunc">{{ msg.title }}</p>
+                        <div class="d-flex align-items-center">
+                            <span class="txt-orange fs-5 fw-medium">>&nbsp;</span>
+                            <p class="title m-0 fw-medium fs-5 trunc" (click)="setSingleMsgView(msg)">{{ msg.title }}
+                            </p>
+                        </div>
                         <p class="m-0">Inviato a:&nbsp;<span class="fw-medium">{{ msg.recipient_user!.username
                                 }}</span>&nbsp;il:&nbsp;{{ msg.date | date : 'dd-MM-YY' }}</p>
                     </div>
-                    <i class="bi bi-arrow-bar-down" (click)="collapseableSArr[i] = !collapseableSArr[i]"></i>
                 </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableSArr[i]" class="sm-container p-3 pb-4">
-                    <div class="mb-2 fs-5 fw-medium">{{ msg.title }}</div>
-                    <div class="mb-3 pb-2 date-info">Messaggio Inviato il: {{ msg.date | date : 'dd-MM-YY' }} alle ore
-                        {{ msg.date | date :
-                        'HH:mm' }}</div>
-                    <div class="sm-content pb-4" [innerHTML]="msg.content"></div>
+            </div>
+        </div>
+
+        <div *ngIf="isSingleMsgView" class="sm-container p-3 pb-4">
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-arrow-left-circle fs-2 me-3" (click)="resetSingleMsgView()"></i>
+                <span class="fs-5">Indietro</span>
+            </div>
+            <div *ngIf="!isReplyToMsgView">
+                <div class="mb-2 fs-4 fw-medium">{{ singleMsg?.title }}</div>
+                <div class="mb-3 pb-2 date-info">Messaggio Inviato il: {{ singleMsg?.date | date : 'dd-MM-YY' }}
+                    alle
+                    ore
+                    {{ singleMsg?.date | date :
+                    'HH:mm' }}</div>
+                <div class="sm-content pb-4" [innerHTML]="singleMsg?.content"></div>
+                <div *ngIf="singleMsg?.sender_user!.id != profileData!.id" class="d-flex justify-content-center mt-4">
+                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Rispondi'"
+                        (click)="isReplyToMsgView = true"></app-orange-button>
                 </div>
+            </div>
+            <div *ngIf="isReplyToMsgView" class="mt-3">
+                <p class="fs-5 mb-1">Rispondi a: <span class="fw-medium">{{ singleMsg?.sender_user?.username }}</span>
+                </p>
+                <p class="fs-5">Titolo originale: <span>{{ singleMsg?.title }}</span></p>
+                <app-editor-form [type]="'pm'" [quoted]="getQuoteMsg()"
+                    (submitPost)="doReply($event)"></app-editor-form>
+                <p *ngIf="msgSentCorrectly" class="mt-3 mb-0 text-center fs-4 fw-medium">Messaggio inviato
+                    correttamente!</p>
             </div>
         </div>
     </div>

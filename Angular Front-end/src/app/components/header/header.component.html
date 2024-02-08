@@ -67,6 +67,7 @@
         </div>
         <div class="d-none d-md-flex align-items-center">
             <li class="nav-item list-unstyled" ngbDropdown>
+                <a class="nav-link d-inline fw-medium me-3" [routerLink]="'profile/pm'">Messaggi Privati</a>
                 <a class="nav-link d-inline fw-medium" tabindex="0" ngbDropdownToggle id="navbarDropdownSections"
                     role="button">Sezioni Principali</a>
                 <div ngbDropdownMenu class="dropdown-menu dropdown-menu-start dropdown-menu-md-end">
@@ -85,6 +86,7 @@
         </div>
     </div>
     <div class="search-container align-self-center align-self-md-auto">
-        <input #searchInput type="text" class="form-control form-control-sm border-0" placeholder="Ricerca nel sito..">
+        <input id="searchField" #searchInput type="text" class="form-control form-control-sm border-0"
+            placeholder="Ricerca nel sito..">
     </div>
 </div>

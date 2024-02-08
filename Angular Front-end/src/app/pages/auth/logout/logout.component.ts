@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { OnlinespyService } from 'src/app/services/onlinespy.service';
+import { PmService } from 'src/app/services/pm.service';
 
 @Component({
   selector: 'app-logout',
@@ -13,7 +14,8 @@ export class LogoutComponent {
   constructor(
     private svc: AuthService,
     private router: Router,
-    private wsSpy: OnlinespyService
+    private wsSpy: OnlinespyService,
+    private pmSvc: PmService
   ) {}
 
   isLoadingPage: boolean = true;
@@ -34,7 +36,7 @@ export class LogoutComponent {
           ? 'text-danger'
           : res?.isMod
           ? 'text-green'
-          : '';
+          : 'text-orange';
       }
     });
 
@@ -48,6 +50,7 @@ export class LogoutComponent {
 
   ngAfterViewInit() {
     this.wsSpy.sendDisconnectInfo('remove');
+    this.pmSvc.disconnect();
     setTimeout(() => {
       this.svc.logout();
     }, 2000);
