@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { UserLevel } from '../enums/user-level';
 import { ICommentData } from '../interfaces/icomment-data';
 import { IPostDataPaged } from '../interfaces/ipost-data-paged';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 type minimalUserData = {
   id: number;
@@ -16,7 +17,11 @@ type minimalUserData = {
   providedIn: 'root',
 })
 export class CommonService {
-  constructor(private router: Router, private auth_svc: AuthService) {}
+  constructor(
+    private router: Router,
+    private auth_svc: AuthService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   getClassName(level: UserLevel | string): string {
     return level.toString() == 'BASE'
@@ -81,5 +86,13 @@ export class CommonService {
         );
       }
     });
+  }
+
+  bypassSec(html: string): SafeHtml {
+    let safeHtml = html.replaceAll(
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      ''
+    );
+    return this.sanitizer.bypassSecurityTrustHtml(safeHtml);
   }
 }

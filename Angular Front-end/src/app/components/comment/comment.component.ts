@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ICommentData } from 'src/app/interfaces/icomment-data';
 import { ThreadUserDetailsComponent } from '../thread-user-details/thread-user-details.component';
 import { BtnReplyComponent } from '../btn-reply/btn-reply.component';
+import { SafeHtml } from '@angular/platform-browser';
+import { CommonService } from 'src/app/services/common.service';
 
 @Component({
   selector: 'app-comment',
@@ -17,11 +19,14 @@ export class CommentComponent {
 
   @Output() onReply = new EventEmitter();
   @Output() onDelete = new EventEmitter();
+  @Input() canDelete: boolean = false;
 
-  constructor() {}
+  safeHtml!: SafeHtml;
+
+  constructor(private common: CommonService) {}
 
   ngOnInit() {
-    //
+    this.safeHtml = this.common.bypassSec(this.commentData.content);
   }
 
   ngOnDestroy() {

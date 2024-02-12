@@ -1,19 +1,16 @@
 .outer-container {
   background-color: var(--bg-lighter);
-
-  .form-floating {
-    .form-control {
-      background-color: var(--bg);
-      border: 1px solid var(--orange-hover);
-      color: var(--txt);
-    }
-
-    .form-control::placeholder {
-      color: var(--txt-muted) !important;
-    }
-  }
+  border: 1px solid var(--near-black);
 }
 
-app-ckeditor {
-  height: max-content;
+ngx-editor {
+  width: 97.5%;
+}
+
+.min-h-50 {
+  min-height: 50vh;
+}
+
+.min-h-90 {
+  min-height: 90vh;
 }

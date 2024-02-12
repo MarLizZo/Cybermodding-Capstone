@@ -7,6 +7,7 @@ import { IPrivateMessageData } from 'src/app/interfaces/iprivate-message-data';
 import { IQuoteInfo } from 'src/app/interfaces/iquote-info';
 import { IUserData } from 'src/app/interfaces/iuser-data';
 import { AuthService } from 'src/app/services/auth.service';
+import { CommonService } from 'src/app/services/common.service';
 import { PmService } from 'src/app/services/pm.service';
 import { UserService } from 'src/app/services/user.service';
 
@@ -64,7 +65,8 @@ export class PmComponent {
     private userSvc: UserService,
     private authSvc: AuthService,
     private pmSvc: PmService,
-    private modalSvc: NgbModal
+    private modalSvc: NgbModal,
+    private common: CommonService
   ) {}
 
   ngOnInit() {
@@ -122,6 +124,16 @@ export class PmComponent {
                   (el) => el.sender_user!.id == res.user_id
                 );
 
+                this.receivedMessages = this.receivedMessages.map((msg) => {
+                  msg.content = this.common.bypassSec(msg.content.toString());
+                  return msg;
+                });
+
+                this.sentMessages = this.sentMessages.map((msg) => {
+                  msg.content = this.common.bypassSec(msg.content.toString());
+                  return msg;
+                });
+
                 const currentValues = this.subsBoolArr.value;
                 currentValues[1] = true;
                 this.subsBoolArr.next(currentValues);
@@ -144,9 +156,11 @@ export class PmComponent {
                 let ms = newpm as IPrivateMessageData;
 
                 if (ms.recipient_user?.id == res.user_id) {
+                  ms.content = this.common.bypassSec(ms.content.toString());
                   this.receivedMessages.unshift(ms);
                 }
                 if (ms.sender_user?.id == res.user_id) {
+                  ms.content = this.common.bypassSec(ms.content.toString());
                   this.sentMessages.unshift(ms);
                   if (this.isReplyToMsgView) {
                     this.msgSentCorrectly = true;
@@ -288,7 +302,7 @@ export class PmComponent {
 
   getQuoteMsg(): IQuoteInfo {
     let supportDiv: HTMLDivElement = document.createElement('div');
-    supportDiv.innerHTML = this.singleMsg!.content;
+    supportDiv.innerHTML = this.singleMsg!.content as string;
     let firstBlockQuote: string | undefined =
       supportDiv.querySelector('blockquote')?.nextElementSibling?.innerHTML;
     let strQuote =
@@ -305,7 +319,7 @@ export class PmComponent {
 
   doReply(text: string) {
     let supportDiv: HTMLDivElement = document.createElement('div');
-    supportDiv.innerHTML = this.singleMsg!.content;
+    supportDiv.innerHTML = this.singleMsg!.content as string;
     let firstBlockQuote: string | undefined =
       supportDiv.querySelector('blockquote')?.nextElementSibling?.innerHTML;
     let strQuote =

@@ -10,8 +10,11 @@
                 }}</span> visitatori anonimi
         </p>
     </div>
-    <div *ngIf="areAllGuests()">
+    <div *ngIf="onlineUsers.length && areAllGuests()">
         <p class="m-0">Ci sono <span class="txt-orange">{{ onlineUsers.length }}</span> visitatori anonimi al momento..
         </p>
+    </div>
+    <div *ngIf="!onlineUsers.length">
+        <p class="m-0">Non ci sono utenti online al momento.</p>
     </div>
 </div>

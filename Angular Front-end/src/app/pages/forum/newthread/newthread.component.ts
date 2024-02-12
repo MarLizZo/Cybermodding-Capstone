@@ -109,7 +109,7 @@ export class NewthreadComponent {
         .subscribe((res) => {
           if (res.response!.ok) {
             this.threadTitle = res.title;
-            this.editPostInitBody = res.body;
+            this.editPostInitBody = res.body as string;
           } else {
             this.errorsMsgs.push(
               'Errore nel caricamento delle informazioni sul post.'

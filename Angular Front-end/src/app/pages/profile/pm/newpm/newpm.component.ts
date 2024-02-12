@@ -185,7 +185,7 @@ export class NewpmComponent {
             setTimeout(() => {
               this.isMessageTriggered = false;
               this.router.navigateByUrl('/profile/pm');
-            }, 3000);
+            }, 2500);
           }
         });
 

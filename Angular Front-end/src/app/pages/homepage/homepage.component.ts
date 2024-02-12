@@ -147,6 +147,11 @@ export class HomepageComponent {
       )
       .subscribe((res) => {
         this.postsData = res;
+        res.content = res.content.map((el) => {
+          el.body = this.common.bypassSec(el.body.toString());
+          return el;
+        });
+
         this.pagesArr = [];
         if (page + 1 <= 3) {
           for (let i = 0; i < res.totalPages; i++) {

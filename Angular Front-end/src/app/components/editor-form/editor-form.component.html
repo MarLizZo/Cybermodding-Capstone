@@ -1,7 +1,11 @@
-<div class="outer-container d-flex flex-column justify-content-center align-items-center py-3">
-    <app-ckeditor [style]="heightStyle" class="w-100 d-flex flex-column"
-        [placeholderText]="type == 'comment' ? 'Rispondi qui..' : 'Scrivi qui..'" [type]="type"
-        (onSubmit)="doPost($event)" [quotedMsg]="quoted == undefined ? undefined : quoted"
-        [threadTitle]="postTitle == undefined ? undefined : postTitle"
-        [postBody]="postBody == undefined ? undefined : postBody" [type]="type"></app-ckeditor>
+<div class="outer-container d-flex flex-column align-items-center rounded-1" [class]="heightStyle">
+    <ngx-editor-menu [editor]="editor" [toolbar]="toolbar" [colorPresets]="preset_colors" class="w-100 mt-2">
+    </ngx-editor-menu>
+    <ngx-editor [editor]="editor" [(ngModel)]="postBody" [disabled]="false" [placeholder]="'Scrivi qui..'"
+        class="mt-2 flex-grow-1"></ngx-editor>
+    <div class="w-100 d-flex btns-container justify-content-end p-3">
+        <app-orange-button *ngIf="type != 'comment' && type != 'newpm'" [btnTheme]="'dark'" [btnTitle]="'Anteprima'"
+            class="me-3"></app-orange-button>
+        <app-orange-button [btnTheme]="'orange'" [btnTitle]="getButtonString()" (click)="doPost()"></app-orange-button>
+    </div>
 </div>

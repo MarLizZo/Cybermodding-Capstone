@@ -1,3 +1,4 @@
+import { SafeHtml } from '@angular/platform-browser';
 import { PostType } from '../enums/post-type';
 import { UserLevel } from '../enums/user-level';
 import { ICommentPageable } from './icommentpageable';
@@ -10,7 +11,7 @@ export interface IPostDataPaged {
   response: IResponseBase;
   id: number;
   title: string;
-  body: string;
+  body: string | SafeHtml;
   publishedDate: Date;
   type: PostType;
   author: IUserData;

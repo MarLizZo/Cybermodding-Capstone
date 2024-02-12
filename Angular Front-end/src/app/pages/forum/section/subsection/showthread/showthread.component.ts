@@ -124,6 +124,9 @@ export class ShowthreadComponent {
         .subscribe((res) => {
           if (res.response.ok) {
             this.postData = res;
+            this.postData.body = this.common.bypassSec(
+              this.postData.body.toString()
+            );
             this.mainSectionTitle = res.main_section_title!;
             this.subSectionTitle = res.subsection_title!;
             this.getReactionsCount();
@@ -274,15 +277,13 @@ export class ShowthreadComponent {
         user_id: comm.user.id!,
         user_level: comm.user_level!,
       };
-      console.log(this.quotedMessage);
     } else {
       this.quotedMessage = {
-        content: this.postData.body,
+        content: this.postData.body as string,
         user_id: this.postData.author.id!,
         username: this.postData.author.username,
         user_level: this.postData.user_level!,
       };
-      console.log(this.quotedMessage);
     }
   }
 

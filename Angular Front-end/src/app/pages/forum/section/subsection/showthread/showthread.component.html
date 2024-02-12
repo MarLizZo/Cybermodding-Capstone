@@ -56,7 +56,7 @@
         </div>
         <app-comment *ngFor="let comment of postData.comments.content; let i = index" [commentData]="comment"
             [commentIndex]="getCommentNumber(i + 1)" class="row w-100 mt-3 rounded-1" (onReply)="goToReply($event)"
-            (onDelete)="deleteComment($event)"></app-comment>
+            (onDelete)="deleteComment($event)" [canDelete]="comment.user.id == userID"></app-comment>
         <div class="row w-100 pageable-container py-2 px-3 my-5 d-flex align-items-center">
             <div *ngIf="!postData.comments.content.length && postData.comments.number == 0"
                 class="d-flex justify-content-center">

@@ -42,7 +42,13 @@ public class WSOnlineSpyHandler extends TextWebSocketHandler {
         String onlineUsersJson = objectMapper.writeValueAsString(users);
 
         for (WebSocketSession session : sessions.values()) {
-            session.sendMessage(new TextMessage(onlineUsersJson));
+            try {
+                session.sendMessage(new TextMessage(onlineUsersJson));
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                sessions.remove(session.getId());
+                users.removeIf(u -> u.getSession_id().equals(session.getId()));
+            }
         }
     }
 
@@ -100,6 +106,8 @@ public class WSOnlineSpyHandler extends TextWebSocketHandler {
         try {
             sendOnlineUsersToClientAfterDisconnect(session.getId());
         } catch (Exception ex) {
+            sessions.remove(session.getId());
+            users.removeIf(u -> u.getSession_id().equals(session.getId()));
             System.out.println("Exception on Spy disconnected > " + ex.getMessage());
         }
     }
