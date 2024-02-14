@@ -1,0 +1,31 @@
+@import "mixins";
+@include text-orange;
+@include special-title;
+@include truncate;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  i {
+    cursor: pointer;
+  }
+
+  .single-message {
+    background-color: var(--bg);
+
+    p {
+      width: max-content;
+    }
+
+    .title {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .head-info {
+    border-bottom: 1px solid var(--near-black);
+  }
+}

@@ -45,9 +45,9 @@ public class WSOnlineSpyHandler extends TextWebSocketHandler {
             try {
                 session.sendMessage(new TextMessage(onlineUsersJson));
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
                 sessions.remove(session.getId());
-                users.removeIf(u -> u.getSession_id().equals(session.getId()));
+                boolean removed = users.removeIf(u -> u.getSession_id().equals(session.getId()));
+                System.out.println("Removed: " + removed + " -- " + ex.getMessage());
             }
         }
     }

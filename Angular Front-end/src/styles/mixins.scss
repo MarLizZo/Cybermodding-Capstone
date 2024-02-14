@@ -109,3 +109,13 @@
     }
   }
 }
+
+@mixin special-title {
+  .special-title {
+    background: var(--txt);
+    background: linear-gradient(to right, var(--txt) 0%, var(--orange) 30%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}

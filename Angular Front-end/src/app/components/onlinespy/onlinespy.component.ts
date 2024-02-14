@@ -35,7 +35,7 @@ export class OnlinespyComponent {
             }
             this.svc.getOnlineUsers(this.user_id).subscribe((on) => {
               this.onlineSessions = on;
-              this.clearDuplicate();
+              this.onlineUsers = this.onlineSessions.filter((s) => s.id != 0);
             });
           }
         });
@@ -63,13 +63,5 @@ export class OnlinespyComponent {
 
   goToProfile(id: number, username: string) {
     this.common.goToProfile({ id: id, username: username });
-  }
-
-  clearDuplicate() {
-    this.onlineSessions.forEach((el) => {
-      if (el.id == 0) return;
-      if (this.onlineUsers.findIndex((ou) => ou.id == el.id) != -1) return;
-      this.onlineUsers.push(el);
-    });
   }
 }

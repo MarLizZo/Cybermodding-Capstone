@@ -3,14 +3,7 @@
 @include pageable-mixin;
 @include text-mod;
 @include text-orange;
-
-h1 {
-  background: var(--txt);
-  background: linear-gradient(to right, var(--orange) 0%, var(--txt) 20%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+@include special-title;
 
 .sections-container {
   background-color: var(--bg-lighter);

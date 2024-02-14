@@ -45,6 +45,12 @@ public class ContactMsgController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/close/{id}")
     public ResponseEntity<ContactMsgResponse> setClose(@PathVariable Long id) {
-        return ResponseEntity.ok(svc.setMessageAsClosed(id));
+        return ResponseEntity.ok(svc.setMessageState(id, true));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/reopen/{id}")
+    public ResponseEntity<ContactMsgResponse> setOpen(@PathVariable Long id) {
+        return ResponseEntity.ok(svc.setMessageState(id, false));
     }
 }

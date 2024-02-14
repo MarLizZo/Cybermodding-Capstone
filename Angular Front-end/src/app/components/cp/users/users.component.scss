@@ -1,0 +1,12 @@
+@import "mixins";
+@include text-orange;
+@include special-title;
+@include truncate;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  i {
+    cursor: pointer;
+  }
+}

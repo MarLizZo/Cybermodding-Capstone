@@ -9,6 +9,13 @@ import { OrangeButtonComponent } from 'src/app/components/orange-button/orange-b
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-loader.component';
+import { BanComponent } from 'src/app/components/cp/ban/ban.component';
+import { BlocksComponent } from 'src/app/components/cp/blocks/blocks.component';
+import { ContactmsgsComponent } from 'src/app/components/cp/contactmsgs/contactmsgs.component';
+import { InfosComponent } from 'src/app/components/cp/infos/infos.component';
+import { SectionsComponent } from 'src/app/components/cp/sections/sections.component';
+import { ThreadsComponent } from 'src/app/components/cp/threads/threads.component';
+import { UsersComponent } from 'src/app/components/cp/users/users.component';
 
 @NgModule({
   declarations: [AdmincpComponent],
@@ -21,6 +28,13 @@ import { InlineLoaderComponent } from 'src/app/components/inline-loader/inline-l
     NgbCollapseModule,
     ModalComponent,
     InlineLoaderComponent,
+    BanComponent,
+    BlocksComponent,
+    ContactmsgsComponent,
+    InfosComponent,
+    SectionsComponent,
+    ThreadsComponent,
+    UsersComponent,
   ],
 })
 export class AdmincpModule {}

@@ -159,4 +159,10 @@ export class ModerationService {
   public setMessageClosed(id: number): Observable<IContactMessage> {
     return this.http.get<IContactMessage>(this.contactsApiUrl + '/close/' + id);
   }
+
+  public setMessageOpen(id: number): Observable<IContactMessage> {
+    return this.http.get<IContactMessage>(
+      this.contactsApiUrl + '/reopen/' + id
+    );
+  }
 }

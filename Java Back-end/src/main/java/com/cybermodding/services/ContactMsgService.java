@@ -51,11 +51,11 @@ public class ContactMsgService {
         return new ContactMsgResponse(new ResponseBase(true, "", LocalDateTime.now()), cms);
     }
 
-    public ContactMsgResponse setMessageAsClosed(Long id) {
+    public ContactMsgResponse setMessageState(Long id, boolean state) {
         Optional<ContactMessage> cm = repo.findById(id);
 
         if (cm.isPresent()) {
-            cm.get().setClosed(true);
+            cm.get().setClosed(state);
             repo.save(cm.get());
             return new ContactMsgResponse(new ResponseBase(true, "", LocalDateTime.now()), cm.get());
         } else {
