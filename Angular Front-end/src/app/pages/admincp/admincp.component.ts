@@ -51,17 +51,17 @@ export class AdmincpComponent {
   contactMessagesErrorString: string | undefined;
 
   isMessagesCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isMsgOpenView: true,
+      isMsgOpenView: false,
       isMsgClosedView: false,
     },
   };
 
   isUsersCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isSearchUsersView: false,
+      isSearchUsersView: true,
       isUsersStatsView: false,
     },
   };
@@ -245,35 +245,13 @@ export class AdmincpComponent {
 
   //   inputSearchUser: string = '';
   //   usersFound!: IUserDataPageable;
-  //   collapseableArr: boolean[] = [true, true, true, true, true, true, true, true];
   //   userNamesArr: string[] = [];
   //   userPagesArr: number[] = [];
-  //   singleContactMsg: IContactMessageBody | null = null;
 
   //   inputSearchThread: string = '';
   //   threadSearchCriteria: number = 0;
   //   threadsFound!: IPostHomePaged;
-  //   collapseableTArr: boolean[] = [
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //   ];
   //   threadsCustomFound!: IPostHomePaged;
-  //   collapseableTCArr: boolean[] = [
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //   ];
   //   startDateThread: string = '2023/1/1';
   //   endDateThread: string = '2023/12/1';
   //   threadTitleArr: string[] = [];
@@ -283,16 +261,6 @@ export class AdmincpComponent {
 
   //   sectionsArr: ISectionData[] = [];
   //   sectionsTitleArr: string[] = [];
-  //   collapseableSArr: boolean[] = [
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //   ];
   //   activeBoolArr: boolean[] = [];
   //   selectedSSIndex: number = -1;
   //   newSubSectionParentId: number = -1;
@@ -301,16 +269,6 @@ export class AdmincpComponent {
   //   blockContent: string = '';
   //   blockTitle: string = '';
   //   blocksArr: ISideBlockData[] = [];
-  //   collapseableBArr: boolean[] = [
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //     true,
-  //   ];
   //   collapseableCMArr: boolean[] = [];
   //   activeBoolBArr: boolean[] = [];
   //   blocksTitleArr: string[] = [];
@@ -393,99 +351,6 @@ export class AdmincpComponent {
     if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
   }
 
-  //   switchModeration(flag: number): void {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     if (flag == 0) {
-  //       if (!this.isContactModeration) {
-  //         this.isContactModeration = true;
-  //         this.isUsersModeration = false;
-  //         this.isThreadsModeration = false;
-  //         this.isSectionsModeration = false;
-  //         this.isBlocksModeration = false;
-  //         this.contactsBtn.nativeElement.classList.add('btn-selected');
-  //         this.usersBtn.nativeElement.classList.remove('btn-selected');
-  //         this.threadsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.blocksBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 1) {
-  //       if (!this.isUsersModeration) {
-  //         this.isContactModeration = false;
-  //         this.isUsersModeration = true;
-  //         this.isThreadsModeration = false;
-  //         this.isSectionsModeration = false;
-  //         this.isBlocksModeration = false;
-  //         this.contactsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.usersBtn.nativeElement.classList.add('btn-selected');
-  //         this.threadsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.blocksBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 2) {
-  //       if (!this.isThreadsModeration) {
-  //         this.isContactModeration = false;
-  //         this.isThreadsModeration = true;
-  //         this.isUsersModeration = false;
-  //         this.isSectionsModeration = false;
-  //         this.isBlocksModeration = false;
-  //         this.contactsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.usersBtn.nativeElement.classList.remove('btn-selected');
-  //         this.threadsBtn.nativeElement.classList.add('btn-selected');
-  //         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.blocksBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 3) {
-  //       if (!this.isSectionsModeration) {
-  //         this.isContactModeration = false;
-  //         this.isSectionsModeration = true;
-  //         this.isUsersModeration = false;
-  //         this.isThreadsModeration = false;
-  //         this.isBlocksModeration = false;
-  //         this.contactsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.usersBtn.nativeElement.classList.remove('btn-selected');
-  //         this.threadsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.sectionsBtn.nativeElement.classList.add('btn-selected');
-  //         this.blocksBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 4) {
-  //       if (!this.isBlocksModeration) {
-  //         this.isContactModeration = false;
-  //         this.isBlocksModeration = true;
-  //         this.isUsersModeration = false;
-  //         this.isThreadsModeration = false;
-  //         this.isSectionsModeration = false;
-  //         this.contactsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.usersBtn.nativeElement.classList.remove('btn-selected');
-  //         this.threadsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.sectionsBtn.nativeElement.classList.remove('btn-selected');
-  //         this.blocksBtn.nativeElement.classList.add('btn-selected');
-  //       }
-  //     }
-  //   }
-
-  //   switchThreadView(flag: number): void {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     if (flag == 0) {
-  //       if (!this.isThreadViewSearch) {
-  //         this.isThreadViewSearch = true;
-  //         this.isThreadViewAll = false;
-  //         this.threadViewSearchBtn.nativeElement.classList.add('btn-selected');
-  //         this.threadViewAllBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 1) {
-  //       if (!this.isThreadViewAll) {
-  //         this.isThreadViewSearch = false;
-  //         this.isThreadViewAll = true;
-  //         this.threadViewSearchBtn.nativeElement.classList.remove('btn-selected');
-  //         this.threadViewAllBtn.nativeElement.classList.add('btn-selected');
-  //       }
-  //     }
-  //   }
-
   getContactMessages() {
     if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
     this.isWaitingPanel = true;
@@ -509,42 +374,6 @@ export class AdmincpComponent {
         this.isWaitingPanel = false;
       });
   }
-
-  //   showMsg(index: number) {
-  //     this.singleContactMsg = this.openContactMessagesArr[index];
-  //     this.isSingleContactModeration = true;
-  //   }
-
-  //   setMsgAsClosed() {
-  //     this.errorSingleContact.nativeElement.classList.add('d-none');
-  //     let index: number = this.openContactMessagesArr.findIndex(
-  //       (el) => el.id == this.singleContactMsg?.id
-  //     );
-
-  //     if (index >= 0) {
-  //       this.svc
-  //         .setMessageClosed(this.openContactMessagesArr[index].id)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.errorSingleContact.nativeElement.classList.remove('d-none');
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           if (res.response.ok) {
-  //             this.openContactMessagesArr[index].closed = true;
-  //             this.closedContactMessagesArr.push(
-  //               this.openContactMessagesArr[index]
-  //             );
-  //             this.openContactMessagesArr.splice(index, 1);
-  //             this.isSingleContactModeration = false;
-  //             console.log(res);
-  //           } else {
-  //             this.errorSingleContact.nativeElement.classList.remove('d-none');
-  //           }
-  //         });
-  //     }
-  //   }
 
   //   getBlocks() {
   //     this.isWaitingPanel = true;
@@ -574,232 +403,6 @@ export class AdmincpComponent {
   //         }
   //         this.isWaitingPanel = false;
   //       });
-  //   }
-
-  //   switchBlockView(flag: number): void {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     if (flag == 0) {
-  //       if (!this.isBlocksViewCreate) {
-  //         this.isBlocksViewCreate = true;
-  //         this.isBlockViewAll = false;
-  //         this.blockViewCreateBtn.nativeElement.classList.add('btn-selected');
-  //         this.blockViewAllBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 1) {
-  //       if (!this.isBlockViewAll) {
-  //         this.isBlocksViewCreate = false;
-  //         this.isBlockViewAll = true;
-  //         this.blockViewCreateBtn.nativeElement.classList.remove('btn-selected');
-  //         this.blockViewAllBtn.nativeElement.classList.add('btn-selected');
-  //         this.getBlocks();
-  //       }
-  //     }
-  //   }
-
-  //   switchSectionView(flag: number): void {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     if (flag == 0) {
-  //       if (!this.isSectionViewCreate) {
-  //         this.isSectionViewCreate = true;
-  //         this.isSubSectionViewCreate = false;
-  //         this.isSectionViewAll = false;
-  //         this.sectionViewCreateBtn.nativeElement.classList.add('btn-selected');
-  //         this.subSectionViewCreateBtn.nativeElement.classList.remove(
-  //           'btn-selected'
-  //         );
-  //         this.sectionViewAllBtn.nativeElement.classList.remove('btn-selected');
-  //       }
-  //     } else if (flag == 1) {
-  //       if (!this.isSubSectionViewCreate) {
-  //         this.isSectionViewCreate = false;
-  //         this.isSubSectionViewCreate = true;
-  //         this.isSectionViewAll = false;
-  //         this.sectionViewCreateBtn.nativeElement.classList.remove(
-  //           'btn-selected'
-  //         );
-  //         this.subSectionViewCreateBtn.nativeElement.classList.add(
-  //           'btn-selected'
-  //         );
-  //         this.sectionViewAllBtn.nativeElement.classList.remove('btn-selected');
-  //         this.sectionsArr = [];
-  //         this.getSections();
-  //       }
-  //     } else if (flag == 2) {
-  //       if (!this.isSectionViewAll) {
-  //         this.isSectionViewCreate = false;
-  //         this.isSubSectionViewCreate = false;
-  //         this.isSectionViewAll = true;
-  //         this.sectionViewCreateBtn.nativeElement.classList.remove(
-  //           'btn-selected'
-  //         );
-  //         this.subSectionViewCreateBtn.nativeElement.classList.remove(
-  //           'btn-selected'
-  //         );
-  //         this.sectionViewAllBtn.nativeElement.classList.add('btn-selected');
-  //         this.sectionsArr = [];
-  //         this.getSections();
-  //       }
-  //     }
-  //   }
-
-  //   searchUsers(page: number): void {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     this.searcUserSub = this.svc
-  //       .getUsersFromName(this.inputSearchUser, page)
-  //       .pipe(
-  //         catchError((err) => {
-  //           this.errorPanelMsg = 'Errore nel caricamento degli utenti.';
-  //           this.isErrorPanel = true;
-  //           return EMPTY;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         this.userNamesArr = [];
-  //         this.userPagesArr = [];
-
-  //         if (page + 1 <= 3) {
-  //           for (let i = 0; i < res.totalPages; i++) {
-  //             i < 5 || i > res.totalPages - 3
-  //               ? this.userPagesArr.push(i + 1)
-  //               : null;
-  //           }
-  //         } else if (page + 1 >= res.totalPages - 2) {
-  //           for (let i = 0; i < res.totalPages; i++) {
-  //             i < 2 || i > res.totalPages - 6
-  //               ? this.userPagesArr.push(i + 1)
-  //               : null;
-  //           }
-  //         } else {
-  //           this.userPagesArr.push(1);
-  //           for (let i = page - 2; i < page + 3; i++) {
-  //             this.userPagesArr.push(i + 1);
-  //           }
-  //           this.userPagesArr.push(res.totalPages);
-  //         }
-
-  //         for (let i = 0; i < res.numberOfElements; i++) {
-  //           this.userNamesArr[i] = res.content[i].username;
-  //         }
-
-  //         for (let i = 0; i < this.collapseableArr.length; i++) {
-  //           this.collapseableArr[i] = true;
-  //         }
-
-  //         this.usersFound = res;
-
-  //         setTimeout(() => {
-  //           document.getElementById('top-user')?.scrollIntoView();
-  //         }, 200);
-  //       });
-  //   }
-
-  //   resetUsersFields(num: number): void {
-  //     let usernameP: HTMLElement | null = document.getElementById(
-  //       'err-us-' + num
-  //     );
-  //     let emailP: HTMLElement | null = document.getElementById('err-em-' + num);
-  //     let descriptionP: HTMLElement | null = document.getElementById(
-  //       'err-de-' + num
-  //     );
-  //     usernameP!.classList.add('d-none');
-  //     descriptionP?.classList.add('d-none');
-  //     emailP?.classList.add('d-none');
-  //   }
-
-  //   doChecksUser(form: NgForm, num: number): boolean {
-  //     let bool: boolean = true;
-  //     let usernameP: HTMLElement | null = document.getElementById(
-  //       'err-us-' + num
-  //     );
-  //     let emailP: HTMLElement | null = document.getElementById('err-em-' + num);
-  //     let descriptionP: HTMLElement | null = document.getElementById(
-  //       'err-de-' + num
-  //     );
-
-  //     if (form.controls['username'].value.length < 3) {
-  //       bool = false;
-  //       usernameP!.classList.remove('d-none');
-  //       usernameP!.innerText = 'Min 3 chars';
-  //     } else if (form.controls['username'].value.length > 30) {
-  //       bool = false;
-  //       usernameP!.classList.remove('d-none');
-  //       usernameP!.innerText = 'Max 30 chars';
-  //     }
-
-  //     if (form.controls['description'].value.length > 25) {
-  //       bool = false;
-  //       descriptionP?.classList.remove('d-none');
-  //     }
-
-  //     if (
-  //       !RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$').test(
-  //         form.controls['email'].value
-  //       )
-  //     ) {
-  //       bool = false;
-  //       emailP?.classList.remove('d-none');
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   canBeModerated(user: IUserData): boolean {
-  //     if (user.id == 1 || user.id == 87) return false;
-  //     else return true;
-  //   }
-
-  //   doUserModerate(data: NgForm, index: number): void {
-  //     this.resetUsersFields(index);
-
-  //     if (this.doChecksUser(data, index)) {
-  //       this.isOpUsers = true;
-  //       let outData: Partial<IUserData> = {
-  //         id: data.controls['uid'].value,
-  //         username: data.controls['username'].value,
-  //         email: data.controls['email'].value,
-  //         description: data.controls['description'].value,
-  //         roles:
-  //           data.controls['role'].value == 4
-  //             ? [{ id: 4, roleName: 'ROLE_BANNED' }]
-  //             : data.controls['role'].value == 2
-  //             ? [{ id: 2, roleName: 'ROLE_MODERATOR' }]
-  //             : data.controls['role'].value == 3
-  //             ? [{ id: 3, roleName: 'ROLE_ADMIN' }]
-  //             : [{ id: 1, roleName: 'ROLE_USER' }],
-  //       };
-
-  //       this.moderateUserSub = this.svc
-  //         .moderate(this.user_id!, outData)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpUsers = false;
-  //             throw err;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           this.userNamesArr[index] = res.username!;
-  //           setTimeout(() => {
-  //             this.isOpUsers = false;
-  //             document
-  //               .querySelector('#userParagMod' + index)
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector('#userParagMod' + index)
-  //                 ?.classList.add('opacity-0');
-  //             }, 3000);
-  //           }, 1000);
-  //           console.log(res);
-  //         });
-  //     } else {
-  //       console.log('Checks not ok');
-  //     }
   //   }
 
   //   doPostModerate(data: NgForm, index: number): void {

@@ -161,7 +161,7 @@ public class UserService {
                                                 r -> r.getRoleName().equals(ERole.ROLE_ADMIN)
                                                                 || r.getRoleName().equals(ERole.ROLE_MODERATOR));
 
-                if (u_repo.existsById(id)) {
+                if (u_repo.existsById(id) && u_repo.existsById(u.getId())) {
                         if (hasPriviliges || id.equals(u.getId())) {
                                 User fromDB = u_repo.findById(u.getId()).get();
                                 fromDB.setUsername(u.getUsername());

@@ -1,3 +1,132 @@
-<div class="main-container h-100">
-    <h2 class="special-title mb-3">Impostazioni Utenti</h2>
+<div class="main-container d-flex flex-column h-100">
+    <h2 class="special-title mb-4">Impostazioni Utenti</h2>
+    <div class="flex-grow-1 overflow-y-auto scrollb">
+        <div *ngIf="!isStatsView" class="d-flex flex-column align-items-center">
+            <p class="mb-2">Cerca utenti</p>
+            <form (submit)="searchUsers(0)"
+                class="w-100 d-flex justify-content-center pb-4 border-bottom border-1 border-black">
+                <input autocomplete="off" [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
+                    class="form-control form-control-sm px-2 border-0 shadow-none resp-input"
+                    placeholder="Cerca utente..">
+            </form>
+            <p *ngIf="usersFound == undefined && !isError" class="mt-4 fw-medium fs-5">Il risultato apparirà
+                qui</p>
+
+            <div *ngIf="isError" class="w-100 mt-5">
+                <h4 class="m-0 pb-1 fs-5 text-center">{{ errorMsg }}</h4>
+            </div>
+
+            <div *ngIf="usersFound != undefined && usersFound.content.length != 0 && !isError && !isSingleUserView"
+                class="w-100 mt-4 p-3">
+                <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-result"
+                    [ngClass]="{'mt-3' : !first}">
+                    <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                        <p class="m-0 fw-medium fs-5 pointer" [innerText]="u.username" (click)="setSingleView(u)"
+                            [ngClass]="{'txt-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
+                    <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
+                        <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersFound.first"
+                            (click)="searchUsers(usersFound.number - 1)">
+                            <i class="bi bi-arrow-bar-left"></i>
+                            <p class="m-0 ms-2">Indietro</p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 d-flex justify-content-center">
+                        <div class="pages d-flex justify-content-center flex-wrap rounded-1">
+                            <div *ngFor="let p of userPagesArr; let first = first;"
+                                [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersFound.number}"
+                                class="btn-page px-2" (click)="searchUsers(p - 1)">
+                                <p class="m-0">{{ p }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
+                        <div class="next rounded-1 px-2 d-flex" *ngIf="!usersFound.last"
+                            (click)="searchUsers(usersFound.number + 1)">
+                            <p class="m-0 me-2">Avanti</p>
+                            <i class="bi bi-arrow-bar-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="isSingleUserView && !isError" class="p-3 w-100">
+                <div class="d-flex align-items-center mb-4">
+                    <i class="bi bi-arrow-left-circle fs-1 txt-orange" (click)="resetSingleView()"></i>
+                    <h4 class="m-0 ms-5">{{ singleUser!.username }}</h4>
+                </div>
+                <div *ngIf="!canBeModerated()">
+                    <p class="m-0 fs-3 fw-medium text-center">.. I Am untouchable ..</p>
+                </div>
+                <form *ngIf="canBeModerated()" #f="ngForm" class="d-flex flex-column align-items-center">
+                    <div class="resp-div">
+                        <label for="uid" class="mb-1 align-self-start">ID Utente</label>
+                        <input autocomplete="off" id="uid" type="text" ngModel name="uid"
+                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                            [(ngModel)]="this.singleUser!.id" disabled>
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="usernameInput">Username</label>
+                            <p id="err-username" class="m-0 text-danger d-none"></p>
+                        </div>
+                        <input autocomplete="off" id="usernameInput" type="text" ngModel name="username"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="this.singleUser!.username" minlength="3" maxlength="30">
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="emailInput">Email</label>
+                            <p id="err-email" class="m-0 text-danger d-none">Invalida</p>
+                        </div>
+                        <input autocomplete="off" ngModel name="email" id="emailInput" type="email"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="this.singleUser!.email">
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="descrInput">Description</label>
+                            <p id="err-descr" class="m-0 text-danger d-none">Max 20 chars</p>
+                        </div>
+                        <input autocomplete="off" id="descrInput" type="text" ngModel name="description"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="this.singleUser!.description" maxlength="25">
+                    </div>
+
+                    <div class="resp-div mt-3 mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="roleInput">Ruolo</label>
+                            <p id="err-role" class="m-0 text-danger d-none">Non consentito</p>
+                        </div>
+                        <select name="role" id="roleInput" [(ngModel)]="this.singleUser!.roles![0].id"
+                            class="form-select form-select-sm border-0 shadow-none">
+                            <option value="1">User</option>
+                            <option value="2">Moderatore</option>
+                            <option value="3">Admin</option>
+                            <option value="4">Bannato</option>
+                        </select>
+                    </div>
+                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera utente'"
+                        (click)="doUserModerate(f)"></app-orange-button>
+                    <div class="mt-3">
+                        <app-inline-loader *ngIf="isOpUsers" [bg]="'lighter'"></app-inline-loader>
+                    </div>
+                    <p id="userParagMod" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
+                        con successo!
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div *ngIf="isStatsView">Yes stats
+            <!--  -->
+        </div>
+    </div>
 </div>

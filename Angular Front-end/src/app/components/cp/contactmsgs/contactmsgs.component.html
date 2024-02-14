@@ -1,46 +1,49 @@
-<div class="main-container h-100">
+<div class="main-container h-100 d-flex flex-column">
     <h2 class="special-title mb-3">Messaggi di contatto</h2>
-    <h5 *ngIf="!messages.length" class="m-0">Nessun messaggio</h5>
-    <h5 *ngIf="messages.length && areMessagesOpen" class="m-0"
-        [innerText]="'Messaggi aperti' + ' > ' + messages.length + ' <'"></h5>
-    <h5 *ngIf="messages.length && areMessagesClosed" class="m-0"
-        [innerText]="'Messaggi archiviati' + ' > ' + messages.length + ' <'"></h5>
-    <h5 *ngIf="messages.length && !areMessagesClosed && !areMessagesOpen" class="m-0">Errore inatteso, contatta il dev
-    </h5>
+    <div class="flex-grow-1 overflow-y-auto scrollb">
+        <h5 *ngIf="!messages.length" class="m-0">Nessun messaggio</h5>
+        <h5 *ngIf="messages.length && areMessagesOpen" class="m-0"
+            [innerText]="'Messaggi aperti' + ' > ' + messages.length + ' <'"></h5>
+        <h5 *ngIf="messages.length && areMessagesClosed" class="m-0"
+            [innerText]="'Messaggi archiviati' + ' > ' + messages.length + ' <'"></h5>
+        <h5 *ngIf="messages.length && !areMessagesClosed && !areMessagesOpen" class="m-0">Errore inatteso, contatta il
+            dev
+        </h5>
 
-    <div *ngIf="!isSingleMsgView" class="mt-4">
-        <div *ngFor="let m of messages; let i = index; let first = first" class="single-message w-100 rounded-1"
-            [ngClass]="{'mt-3' : !first}">
-            <div class="w-100 py-2 px-3">
-                <p class="mb-0 fs-5 trunc title" (click)="showMsg(i)">{{ m.title }}</p>
-                <p class="mb-0">Da: <span class="fw-medium" [ngClass]="{'txt-orange' : m.fromUser != null}">{{
-                        m.name != '' ? m.name :
-                        m.fromUser!.username }}</span></p>
-                <p class="mb-0" [innerText]="'Categoria: ' + m.type"></p>
+        <div *ngIf="!isSingleMsgView" class="mt-4">
+            <div *ngFor="let m of messages; let i = index; let first = first" class="single-message w-100 rounded-1"
+                [ngClass]="{'mt-3' : !first}">
+                <div class="w-100 py-2 px-3">
+                    <p class="mb-0 fs-5 trunc title" (click)="showMsg(i)">{{ m.title }}</p>
+                    <p class="mb-0">Da: <span class="fw-medium" [ngClass]="{'txt-orange' : m.fromUser != null}">{{
+                            m.name != '' ? m.name :
+                            m.fromUser!.username }}</span></p>
+                    <p class="mb-0" [innerText]="'Categoria: ' + m.type"></p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div *ngIf="isSingleMsgView" class="mt-4">
-        <i class="bi bi-arrow-left-circle fs-1 txt-orange" (click)="resetSingleView()"></i>
-        <div class="w-100 mt-2">
-            <div class="head-info pb-2">
-                <p class="mb-1 fs-5">Titolo: {{ singleMsg?.title }}</p>
-                <p class="mb-1">Inviato da: <span class="fw-medium"
-                        [ngClass]="{'txt-orange' : singleMsg?.fromUser != null}">{{ getMsgUsername() }}</span>
-                </p>
-            </div>
-            <div class="msg-body mt-3" [innerHTML]="singleMsg?.content"></div>
-            <div class="pt-5 pb-4 d-flex justify-content-center">
-                <app-orange-button *ngIf="!singleMsg?.closed" [btnTheme]="'dark'" [btnTitle]="'Archivia messaggio'"
-                    (click)="archiveMessage()"></app-orange-button>
-                <app-orange-button *ngIf="singleMsg?.closed" [btnTheme]="'dark'" [btnTitle]="'Riapri messaggio'"
-                    (click)="reOpenMessage()"></app-orange-button>
+        <div *ngIf="isSingleMsgView" class="mt-4">
+            <i class="bi bi-arrow-left-circle fs-1 txt-orange" (click)="resetSingleView()"></i>
+            <div class="w-100 mt-2">
+                <div class="head-info pb-2">
+                    <p class="mb-1 fs-5">Titolo: {{ singleMsg?.title }}</p>
+                    <p class="mb-1">Inviato da: <span class="fw-medium"
+                            [ngClass]="{'txt-orange' : singleMsg?.fromUser != null}">{{ getMsgUsername() }}</span>
+                    </p>
+                </div>
+                <div class="msg-body mt-3" [innerHTML]="singleMsg?.content"></div>
+                <div class="pt-5 pb-4 d-flex justify-content-center">
+                    <app-orange-button *ngIf="!singleMsg?.closed" [btnTheme]="'dark'" [btnTitle]="'Archivia messaggio'"
+                        (click)="archiveMessage()"></app-orange-button>
+                    <app-orange-button *ngIf="singleMsg?.closed" [btnTheme]="'dark'" [btnTitle]="'Riapri messaggio'"
+                        (click)="reOpenMessage()"></app-orange-button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div *ngIf="error" class="mt-4 text-center fw-medium">
-        {{ error }}
+        <div *ngIf="error" class="mt-4 text-center fw-medium">
+            {{ error }}
+        </div>
     </div>
 </div>

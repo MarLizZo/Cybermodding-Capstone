@@ -9,6 +9,7 @@
 
     .previous,
     .next {
+      align-items: center;
       transition: all 0.2s;
       cursor: pointer;
       width: max-content;
@@ -117,5 +118,18 @@
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+}
+
+@mixin secondary-scrollbar {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--orange-hover);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--near-black);
   }
 }

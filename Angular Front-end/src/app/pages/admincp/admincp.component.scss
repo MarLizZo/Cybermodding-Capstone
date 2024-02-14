@@ -7,7 +7,7 @@
 
 .main-container {
   background-color: var(--bg-lighter);
-  min-height: 80vh;
+  height: 80vh;
 
   .selection-container {
     .sect-btn {
@@ -155,21 +155,4 @@
   // .bb-orange {
   //   border-bottom: 1px solid var(--orange);
   // }
-
-  // .contact-message {
-  //   transition: transform 0.3s;
-  //   width: 90%;
-
-  //   @media screen and (min-width: 992px) {
-  //     width: 75%;
-  //   }
-
-  //   &:hover {
-  //     transform: scale(1.05);
-  //   }
-
-  //   div,
-  //   p {
-  //     cursor: pointer;
-  //   }
 }

@@ -129,14 +129,15 @@
                 </div>
             </div>
 
-            <div class="comps-container flex-grow-1 mx-3 px-3 py-1 shadow overflow-y-auto">
+            <div class="comps-container flex-grow-1 mx-3 px-3 py-1 shadow">
                 <p *ngIf="isErrorMessagePanel" class="mt-4 fw-medium fs-4 text-center">{{ errorPanelMsg }}</p>
                 <div *ngIf="!isErrorMessagePanel" class="h-100">
-                    <app-contactmsgs *ngIf="getAnySubViewOpen(isMessagesCollapsed)"
+                    <app-contactmsgs *ngIf="getAnySubViewOpen(isMessagesCollapsed)" class="d-block h-100"
                         [messages]="isMessagesCollapsed.subs['isMsgOpenView'] ? openContactMessagesArr : closedContactMessagesArr"
                         [error]="contactMessagesErrorString" (onArchive)="archiveMessage($event)"
                         (onReOpen)="reOpenMessage($event)"></app-contactmsgs>
-                    <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)"></app-users>
+                    <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)" class="d-block h-100"
+                        [isStatsView]="isUsersCollapsed.subs['isUsersStatsView']" [user_id]="user_id"></app-users>
                 </div>
             </div>
         </div>
@@ -153,166 +154,6 @@
             <button #blockMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-xl-0"
                 (click)="switchModeration(4)">Moderazione blocchi</button>
         </div>
-
-        <div class="main-container p-3">
-            <div *ngIf="isContactModeration" class="moderation-body d-flex flex-column align-items-center mt-2 pb-3">
-                <p *ngIf="isErrorMessagePanel" class="mt-4 fw-medium fs-5 text-center">{{ errorPanelMsg }}</p>
-
-                <div *ngIf="!isWaitingPanel && !isErrorMessagePanel && !isSingleContactModeration"
-                    class="d-flex flex-column align-items-center w-100">
-                    <p *ngIf="openContactMessagesArr.length < 1" class="mb-0 fs-5 fw-medium">Nessun messaggio aperto</p>
-                    <div *ngFor="let m of openContactMessagesArr; let i = index; let first = first"
-                        class="single-result contact-message" [ngClass]="{'mt-3' : !first}" (click)="showMsg(i)">
-                        <div class="w-100 py-2 px-3 rounded-1">
-                            <p class="mb-0 fs-5 trunc">{{ m.title }}</p>
-                            <p class="mb-0">Da: <span class="fw-medium"
-                                    [ngClass]="{'text-orange' : m.fromUser != null}">{{
-                                    m.name != '' ? m.name :
-                                    m.fromUser!.username }}</span></p>
-                            <p class="mb-0" [innerText]="'Categoria: ' + m.type"></p>
-                        </div>
-                    </div>
-                </div>
-
-                <div *ngIf="isSingleContactModeration" class="single-result p-3 w-100 d-flex flex-column">
-                    <p #errorSingleContact class="mb-2 text-center text-danger d-none">Errore nel processamento del
-                        messaggio</p>
-                    <div class="mb-3 px-3 d-flex justify-content-between">
-                        <i class="bi bi-arrow-left-circle fs-1" (click)="isSingleContactModeration = false"></i>
-                        <div class="d-flex align-items-center">
-                            <p class="m-0 me-2">Segna come risolto</p>
-                            <i class="bi bi-check-circle-fill fs-2" (click)="setMsgAsClosed()"></i>
-                        </div>
-                    </div>
-                    <div class="fs-5">{{ singleContactMsg?.title }}</div>
-                    <div class="su-head pb-1">Da: <span class="fw-medium"
-                            [ngClass]="{ 'text-orange' : singleContactMsg?.fromUser }">{{ singleContactMsg?.fromUser ==
-                            null ? singleContactMsg?.name :
-                            singleContactMsg?.fromUser?.username }}</span></div>
-                    <div class="pb-2 bb-orange">Categoria: {{ singleContactMsg?.type }}</div>
-                    <div class="mt-3" [innerHTML]="singleContactMsg?.content"></div>
-                </div>
-            </div>
-
-            <div *ngIf="isUsersModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
-                <p id="top-user" class="mb-2">Cerca utenti</p>
-                <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">
-                    <input [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
-                        class="form-control form-control-sm px-2 border-0 shadow-none resp-input"
-                        placeholder="Cerca utente..">
-                </form>
-                <p *ngIf="usersFound == undefined && !isErrorPanel" class="mt-4 fw-medium fs-5">Il risultato apparirà
-                    qui</p>
-
-                <div *ngIf="isErrorPanel" class="w-100 mt-5">
-                    <h4 class="m-0 pb-1 text-center">{{ errorPanelMsg }}</h4>
-                </div>
-                <div *ngIf="usersFound != undefined && usersFound.content.length != 0 && !isErrorPanel"
-                    class="w-100 mt-4 p-3">
-                    <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-result"
-                        [ngClass]="{'mt-3' : !first}">
-                        <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
-                            <p class="m-0 fw-medium fs-5" [innerText]="userNamesArr[i]"
-                                [ngClass]="{'txt-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
-                            </p>
-                            <i class="bi bi-arrow-bar-down" (click)="collapseableArr[i] = !collapseableArr[i]"></i>
-                        </div>
-
-                        <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableArr[i]"
-                            class="options-container p-3 pb-4">
-                            <div *ngIf="!canBeModerated(u)">
-                                <p class="m-0 fs-3 fw-medium text-center">.. I Am untouchable ..</p>
-                            </div>
-                            <form *ngIf="canBeModerated(u)" #f="ngForm" class="d-flex flex-column align-items-center">
-                                <div class="resp-div">
-                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID Utente</label>
-                                    <input [id]="'uid-' + i" type="text" ngModel name="uid"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none disabled"
-                                        [(ngModel)]="u.id" disabled>
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'username-' + i">Username</label>
-                                        <p [id]="'err-us-' + i" class="m-0 text-danger d-none"></p>
-                                    </div>
-                                    <input [id]="'username-' + i" type="text" ngModel name="username"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.username" minlength="3" maxlength="30">
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'email-' + i">Email</label>
-                                        <p [id]="'err-em-' + i" class="m-0 text-danger d-none">Invalida</p>
-                                    </div>
-                                    <input ngModel name="email" [id]="'email-' + i" type="email"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.email">
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'descr-' + i">Description</label>
-                                        <p [id]="'err-de-' + i" class="m-0 text-danger d-none">Max 20 chars</p>
-                                    </div>
-                                    <input [id]="'descr-' + i" type="text" ngModel name="description"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.description" maxlength="25">
-                                </div>
-
-                                <div class="resp-div mt-3 mb-4">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'role-' + i">Ruolo</label>
-                                        <p [id]="'err-ru-' + i" class="m-0 text-danger d-none">Non consentito</p>
-                                    </div>
-                                    <select name="role" [id]="'role-' + i" [(ngModel)]="u.roles![0].id"
-                                        class="form-select form-select-sm border-0 shadow-none">
-                                        <option value="1">User</option>
-                                        <option value="2">Moderator</option>
-                                        <option value="3">Admin</option>
-                                        <option value="4">Bannato</option>
-                                    </select>
-                                </div>
-                                <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera utente'"
-                                    (click)="doUserModerate(f, i)"></app-orange-button>
-                                <div class="mt-3">
-                                    <app-inline-loader *ngIf="isOpUsers"></app-inline-loader>
-                                </div>
-                                <p [id]="'userParagMod' + i" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
-                                    con
-                                    successo!
-                                </p>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="row w-100 pageable-container py-2 px-3 mt-5 d-flex align-items-center">
-                        <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
-                            <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersFound.first"
-                                (click)="searchUsers(usersFound.number - 1)">
-                                <i class="bi bi-arrow-bar-left"></i>
-                                <p class="m-0 ms-2">Indietro</p>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 d-flex justify-content-center">
-                            <div class="pages d-flex justify-content-center flex-wrap rounded-1">
-                                <div *ngFor="let p of userPagesArr; let first = first;"
-                                    [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersFound.number}"
-                                    class="btn-page px-2" (click)="searchUsers(p - 1)">
-                                    <p class="m-0">{{ p }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
-                            <div class="next rounded-1 px-2 d-flex" *ngIf="!usersFound.last"
-                                (click)="searchUsers(usersFound.number + 1)">
-                                <p class="m-0 me-2">Avanti</p>
-                                <i class="bi bi-arrow-bar-right"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div *ngIf="isThreadsModeration" class="moderation-body d-flex flex-column align-items-center mt-2">
                 <div
