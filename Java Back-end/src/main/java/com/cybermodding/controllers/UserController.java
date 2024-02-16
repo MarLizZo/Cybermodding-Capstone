@@ -1,5 +1,6 @@
 package com.cybermodding.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,11 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<UserModerationData>> getFromUsername(@RequestParam String u, Pageable page) {
         return ResponseEntity.ok(u_svc.getFromUsername(u, page));
+    }
+
+    @GetMapping("/usersRegStats/{year}")
+    public ResponseEntity<List<LocalDate>> getUsersRegStats(@PathVariable Integer year) {
+        return ResponseEntity.ok(m_svc.getRegDatesForYear(year));
     }
 
     @GetMapping("/names")

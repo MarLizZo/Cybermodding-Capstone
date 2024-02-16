@@ -8,6 +8,9 @@
                 <input autocomplete="off" [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
                     class="form-control form-control-sm px-2 border-0 shadow-none resp-input"
                     placeholder="Cerca utente..">
+                <button type="submit" class="btn-input px-3 rounded-end-1">
+                    <i class="bi bi-search text-white-50"></i>
+                </button>
             </form>
             <p *ngIf="usersFound == undefined && !isError" class="mt-4 fw-medium fs-5">Il risultato apparirà
                 qui</p>
@@ -21,7 +24,7 @@
                 <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-result"
                     [ngClass]="{'mt-3' : !first}">
                     <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
-                        <p class="m-0 fw-medium fs-5 pointer" [innerText]="u.username" (click)="setSingleView(u)"
+                        <p class="m-0 fw-medium fs-5 pointer" [innerText]="userNamesArr[i]" (click)="setSingleView(u)"
                             [ngClass]="{'txt-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
                         </p>
                     </div>
@@ -54,10 +57,16 @@
                 </div>
             </div>
 
-            <div *ngIf="isSingleUserView && !isError" class="p-3 w-100">
+            <div *ngIf="isSingleUserView && !isError && singleUser" class="p-3 w-100">
                 <div class="d-flex align-items-center mb-4">
                     <i class="bi bi-arrow-left-circle fs-1 txt-orange" (click)="resetSingleView()"></i>
                     <h4 class="m-0 ms-5">{{ singleUser!.username }}</h4>
+                </div>
+                <div class="mb-4">
+                    <p class="mb-1">Data di registrazione: {{ singleUser.registrationDate | date : 'dd-MM-YYYY' }}</p>
+                    <p class="mb-1">Data di nascita: {{ singleUser.birthdate | date : 'dd-MM-YYYY' }}</p>
+                    <p class="mb-1">Numero di post avviati: {{ singleUser.posts_count }}</p>
+                    <p class="mb-1">Numero di post commenti: {{ singleUser.comments_count }}</p>
                 </div>
                 <div *ngIf="!canBeModerated()">
                     <p class="m-0 fs-3 fw-medium text-center">.. I Am untouchable ..</p>
@@ -125,8 +134,17 @@
             </div>
         </div>
 
-        <div *ngIf="isStatsView">Yes stats
-            <!--  -->
+        <div *ngIf="isStatsView">
+            <div class="chart-wrapper">
+                <canvas baseChart [type]="'line'" [data]="lineChartData" [options]="lineChartOptions" [legend]="true">
+                </canvas>
+            </div>
+            <div class="mt-4 d-flex justify-content-around align-items-center">
+                <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2023'"
+                    (click)="getStatsInfo(2023)"></app-orange-button>
+                <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2024'"
+                    (click)="getStatsInfo(2024)"></app-orange-button>
+            </div>
         </div>
     </div>
 </div>

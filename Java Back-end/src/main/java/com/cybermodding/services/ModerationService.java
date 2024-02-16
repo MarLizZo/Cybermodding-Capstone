@@ -1,6 +1,8 @@
 package com.cybermodding.services;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,10 @@ public class ModerationService {
                 return new UserModerationData(ur.getId(), ur.getUsername(), ur.getEmail(),
                                 ur.getRegistrationDate(), ur.getDescription(), ur.getAvatar(), ur.getBirthdate(),
                                 fromDBUpd.getRoles(), fromDBUpd.getPosts().size(), fromDBUpd.getComments().size());
+        }
+
+        public List<LocalDate> getRegDatesForYear(Integer year) {
+                return u_repo.getRegisteredDatesInYear(year);
         }
 
         public CustomResponse banUser(Long id) {

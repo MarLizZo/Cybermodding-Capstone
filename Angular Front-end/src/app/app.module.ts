@@ -9,9 +9,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
 import { OnlinespyComponent } from './components/onlinespy/onlinespy.component';
+import { BaseChartDirective, NgChartsModule } from 'ng2-charts';
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent, OnlinespyComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    FooterComponent,
+    OnlinespyComponent,
+  ],
   imports: [BrowserModule, AppRoutingModule, NgbModule, HttpClientModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },

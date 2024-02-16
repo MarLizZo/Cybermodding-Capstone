@@ -46,6 +46,10 @@ export class ModerationService {
     );
   }
 
+  public getRegUsersStatsInfo(year: number): Observable<string[]> {
+    return this.http.get<string[]>(this.usersApiUrl + '/usersRegStats/' + year);
+  }
+
   public updatePost(
     user_id: number,
     data: Partial<IUpdatePostDTO>

@@ -1,5 +1,6 @@
 package com.cybermodding.repositories;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :uname, '%')) ORDER BY u.id ASC LIMIT 6")
     List<User> getFromNameLimit(String uname);
+
+    @Query("SELECT u.registrationDate FROM User u WHERE YEAR(u.registrationDate) = :year")
+    List<LocalDate> getRegisteredDatesInYear(Integer year);
 }

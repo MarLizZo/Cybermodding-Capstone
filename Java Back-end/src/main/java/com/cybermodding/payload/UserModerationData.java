@@ -21,6 +21,6 @@ public class UserModerationData {
     private String avatar;
     private LocalDate birthdate;
     private Set<Role> roles;
-    private Integer post_count;
+    private Integer posts_count;
     private Integer comments_count;
 }
