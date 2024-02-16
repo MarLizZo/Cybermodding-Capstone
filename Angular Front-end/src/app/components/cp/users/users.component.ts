@@ -57,6 +57,7 @@ export class UsersComponent {
   };
 
   @Input() isStatsView: boolean = false;
+  statsInitialized: boolean = false;
   @Input() user_id: number | undefined;
   isError: boolean = false;
   errorMsg: string = '';
@@ -76,6 +77,15 @@ export class UsersComponent {
 
   ngOnInit(): void {
     //
+  }
+
+  ngDoCheck(): void {
+    if (this.isStatsView) {
+      if (!this.statsInitialized) {
+        this.getStatsInfo(2023);
+        this.statsInitialized = true;
+      }
+    }
   }
 
   ngOnDestroy(): void {
@@ -249,6 +259,8 @@ export class UsersComponent {
   getStatsInfo(year: number): void {
     if (this.selectedStatsYear != year) {
       this.selectedStatsYear = year;
+      if (this.statsSub) this.statsSub.unsubscribe();
+
       this.statsSub = this.svc
         .getRegUsersStatsInfo(year)
         .pipe(
