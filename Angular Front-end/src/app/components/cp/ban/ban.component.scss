@@ -1,0 +1,57 @@
+@import "mixins";
+@include text-orange;
+@include text-mod;
+@include special-title;
+@include truncate;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  .btn-input {
+    border: none;
+    border-left: 1px solid var(--near-black);
+    background-color: var(--bg);
+
+    i {
+      background-color: var(--bg);
+    }
+  }
+
+  .single-result {
+    background-color: var(--bg);
+
+    .su-head {
+      border-bottom: 1px solid var(--near-black);
+    }
+
+    i {
+      cursor: pointer;
+    }
+
+    .collapseable {
+      background-color: var(--bg);
+    }
+  }
+
+  input {
+    background-color: var(--bg);
+    color: var(--txt);
+  }
+
+  ::placeholder {
+    color: var(--txt-muted);
+  }
+
+  .resp-input,
+  .resp-div {
+    width: 90%;
+
+    @media screen and (min-width: 576px) {
+      width: 75%;
+    }
+
+    @media screen and (min-width: 992px) {
+      width: 50%;
+    }
+  }
+}

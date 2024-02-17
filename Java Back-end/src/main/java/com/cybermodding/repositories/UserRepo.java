@@ -20,6 +20,9 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     Boolean existsByEmail(String email);
 
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) = LOWER(:username)")
+    User findByUsernameNoCaseSens(String username);
+
     @Query("SELECT u FROM User u ORDER BY RANDOM() LIMIT 1")
     User getRandomUser();
 

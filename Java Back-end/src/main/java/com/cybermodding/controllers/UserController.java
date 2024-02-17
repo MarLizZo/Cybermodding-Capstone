@@ -23,11 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cybermodding.entities.User;
 import com.cybermodding.payload.ModerateUserInDTO;
-import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.responses.AdminModsRes;
 import com.cybermodding.responses.CustomResponse;
 import com.cybermodding.responses.ProfileOut;
 import com.cybermodding.responses.SearchRes;
+import com.cybermodding.responses.UserModerationData;
 import com.cybermodding.responses.UserResponse;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.UpdateUser;
@@ -53,6 +53,12 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<UserModerationData>> getFromUsername(@RequestParam String u, Pageable page) {
         return ResponseEntity.ok(u_svc.getFromUsername(u, page));
+    }
+
+    @GetMapping("/singleFU")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
+    public ResponseEntity<UserModerationData> getSingleUserFromUsername(@RequestParam String u) {
+        return ResponseEntity.ok(m_svc.getSingleUserFUsername(u));
     }
 
     @GetMapping("/usersRegStats/{year}")
@@ -104,7 +110,7 @@ public class UserController {
 
     @GetMapping("/ban/{id}")
     @PreAuthorize("hasRole('ADMIN') || hasRole('MODERATOR')")
-    public ResponseEntity<CustomResponse> banUser(@PathVariable Long id) {
+    public ResponseEntity<UserModerationData> banUser(@PathVariable Long id) {
         return ResponseEntity.ok(m_svc.banUser(id));
     }
 

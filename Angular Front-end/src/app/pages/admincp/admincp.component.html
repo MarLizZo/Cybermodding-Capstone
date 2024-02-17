@@ -56,8 +56,6 @@
                     class="collapse-comp pt-1 pb-2 ps-3">
                     <div class="selection" [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanSearchView']}"
                         (click)="setNewView(isQuickBanCollapsed, 'isQuickBanSearchView')">Ricerca utente</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanStatsView']}"
-                        (click)="setNewView(isQuickBanCollapsed, 'isQuickBanStatsView')">Statistiche dei Ban</div>
                 </div>
 
                 <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
@@ -138,6 +136,8 @@
                         (onReOpen)="reOpenMessage($event)"></app-contactmsgs>
                     <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)" class="d-block h-100"
                         [isStatsView]="isUsersCollapsed.subs['isUsersStatsView']" [user_id]="user_id"></app-users>
+                    <app-ban *ngIf="getAnySubViewOpen(isQuickBanCollapsed)" class="d-block h-100"
+                        [user_id]="user_id"></app-ban>
                 </div>
             </div>
         </div>

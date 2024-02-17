@@ -70,7 +70,6 @@ public class AuthServiceImpl implements AuthService {
         return ftpSvc.uploadAvatar(file, "Username", true);
     }
 
-    @SuppressWarnings("null")
     @Override
     public User register(RegisterDto registerDto) {
 

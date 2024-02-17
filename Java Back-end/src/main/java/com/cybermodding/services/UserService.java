@@ -26,7 +26,6 @@ import com.cybermodding.enumerators.ERole;
 import com.cybermodding.enumerators.EUserLevel;
 import com.cybermodding.factory.PostsFactory;
 import com.cybermodding.factory.UserFactory;
-import com.cybermodding.payload.UserModerationData;
 import com.cybermodding.payload.PasswordUpdateDTO;
 import com.cybermodding.payload.UpdateUser;
 import com.cybermodding.repositories.CommentRepoPage;
@@ -41,6 +40,7 @@ import com.cybermodding.responses.PostWithID;
 import com.cybermodding.responses.ProfileOut;
 import com.cybermodding.responses.ResponseBase;
 import com.cybermodding.responses.SearchRes;
+import com.cybermodding.responses.UserModerationData;
 import com.cybermodding.responses.UserResponse;
 
 @Service
@@ -222,7 +222,8 @@ public class UserService {
         public Page<UserModerationData> getFromUsername(String username, Pageable page) {
                 Page<User> ls = this.u_page_repo.findAllByUsername(username.toLowerCase(), page);
                 Page<UserModerationData> ls_data = ls.map(u -> {
-                        return new UserModerationData(u.getId(), u.getUsername(), u.getEmail(), u.getRegistrationDate(),
+                        return new UserModerationData(new ResponseBase(true, "", LocalDateTime.now()), u.getId(),
+                                        u.getUsername(), u.getEmail(), u.getRegistrationDate(),
                                         u.getDescription(), u.getAvatar(), u.getBirthdate(), u.getRoles(),
                                         u.getPosts().size(),
                                         u.getComments().size());

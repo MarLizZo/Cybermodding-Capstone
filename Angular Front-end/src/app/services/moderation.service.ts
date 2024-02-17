@@ -46,6 +46,14 @@ export class ModerationService {
     );
   }
 
+  public getSingleUserFromUsername(name: string): Observable<IUserData> {
+    return this.http.get<IUserData>(this.usersApiUrl + '/singleFU?u=' + name);
+  }
+
+  public quickBan(id: number): Observable<IUserData> {
+    return this.http.get<IUserData>(this.usersApiUrl + '/ban/' + id);
+  }
+
   public getRegUsersStatsInfo(year: number): Observable<string[]> {
     return this.http.get<string[]>(this.usersApiUrl + '/usersRegStats/' + year);
   }

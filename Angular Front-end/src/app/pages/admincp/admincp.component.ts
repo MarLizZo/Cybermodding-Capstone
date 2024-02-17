@@ -59,18 +59,17 @@ export class AdmincpComponent {
   };
 
   isUsersCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isSearchUsersView: true,
+      isSearchUsersView: false,
       isUsersStatsView: false,
     },
   };
 
   isQuickBanCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isQuickBanSearchView: false,
-      isQuickBanStatsView: false,
+      isQuickBanSearchView: true,
     },
   };
 

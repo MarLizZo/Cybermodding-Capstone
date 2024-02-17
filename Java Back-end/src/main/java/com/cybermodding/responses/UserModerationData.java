@@ -1,4 +1,4 @@
-package com.cybermodding.payload;
+package com.cybermodding.responses;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class UserModerationData {
+    private ResponseBase response;
     private Long id;
     private String username;
     private String email;
