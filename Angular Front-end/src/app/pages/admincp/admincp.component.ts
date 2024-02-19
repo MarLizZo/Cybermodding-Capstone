@@ -67,18 +67,18 @@ export class AdmincpComponent {
   };
 
   isQuickBanCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isQuickBanSearchView: true,
+      isQuickBanSearchView: false,
     },
   };
 
   isThreadsModCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
       isThreadSearchView: false,
       isThreadAllView: false,
-      isThreadStatsView: false,
+      isThreadStatsView: true,
     },
   };
 
@@ -242,11 +242,6 @@ export class AdmincpComponent {
     }
   }
 
-  //   inputSearchUser: string = '';
-  //   usersFound!: IUserDataPageable;
-  //   userNamesArr: string[] = [];
-  //   userPagesArr: number[] = [];
-
   //   inputSearchThread: string = '';
   //   threadSearchCriteria: number = 0;
   //   threadsFound!: IPostHomePaged;
@@ -402,165 +397,6 @@ export class AdmincpComponent {
   //         }
   //         this.isWaitingPanel = false;
   //       });
-  //   }
-
-  //   doPostModerate(data: NgForm, index: number): void {
-  //     this.isOpThread = true;
-  //     let obj: Partial<IUpdatePostDTO> = {
-  //       id: this.isThreadViewAll
-  //         ? data.controls['tid'].value
-  //         : data.controls['tidc'].value,
-  //       title: this.isThreadViewAll
-  //         ? data.controls['title'].value
-  //         : data.controls['titlec'].value,
-  //     };
-  //     this.moderateThreadSub = this.svc
-  //       .updatePost(this.user_id!, obj)
-  //       .pipe(
-  //         catchError((err) => {
-  //           this.isOpThread = false;
-  //           throw err;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         if (this.isThreadViewAll) {
-  //           this.threadTitleArr[index] = res.title;
-  //           setTimeout(() => {
-  //             this.isOpThread = false;
-  //             document
-  //               .querySelector('#threadAllParagMod' + index)
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector('#threadAllParagMod' + index)
-  //                 ?.classList.add('opacity-0');
-  //             }, 3000);
-  //           }, 1000);
-  //         } else {
-  //           this.threadTitleCustomArr[index] = res.title;
-  //           setTimeout(() => {
-  //             this.isOpThread = false;
-  //             document
-  //               .querySelector('#threadParagMod' + index)
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector('#threadParagMod' + index)
-  //                 ?.classList.add('opacity-0');
-  //             }, 3000);
-  //           }, 1000);
-  //         }
-  //       });
-  //   }
-
-  //   doThreadSearch(page: number) {
-  //     this.isErrorPanel = false;
-  //     this.errorPanelMsg = '';
-
-  //     if (this.threadSub) this.threadSub.unsubscribe();
-
-  //     if (this.isThreadViewAll) {
-  //       this.threadSub = this.svc
-  //         .getPosts(0, '?size=6' + '&page=' + page, 0)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.errorPanelMsg = 'Errore nel caricamento dei post.';
-  //             this.isErrorPanel = true;
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           this.threadTitleArr = [];
-  //           this.threadPagesArr = [];
-
-  //           if (page + 1 <= 3) {
-  //             for (let i = 0; i < res.totalPages; i++) {
-  //               i < 5 || i > res.totalPages - 3
-  //                 ? this.threadPagesArr.push(i + 1)
-  //                 : null;
-  //             }
-  //           } else if (page + 1 >= res.totalPages - 2) {
-  //             for (let i = 0; i < res.totalPages; i++) {
-  //               i < 2 || i > res.totalPages - 6
-  //                 ? this.threadPagesArr.push(i + 1)
-  //                 : null;
-  //             }
-  //           } else {
-  //             this.threadPagesArr.push(1);
-  //             for (let i = page - 2; i < page + 3; i++) {
-  //               this.threadPagesArr.push(i + 1);
-  //             }
-  //             this.threadPagesArr.push(res.totalPages);
-  //           }
-
-  //           for (let i = 0; i < res.numberOfElements; i++) {
-  //             this.threadTitleArr[i] = res.content[i].title;
-  //           }
-
-  //           for (let i = 0; i < this.collapseableTArr.length; i++) {
-  //             this.collapseableTArr[i] = true;
-  //           }
-  //           this.threadsFound = res;
-  //         });
-  //     } else {
-  //       let searchBy = '';
-  //       if (this.threadSearchCriteria == 0) {
-  //         searchBy = '&by=title&param=' + this.inputSearchThread;
-  //       } else if (this.threadSearchCriteria == 1) {
-  //         searchBy = '&by=user&param=' + this.inputSearchThread;
-  //       } else {
-  //         searchBy =
-  //           '&by=date&param=' +
-  //           this.startDateThread +
-  //           '&paramtwo=' +
-  //           this.endDateThread;
-  //       }
-  //       let params: string = 'size=6&page=' + page + searchBy;
-
-  //       this.threadSub = this.svc
-  //         .getPostPaged(params)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.errorPanelMsg = 'Errore nel caricamento dei post.';
-  //             this.isErrorPanel = true;
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           this.threadTitleCustomArr = [];
-  //           this.threadPagesCustomArr = [];
-
-  //           if (page + 1 <= 3) {
-  //             for (let i = 0; i < res.totalPages; i++) {
-  //               i < 5 || i > res.totalPages - 3
-  //                 ? this.threadPagesCustomArr.push(i + 1)
-  //                 : null;
-  //             }
-  //           } else if (page + 1 >= res.totalPages - 2) {
-  //             for (let i = 0; i < res.totalPages; i++) {
-  //               i < 2 || i > res.totalPages - 6
-  //                 ? this.threadPagesCustomArr.push(i + 1)
-  //                 : null;
-  //             }
-  //           } else {
-  //             this.threadPagesCustomArr.push(1);
-  //             for (let i = page - 2; i < page + 3; i++) {
-  //               this.threadPagesCustomArr.push(i + 1);
-  //             }
-  //             this.threadPagesCustomArr.push(res.totalPages);
-  //           }
-
-  //           for (let i = 0; i < res.numberOfElements; i++) {
-  //             this.threadTitleCustomArr[i] = res.content[i].title;
-  //           }
-
-  //           for (let i = 0; i < this.collapseableTCArr.length; i++) {
-  //             this.collapseableTCArr[i] = true;
-  //           }
-
-  //           this.threadsCustomFound = res;
-  //         });
-  //     }
   //   }
 
   //   resetSecCollapse(index: number) {

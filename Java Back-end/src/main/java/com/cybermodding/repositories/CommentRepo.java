@@ -1,6 +1,7 @@
 package com.cybermodding.repositories;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,7 @@ public interface CommentRepo extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c FROM Comment c WHERE c.publishedDate BETWEEN :start AND :end")
     public List<Comment> findByPublishedDateBetween(LocalDate start, LocalDate end);
+
+    @Query("SELECT c.publishedDate FROM Comment c WHERE YEAR(c.publishedDate) = :year")
+    public List<LocalDateTime> getDatesFromCommentCreation(Integer year);
 }

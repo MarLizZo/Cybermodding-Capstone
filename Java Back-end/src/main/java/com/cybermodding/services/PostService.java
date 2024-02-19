@@ -291,4 +291,8 @@ public class PostService {
         Page<Post> p = page_repo.findAllOrderComments(page);
         return PostsFactory.getPagePostHome(p);
     }
+
+    public List<Post> getTenMoreActivePosts(Integer year) {
+        return repo.getTenMoreActive(year);
+    }
 }

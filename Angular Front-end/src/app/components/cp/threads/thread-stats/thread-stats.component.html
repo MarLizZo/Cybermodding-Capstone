@@ -1,0 +1,20 @@
+<div class="main-container d-flex flex-column h-100">
+    <div class="chart-wrapper d-flex justify-content-center flex-grow-1">
+        <div class="d-flex justify-content-between align-items-center w-100 h-100">
+            <i class="bi bi-arrow-left fs-1" [ngClass]="{'opacity-0' : actualStat == 0}"
+                (click)="setStat(actualStat - 1)"></i>
+            <canvas *ngIf="actualStat == 0" baseChart [type]="'line'" [data]="lineChartData"
+                [options]="lineChartOptions" [legend]="true"></canvas>
+            <canvas *ngIf="actualStat == 1" baseChart [type]="'line'" [data]="lineChartData"
+                [options]="lineChartOptions" [legend]="true"></canvas>
+            <i [ngClass]="{'opacity-0' : actualStat == 1}" class="bi bi-arrow-right fs-1"
+                (click)="setStat(actualStat + 1)"></i>
+        </div>
+    </div>
+    <div class="pt-4 pb-3 d-flex justify-content-around align-items-center">
+        <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2023'"
+            (click)="getStatsInfo(2023)"></app-orange-button>
+        <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2024'"
+            (click)="getStatsInfo(2024)"></app-orange-button>
+    </div>
+</div>

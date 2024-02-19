@@ -1,5 +1,6 @@
 package com.cybermodding.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +11,14 @@ import com.cybermodding.entities.Post;
 public interface PostRepo extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE sub_section.id = :ssid ORDER BY p.id DESC")
-    public List<Post> findAllBySubSId(Long ssid);
+    List<Post> findAllBySubSId(Long ssid);
 
     @Query("SELECT p FROM Post p ORDER BY RANDOM() LIMIT 1")
-    public Post getRandom();
+    Post getRandom();
+
+    @Query("SELECT p FROM Post p JOIN p.comments pc WHERE YEAR(p.publishedDate) = :year ORDER BY COUNT(pc) LIMIT 10")
+    List<Post> getTenMoreActive(Integer year);
+
+    @Query("SELECT p.publishedDate FROM Post p WHERE YEAR(p.publishedDate) = :year")
+    List<LocalDateTime> getDatesFromPostCreation(Integer year);
 }

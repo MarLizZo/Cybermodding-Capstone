@@ -177,4 +177,21 @@ export class ModerationService {
       this.contactsApiUrl + '/reopen/' + id
     );
   }
+
+  public getPostsPerYear(year: number): Observable<string[]> {
+    return this.http.get<string[]>(this.threadsApiUrl + '/peryear/' + year);
+  }
+
+  // for forum block
+  public getActivePosts(year: number): Observable<IPostData[]> {
+    return this.http.get<IPostData[]>(
+      this.threadsApiUrl + '/moreactives/' + year
+    );
+  }
+
+  public getCommentsPerYear(year: number): Observable<string[]> {
+    return this.http.get<string[]>(
+      this.threadsApiUrl + '/comments/peryear/' + year
+    );
+  }
 }

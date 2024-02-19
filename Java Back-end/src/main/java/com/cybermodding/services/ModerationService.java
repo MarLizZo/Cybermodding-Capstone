@@ -14,6 +14,8 @@ import com.cybermodding.entities.User;
 import com.cybermodding.enumerators.ERole;
 import com.cybermodding.payload.ModerateUserInDTO;
 import com.cybermodding.payload.UpdateUser;
+import com.cybermodding.repositories.CommentRepo;
+import com.cybermodding.repositories.PostRepo;
 import com.cybermodding.repositories.RoleRepo;
 import com.cybermodding.repositories.UserRepo;
 import com.cybermodding.responses.ResponseBase;
@@ -29,6 +31,10 @@ public class ModerationService {
         UserRepo u_repo;
         @Autowired
         RoleRepo roleRepository;
+        @Autowired
+        PostRepo p_repo;
+        @Autowired
+        CommentRepo c_repo;
 
         public UserModerationData moderateUser(Long id, ModerateUserInDTO data) {
                 User fromDB = u_svc.getById(data.getId());
@@ -97,5 +103,13 @@ public class ModerationService {
                                 null, null,
                                 null, null, null, null,
                                 null, 0, 0);
+        }
+
+        public List<LocalDateTime> getThreadsDatesForYear(Integer year) {
+                return p_repo.getDatesFromPostCreation(year);
+        }
+
+        public List<LocalDateTime> getCommentsDatesForYear(Integer year) {
+                return c_repo.getDatesFromCommentCreation(year);
         }
 }

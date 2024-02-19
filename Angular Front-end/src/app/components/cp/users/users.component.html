@@ -134,12 +134,12 @@
             </div>
         </div>
 
-        <div *ngIf="isStatsView">
-            <div class="chart-wrapper">
+        <div *ngIf="isStatsView" class="d-flex flex-column h-100">
+            <div class="chart-wrapper d-flex justify-content-center flex-grow-1">
                 <canvas baseChart [type]="'line'" [data]="lineChartData" [options]="lineChartOptions" [legend]="true">
                 </canvas>
             </div>
-            <div class="mt-4 d-flex justify-content-around align-items-center">
+            <div class="pt-4 pb-3 d-flex justify-content-around align-items-center">
                 <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2023'"
                     (click)="getStatsInfo(2023)"></app-orange-button>
                 <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Anno 2024'"

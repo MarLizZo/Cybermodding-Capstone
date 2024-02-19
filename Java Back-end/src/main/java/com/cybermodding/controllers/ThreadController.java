@@ -1,6 +1,7 @@
 package com.cybermodding.controllers;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cybermodding.entities.Post;
 import com.cybermodding.entities.Reaction;
 import com.cybermodding.payload.CommentInDTO;
 import com.cybermodding.payload.PostDTO;
@@ -29,6 +31,7 @@ import com.cybermodding.responses.PostWithID;
 import com.cybermodding.responses.ReactionResponse;
 import com.cybermodding.responses.PostOutCPaged;
 import com.cybermodding.responses.PostResponse;
+import com.cybermodding.services.ModerationService;
 import com.cybermodding.services.PostService;
 import com.cybermodding.services.UserService;
 
@@ -41,6 +44,8 @@ public class ThreadController {
     PostService svc;
     @Autowired
     UserService u_svc;
+    @Autowired
+    ModerationService m_svc;
 
     @GetMapping("/{id}")
     public ResponseEntity<PostOutCPaged> getById(@PathVariable Long id, Pageable page) {
@@ -132,5 +137,20 @@ public class ThreadController {
                 return ResponseEntity.ok(svc.getPostsForHomeOrderDate(id, page));
             }
         }
+    }
+
+    @GetMapping("/peryear/{year}")
+    public ResponseEntity<List<LocalDateTime>> getPostsPerYear(@PathVariable Integer year) {
+        return ResponseEntity.ok(m_svc.getThreadsDatesForYear(year));
+    }
+
+    @GetMapping("/moreactives/{year}")
+    public ResponseEntity<List<Post>> getMoreActivePosts(@PathVariable Integer year) {
+        return ResponseEntity.ok(svc.getTenMoreActivePosts(year));
+    }
+
+    @GetMapping("/comments/peryear/{year}")
+    public ResponseEntity<List<LocalDateTime>> getCommentsPerYear(@PathVariable Integer year) {
+        return ResponseEntity.ok(m_svc.getCommentsDatesForYear(year));
     }
 }
