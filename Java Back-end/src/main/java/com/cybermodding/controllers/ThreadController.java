@@ -144,9 +144,9 @@ public class ThreadController {
         return ResponseEntity.ok(m_svc.getThreadsDatesForYear(year));
     }
 
-    @GetMapping("/moreactives/{year}")
-    public ResponseEntity<List<Post>> getMoreActivePosts(@PathVariable Integer year) {
-        return ResponseEntity.ok(svc.getTenMoreActivePosts(year));
+    @GetMapping("/moreactives")
+    public ResponseEntity<List<Post>> getMoreActivePosts(@RequestParam Integer year, @RequestParam Integer limit) {
+        return ResponseEntity.ok(svc.getTenMoreActivePosts(year, limit));
     }
 
     @GetMapping("/comments/peryear/{year}")

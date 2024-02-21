@@ -1,1 +1,328 @@
-<p>sections works!</p>
+<div class="main-container d-flex flex-column h-100">
+    <h2 class="special-title mb-4">Impostazioni Sezioni</h2>
+    <div class="flex-grow-1 overflow-y-auto scrollb">
+        <div *ngIf="isCreateSectionView" class="d-flex flex-column align-items-center">
+            <form *ngIf="!isError" #fNewSection="ngForm" class="w-100 pb-2 d-flex flex-column align-items-center">
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="title">Titolo</label>
+                        <p id="err-ti" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="title" type="text" ngModel name="title"
+                        class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="60">
+                </div>
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="descr">Descrizione</label>
+                        <p [id]="'err-descr'" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="descr" type="text" ngModel name="description"
+                        class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="100">
+                </div>
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="order">Ordine visualizzazione</label>
+                        <p [id]="'err-order'" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="order" type="number" ngModel name="order"
+                        class="form-control form-control-sm px-1 border-0 shadow-none">
+                </div>
+
+                <div
+                    class="resp-div mt-3 mb-4 d-flex flex-column flex-md-row align-items-center justify-content-md-center">
+                    <div class="form-check form-check-inline mb-3 mb-md-0">
+                        <input #activeRadioOne class="form-check-input shadow-none" type="radio" name="active"
+                            id="flexRadioDefault1" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Attiva e visibile
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input #activeRadioTwo class="form-check-input shadow-none" type="radio" name="active"
+                            id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Disattiva e non visibile
+                        </label>
+                    </div>
+                </div>
+
+                <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sezione'"
+                    (click)="doCreateSection(fNewSection)"></app-orange-button>
+                <div *ngIf="isOpSection" class="mt-3">
+                    <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+                </div>
+                <p #sectionCParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione Creata con
+                    successo!</p>
+            </form>
+        </div>
+
+        <div *ngIf="isCreateSubSectionView" class="d-flex flex-column align-items-center">
+            <p *ngIf="isErrorSS" class="mt-4 fw-medium fs-5 text-center">{{ errorSSMsg }}</p>
+
+            <div *ngIf="isLoadingSections" class="d-flex justify-content-center">
+                <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+            </div>
+
+            <form *ngIf="!isLoadingSections" #fNewSubSection="ngForm"
+                class="w-100 pb-2 d-flex flex-column align-items-center">
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <p class="m-0">Sezione Genitore</p>
+                        <p [id]="'err-parent'" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <select name="ss-select" [(ngModel)]="newSubSectionParentId"
+                        class="form-control form-control-sm border-0 shadow-none">
+                        <option value="-1">Seleziona Sezione Genitore</option>
+                        <option *ngFor="let s of sectionsArr; let i = index" [value]="s.id">{{ s.title }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="stitle">Titolo</label>
+                        <p id="err-ti" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="stitle" type="text" ngModel name="title"
+                        class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="40">
+                </div>
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="sdescr">Descrizione</label>
+                        <p id="err-descr" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="sdescr" type="text" ngModel name="description"
+                        class="form-control form-control-sm px-1 border-0 shadow-none" maxlength="80">
+                </div>
+
+                <div class="resp-div mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <label for="sorder">Ordine visualizzazione</label>
+                        <p id="err-order" class="m-0 text-danger d-none"></p>
+                    </div>
+                    <input id="sorder" type="number" ngModel name="order"
+                        class="form-control form-control-sm px-1 border-0 shadow-none">
+                </div>
+
+                <div
+                    class="resp-div mt-3 mb-4 d-flex flex-column flex-md-row align-items-center justify-content-md-center">
+                    <div class="form-check form-check-inline mb-2 mb-md-0">
+                        <input #activeRadioOne class="form-check-input shadow-none" type="radio" name="active"
+                            id="flexRadioDefault1" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Attiva e visibile
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input #activeRadioTwo class="form-check-input shadow-none" type="radio" name="active"
+                            id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Disattiva e non visibile
+                        </label>
+                    </div>
+                </div>
+
+                <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Crea Sotto-Sezione'"
+                    (click)="doCreateSubSection(fNewSubSection)"></app-orange-button>
+                <div *ngIf="isOpSection" class="mt-3">
+                    <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+                </div>
+                <p #subsectionCParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione Creata con
+                    successo!</p>
+            </form>
+        </div>
+
+        <div *ngIf="isAllView" class="d-flex flex-column align-items-center">
+            <p *ngIf="isError" class="mt-4 fw-medium fs-5 text-center">{{ errorMsg }}</p>
+
+            <div *ngIf="isLoadingSections" class="d-flex justify-content-center">
+                <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+            </div>
+            <div *ngIf="!isLoadingSections && !selectedSection" class="w-100">
+                <div *ngFor="let s of sectionsArr; let i = index; let first = first" class="single-result w-100"
+                    [ngClass]="{'mt-3' : !first}">
+                    <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
+                        <p class="m-0 fw-medium fs-5 trunc sec-title" (click)="setSingleSectionView(s)">{{
+                            sectionsTitleArr[i] }}</p>
+                        <p class="m-0" [innerText]="s.active ? 'Attiva' : 'Disattiva'"
+                            [ngClass]="{'text-danger' : !s.active, 'txt-mod' : s.active}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="selectedSection" class="w-100">
+                <i class="bi bi-arrow-left-circle fs-1 txt-orange mb-3" (click)="resetSingleSectionView()"></i>
+                <form #fSection="ngForm" class="d-flex flex-column align-items-center mb-3">
+                    <div class="resp-div">
+                        <label for="sid" class="mb-1 align-self-start">ID Sezione</label>
+                        <input id="sid" type="text" ngModel name="id"
+                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                            [(ngModel)]="selectedSection.id" disabled>
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="stitle">Titolo</label>
+                            <p id="err-ti" class="m-0 text-danger d-none"></p>
+                        </div>
+                        <input id="stitle" type="text" ngModel name="title"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="selectedSection.title" maxlength="60">
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="sdescr">Descrizione</label>
+                            <p id="err-descr" class="m-0 text-danger d-none"></p>
+                        </div>
+                        <input id="sdescr" type="text" ngModel name="description"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="selectedSection.description" maxlength="100">
+                    </div>
+
+                    <div class="resp-div mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <label for="sorder">Ordine visualizzazione</label>
+                            <p id="err-order" class="m-0 text-danger d-none"></p>
+                        </div>
+                        <input id="sorder" type="number" ngModel name="order"
+                            class="form-control form-control-sm px-1 border-0 shadow-none"
+                            [(ngModel)]="selectedSection.order_number">
+                    </div>
+
+                    <div
+                        class="resp-div mt-3 mb-4 d-flex flex-column flex-md-row align-items-center justify-content-md-center">
+                        <div class="form-check form-check-inline mb-2 mb-md-0">
+                            <input #activeRadioOne class="form-check-input shadow-none" type="radio"
+                                (change)="selectedSection.active = !selectedSection.active" name="active"
+                                id="flexRadioDefault1" [checked]="selectedSection.active">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                                Attiva e visibile
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input #activeRadioTwo class="form-check-input shadow-none" type="radio"
+                                (change)="selectedSection.active = !selectedSection.active" name="active"
+                                id="flexRadioDefault2" [checked]="!selectedSection.active">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Disattiva e non visibile
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="w-100 d-flex flex-column flex-md-row align-items-center justify-content-md-evenly">
+                        <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Elimina Sezione'"
+                            (click)="deleteSection(selectedSection.id!)" class="mb-3 mb-md-0"></app-orange-button>
+                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Sezione'"
+                            (click)="doSectionUpdate(fSection)"></app-orange-button>
+                    </div>
+                    <div *ngIf="isOpSection" class="mt-3">
+                        <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+                    </div>
+                    <p id="sectionUParagMod" #sectionUParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">Sezione
+                        aggiornata con successo!</p>
+                </form>
+
+                <div class="w-100 pt-4 border-top border-1 border-black">
+                    <div class="resp-div mx-auto">
+                        <h6 class="mb-2 text-center">Sotto-Sezioni</h6>
+                        <select name="ss-select" [(ngModel)]="selectedSSIndex"
+                            class="form-control form-control-sm border-0 shadow-none mb-4">
+                            <option value="-1">Lista sotto-sezioni</option>
+                            <option *ngFor="let ss of selectedSection.sub_sections; let ssi = index" [value]="ssi">{{
+                                ss.title
+                                }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div *ngIf="selectedSSIndex >= 0 && selectedSection.sub_sections && selectedSSIndex < selectedSection.sub_sections.length && selectedSection.sub_sections[selectedSSIndex].id != undefined"
+                        class="mb-4">
+                        <form #fSS="ngForm" class="w-100 d-flex flex-column align-items-center">
+                            <div class="resp-div">
+                                <label for="ssid" class="mb-1 align-self-start">ID
+                                    Sotto-Sezione</label>
+                                <input id="ssid" type="text" ngModel name="ssid"
+                                    class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                    [(ngModel)]="selectedSection.sub_sections![selectedSSIndex].id" disabled>
+                            </div>
+
+                            <div class="resp-div mt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label for="sstitle">Titolo</label>
+                                    <p id="err-ssti" class="m-0 text-danger d-none"></p>
+                                </div>
+                                <input id="sstitle" type="text" ngModel name="sstitle"
+                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                    [(ngModel)]="selectedSection.sub_sections![selectedSSIndex].title" maxlength="60">
+                            </div>
+
+                            <div class="resp-div mt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label for="ssdescr">Descrizione</label>
+                                    <p id="err-ssdescr" class="m-0 text-danger d-none"></p>
+                                </div>
+                                <input id="ssdescr" type="text" ngModel name="ssdescription"
+                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                    [(ngModel)]="selectedSection.sub_sections![selectedSSIndex].description"
+                                    maxlength="100">
+                            </div>
+
+                            <div class="resp-div mt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <label for="ssorder">Ordine
+                                        visualizzazione</label>
+                                    <p id="err-ssorder" class="m-0 text-danger d-none"></p>
+                                </div>
+                                <input id="ssorder" type="number" ngModel name="ssorder"
+                                    class="form-control form-control-sm px-1 border-0 shadow-none"
+                                    [(ngModel)]="selectedSection.sub_sections![selectedSSIndex].order_number">
+                            </div>
+
+                            <div
+                                class="resp-div mt-3 mb-4 d-flex flex-column flex-md-row align-items-center justify-content-md-center">
+                                <div class="form-check form-check-inline mb-2 mb-md-0">
+                                    <input #activeSSRadioOne class="form-check-input shadow-none" type="radio"
+                                        name="ssactive" id="ssflexRadioDefault1"
+                                        [checked]="selectedSection.sub_sections![selectedSSIndex].active">
+                                    <label class="form-check-label" for="ssflexRadioDefault1">
+                                        Attiva e visibile
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input #activeSSRadioTwo class="form-check-input shadow-none" type="radio"
+                                        name="ssactive" id="ssflexRadioDefault2"
+                                        [checked]="!selectedSection.sub_sections![selectedSSIndex].active">
+                                    <label class="form-check-label" for="ssflexRadioDefault2">
+                                        Disattiva e non visibile
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div
+                                class="w-100 d-flex flex-column flex-md-row align-items-center justify-content-md-evenly">
+                                <app-orange-button [btnTheme]="'dark'" [btnTitle]="'Elimina Sotto-Sezione'"
+                                    (click)="deleteSubSection(selectedSection.sub_sections[selectedSSIndex].id!)"
+                                    class="mb-3 mb-md-0"></app-orange-button>
+                                <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Aggiorna Sotto-Sezione'"
+                                    (click)="doSubSectionUpdate(selectedSection.id!, fSS)"></app-orange-button>
+                            </div>
+                            <div *ngIf="isOpSection" class="mt-3">
+                                <app-inline-loader [bg]="'lighter'"></app-inline-loader>
+                            </div>
+                            <p id="subsectionUParagMod" #subsectionUParagMod class="mt-3 mb-0 fs-5 fw-medium opacity-0">
+                                Sotto-Sezione aggiornata
+                                con
+                                successo!</p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

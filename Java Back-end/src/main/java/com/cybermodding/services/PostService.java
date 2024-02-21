@@ -292,7 +292,7 @@ public class PostService {
         return PostsFactory.getPagePostHome(p);
     }
 
-    public List<Post> getTenMoreActivePosts(Integer year) {
-        return repo.getTenMoreActive(year);
+    public List<Post> getTenMoreActivePosts(Integer year, Integer limit) {
+        return repo.getTenMoreActive(year, limit);
     }
 }

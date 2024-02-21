@@ -17,12 +17,13 @@
   --mod-color: #00a552;
 }
 
-html,
-body {
-  height: 100%;
+html {
+  min-height: 100vh;
+  display: flex;
 }
 
 body {
+  flex-grow: 1;
   background-color: var(--bg);
   color: var(--txt);
 

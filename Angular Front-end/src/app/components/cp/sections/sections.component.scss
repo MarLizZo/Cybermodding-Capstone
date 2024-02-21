@@ -1,0 +1,64 @@
+@import "mixins";
+@include text-orange;
+@include text-mod;
+@include special-title;
+@include truncate;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  .scrollb {
+    @include secondary-scrollbar;
+  }
+
+  i {
+    cursor: pointer;
+  }
+
+  .resp-input,
+  .resp-div {
+    width: 90%;
+
+    @media screen and (min-width: 576px) {
+      width: 75%;
+    }
+
+    @media screen and (min-width: 992px) {
+      width: 50%;
+    }
+  }
+
+  input {
+    background-color: var(--bg);
+    color: var(--txt);
+  }
+
+  input.form-check-input {
+    border-color: var(--orange) !important;
+  }
+
+  select {
+    background-color: var(--bg);
+    color: var(--txt);
+
+    option {
+      background-color: var(--bg-lighter);
+      color: var(--txt);
+    }
+  }
+
+  .single-result {
+    background-color: var(--bg);
+
+    .su-head {
+      border-bottom: 1px solid var(--near-black);
+    }
+
+    .sec-title {
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

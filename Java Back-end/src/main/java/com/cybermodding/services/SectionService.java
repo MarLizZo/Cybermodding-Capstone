@@ -62,7 +62,7 @@ public class SectionService {
         if (u_repo.existsById(id)) {
             if (UserFactory.getRank(u_repo.findById(id).get()).equals(EUserLevel.BOSS)) {
                 if (repo.existsById(s.getId())) {
-                    Section fromDB = repo.findById(id).get();
+                    Section fromDB = repo.findById(s.getId()).get();
                     fromDB.setTitle(s.getTitle());
                     fromDB.setDescription(s.getDescription());
                     fromDB.setActive(s.getActive());

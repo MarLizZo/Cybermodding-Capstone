@@ -74,11 +74,11 @@ export class AdmincpComponent {
   };
 
   isThreadsModCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
       isThreadSearchView: false,
       isThreadAllView: false,
-      isThreadStatsView: true,
+      isThreadStatsView: false,
     },
   };
 
@@ -92,9 +92,9 @@ export class AdmincpComponent {
   };
 
   isBlocksCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isBlockAllView: false,
+      isBlockAllView: true,
       isBlockCreateView: false,
     },
   };
@@ -242,23 +242,6 @@ export class AdmincpComponent {
     }
   }
 
-  //   inputSearchThread: string = '';
-  //   threadSearchCriteria: number = 0;
-  //   threadsFound!: IPostHomePaged;
-  //   threadsCustomFound!: IPostHomePaged;
-  //   startDateThread: string = '2023/1/1';
-  //   endDateThread: string = '2023/12/1';
-  //   threadTitleArr: string[] = [];
-  //   threadPagesArr: number[] = [];
-  //   threadTitleCustomArr: string[] = [];
-  //   threadPagesCustomArr: number[] = [];
-
-  //   sectionsArr: ISectionData[] = [];
-  //   sectionsTitleArr: string[] = [];
-  //   activeBoolArr: boolean[] = [];
-  //   selectedSSIndex: number = -1;
-  //   newSubSectionParentId: number = -1;
-
   //   blockType: string = 'BLOCK_ALL';
   //   blockContent: string = '';
   //   blockTitle: string = '';
@@ -268,23 +251,7 @@ export class AdmincpComponent {
   //   blocksTitleArr: string[] = [];
   //   blocksTypeArr: string[] = [];
 
-  //   @ViewChild('contactsMod') contactsBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('errorSingleContact') errorSingleContact!: ElementRef<HTMLElement>;
-  //   @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('sectionMod') sectionsBtn!: ElementRef<HTMLButtonElement>;
   //   @ViewChild('blockMod') blocksBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('threadViewSearch')
-  //   threadViewSearchBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('threadViewAll') threadViewAllBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('selectCriteria')
-  //   threadCriteriaSelect!: ElementRef<HTMLSelectElement>;
-  //   @ViewChild('sectionViewCreate')
-  //   sectionViewCreateBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('subSectionViewCreate')
-  //   subSectionViewCreateBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('sectionViewAll')
-  //   sectionViewAllBtn!: ElementRef<HTMLButtonElement>;
   //   @ViewChild('blockViewCreate')
   //   blockViewCreateBtn!: ElementRef<HTMLButtonElement>;
   //   @ViewChild('blockViewAll')
@@ -293,8 +260,6 @@ export class AdmincpComponent {
   //   radioActive!: ElementRef<HTMLInputElement>;
   //   @ViewChild('activeSSRadioOne') radioSSActive!: ElementRef<HTMLInputElement>;
 
-  //   @ViewChild('sectionCParagMod') sectionCMod!: ElementRef<HTMLElement>;
-  //   @ViewChild('subsectionCParagMod') subSectionCMod!: ElementRef<HTMLElement>;
   //   @ViewChild('blockParagMod') blockMod!: ElementRef<HTMLElement>;
 
   ngOnInit() {
@@ -396,380 +361,6 @@ export class AdmincpComponent {
   //           this.blocksTypeArr.push(res[i].e_block_type.toString());
   //         }
   //         this.isWaitingPanel = false;
-  //       });
-  //   }
-
-  //   resetSecCollapse(index: number) {
-  //     this.collapseableSArr[index] = !this.collapseableSArr[index];
-  //     this.selectedSSIndex = -1;
-  //   }
-
-  //   getSections() {
-  //     this.errorPanelMsg = '';
-  //     this.isErrorPanel = false;
-  //     this.isWaitingPanel = true;
-
-  //     this.sectionsTitleArr = [];
-  //     this.sectionsArr = [];
-  //     this.activeBoolArr = [];
-  //     this.newSubSectionParentId = -1;
-  //     this.sectionSub = this.svc
-  //       .getSections()
-  //       .pipe(
-  //         catchError((err) => {
-  //           this.errorPanelMsg = 'Errore nel caricamento delle sezioni.';
-  //           this.isErrorPanel = true;
-  //           this.isWaitingPanel = false;
-  //           return EMPTY;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         this.sectionsArr = res;
-  //         for (let i = 0; i < this.sectionsArr.length; i++) {
-  //           this.sectionsTitleArr.push(res[i].title);
-  //           this.activeBoolArr.push(res[i].active);
-  //         }
-  //         this.isWaitingPanel = false;
-  //       });
-  //   }
-
-  //   doSectionsCheck(form: NgForm): boolean {
-  //     let bool: boolean = true;
-
-  //     let titleP: HTMLElement | null = document.getElementById(
-  //       'err-ti-' + this.selectedSSIndex
-  //     );
-  //     let descriptionP: HTMLElement | null = document.getElementById(
-  //       'err-descr-' + this.selectedSSIndex
-  //     );
-  //     let orderP: HTMLElement | null = document.getElementById(
-  //       'err-order-' + this.selectedSSIndex
-  //     );
-
-  //     if (form.controls['title'].value.length < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (form.controls['description'].value.length > 100) {
-  //       bool = false;
-  //       descriptionP!.classList.remove('d-none');
-  //       descriptionP!.innerText = 'Max 100 chars';
-  //     }
-
-  //     if (isNaN(Number(form.controls['order'].value))) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   doSectionUpdate(index: number, data: NgForm) {
-  //     if (this.doSectionsCheck(data)) {
-  //       this.isOpSection = true;
-  //       let obj: ISectionData = {
-  //         id: data.controls['id'].value,
-  //         title: data.controls['title'].value,
-  //         description: data.controls['description'].value,
-  //         active: this.activeBoolArr[index],
-  //         order_number: data.controls['order'].value,
-  //       };
-
-  //       this.sectionOperationsSub = this.svc
-  //         .updateSection(this.user_id!, obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpSection = false;
-  //             throw err;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           setTimeout(() => {
-  //             this.isOpSection = false;
-  //             document
-  //               .querySelector('#sectionUParagMod' + index)
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector('#sectionUParagMod' + index)
-  //                 ?.classList.add('opacity-0');
-  //               this.selectedSSIndex = -1;
-  //               for (let i = 0; i < this.collapseableSArr.length; i++) {
-  //                 this.collapseableSArr[i] = true;
-  //               }
-  //               this.getSections();
-  //             }, 2000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
-
-  //   doSubSectionsCheck(form: NgForm, num: number): boolean {
-  //     let bool: boolean = true;
-
-  //     let titleP: HTMLElement | null = document.getElementById('err-ssti-' + num);
-  //     let descriptionP: HTMLElement | null = document.getElementById(
-  //       'err-ssdescr-' + num
-  //     );
-  //     let orderP: HTMLElement | null = document.getElementById(
-  //       'err-ssorder-' + num
-  //     );
-
-  //     if (form.controls['sstitle'].value.length < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (form.controls['ssdescription'].value.length > 100) {
-  //       bool = false;
-  //       descriptionP!.classList.remove('d-none');
-  //       descriptionP!.innerText = 'Max 100 chars';
-  //     }
-
-  //     if (isNaN(Number(form.controls['ssorder'].value))) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   doSubSectionUpdate(parent_section_id: number, data: NgForm) {
-  //     if (this.doSubSectionsCheck(data, this.selectedSSIndex)) {
-  //       this.isOpSection = true;
-  //       let obj: Partial<ISubSectionData> = {
-  //         id: data.controls['ssid'].value,
-  //         title: data.controls['sstitle'].value,
-  //         description: data.controls['ssdescription'].value,
-  //         active: this.radioSSActive.nativeElement.checked ? true : false,
-  //         order_number: data.controls['ssorder'].value,
-  //         parent_id: parent_section_id,
-  //       };
-
-  //       this.subSectionOperationsSub = this.svc
-  //         .updateSubSection(this.user_id!, obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpSection = false;
-  //             throw err;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           setTimeout(() => {
-  //             this.isOpSection = false;
-  //             document
-  //               .querySelector(
-  //                 '#subsectionUParagMod' +
-  //                   this.selectedSSIndex +
-  //                   parent_section_id
-  //               )
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector(
-  //                   '#subsectionUParagMod' +
-  //                     this.selectedSSIndex +
-  //                     parent_section_id
-  //                 )
-  //                 ?.classList.add('opacity-0');
-  //             }, 2000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
-
-  //   doNewSecChecks(form: NgForm): boolean {
-  //     let bool: boolean = true;
-
-  //     let titleP: HTMLElement | null = document.getElementById('err-ti');
-  //     let descriptionP: HTMLElement | null = document.getElementById('err-descr');
-  //     let orderP: HTMLElement | null = document.getElementById('err-order');
-
-  //     if (form.controls['title'].value < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (form.controls['description'].value.length > 100) {
-  //       bool = false;
-  //       descriptionP!.classList.remove('d-none');
-  //       descriptionP!.innerText = 'Max 100 chars';
-  //     }
-
-  //     if (isNaN(Number(form.controls['order'].value))) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   doNewSubSecChecks(form: NgForm): boolean {
-  //     let bool: boolean = true;
-
-  //     let parentP: HTMLElement | null = document.getElementById('err-parent');
-  //     let titleP: HTMLElement | null = document.getElementById('err-ti');
-  //     let descriptionP: HTMLElement | null = document.getElementById('err-descr');
-  //     let orderP: HTMLElement | null = document.getElementById('err-order');
-
-  //     if (this.newSubSectionParentId == -1) {
-  //       bool = false;
-  //       parentP!.classList.remove('d-none');
-  //       parentP!.innerText = 'Invalid value';
-  //     }
-
-  //     if (form.controls['title'].value < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (form.controls['description'].value.length > 80) {
-  //       bool = false;
-  //       descriptionP!.classList.remove('d-none');
-  //       descriptionP!.innerText = 'Max 80 chars';
-  //     }
-
-  //     if (
-  //       form.controls['order'].value.length == 0 ||
-  //       isNaN(Number(form.controls['order'].value))
-  //     ) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   resetSFields() {
-  //     document.getElementById('err-ti')?.classList.add('d-none');
-  //     document.getElementById('err-descr')?.classList.add('d-none');
-  //     document.getElementById('err-order')?.classList.add('d-none');
-  //   }
-
-  //   doCreateSection(data: NgForm) {
-  //     this.resetSFields();
-  //     this.errorPanelMsg = '';
-  //     this.isErrorPanel = false;
-
-  //     if (this.doNewSecChecks(data)) {
-  //       this.isOpSection = true;
-  //       let obj: Partial<ISectionData> = {
-  //         title: data.controls['title'].value,
-  //         description: data.controls['description'].value,
-  //         order_number: data.controls['order'].value,
-  //         active: this.radioActive.nativeElement.checked ? true : false,
-  //       };
-
-  //       this.sectionOperationsSub = this.svc
-  //         .createSection(obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpSection = false;
-  //             this.errorPanelMsg = 'Errore nella creazione della sezione';
-  //             this.isErrorPanel = true;
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           data.resetForm();
-  //           setTimeout(() => {
-  //             this.isOpSection = false;
-  //             this.sectionCMod.nativeElement.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               this.sectionCMod.nativeElement.classList.add('opacity-0');
-  //             }, 3000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
-
-  //   resetSSFields() {
-  //     document.getElementById('err-parent')?.classList.add('d-none');
-  //     document.getElementById('err-ti')?.classList.add('d-none');
-  //     document.getElementById('err-descr')?.classList.add('d-none');
-  //     document.getElementById('err-order')?.classList.add('d-none');
-  //   }
-
-  //   doCreateSubSection(data: NgForm) {
-  //     this.resetSSFields();
-  //     this.errorPanelMsg = '';
-  //     this.isErrorPanel = false;
-
-  //     if (this.doNewSubSecChecks(data)) {
-  //       this.isOpSection = true;
-  //       let obj: Partial<ISubSectionData> = {
-  //         title: data.controls['title'].value,
-  //         description: data.controls['description'].value,
-  //         order_number: data.controls['order'].value,
-  //         active: this.radioActive.nativeElement.checked ? true : false,
-  //         parent_section_id: this.newSubSectionParentId,
-  //       };
-  //       this.subSectionOperationsSub = this.svc
-  //         .createSubSection(obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpSection = false;
-  //             this.errorPanelMsg = 'Errore nella creazione della sotto-sezione';
-  //             this.isErrorPanel = true;
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           data.resetForm();
-  //           setTimeout(() => {
-  //             this.isOpSection = false;
-  //             this.subSectionCMod.nativeElement.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               this.subSectionCMod.nativeElement.classList.add('opacity-0');
-  //             }, 3000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
-
-  //   deleteSection(id: number) {
-  //     for (let i = 0; i < this.collapseableSArr.length; i++) {
-  //       this.collapseableSArr[i] = true;
-  //     }
-
-  //     this.sectionOperationsSub = this.svc
-  //       .deleteSection(id)
-  //       .pipe(
-  //         catchError((err) => {
-  //           throw err;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         console.log(res.message);
-  //         this.getSections();
-  //       });
-  //   }
-
-  //   deleteSubSection(id: number) {
-  //     console.log(id);
-  //     this.subSectionOperationsSub = this.svc
-  //       .deleteSubSection(id)
-  //       .pipe(
-  //         catchError((err) => {
-  //           throw err;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         console.log(res.message);
-  //         this.selectedSSIndex = -1;
-  //         for (let i = 0; i < this.collapseableSArr.length; i++) {
-  //           this.collapseableSArr[i] = true;
-  //         }
-  //         this.getSections();
   //       });
   //   }
 

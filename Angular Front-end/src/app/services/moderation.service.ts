@@ -183,9 +183,9 @@ export class ModerationService {
   }
 
   // for forum block
-  public getActivePosts(year: number): Observable<IPostData[]> {
+  public getActivePosts(year: number, limit: number): Observable<IPostData[]> {
     return this.http.get<IPostData[]>(
-      this.threadsApiUrl + '/moreactives/' + year
+      this.threadsApiUrl + '/moreactives?year=' + year + '&limit=' + limit
     );
   }
 

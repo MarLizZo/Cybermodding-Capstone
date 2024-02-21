@@ -139,7 +139,6 @@ export class ThreadStatsComponent {
   setStat(type: number) {
     this.actualStat = type;
     this.selectedStatsYear = 2023;
-    this.getStatsInfo(2023);
-    this.getStatsInfo(2023);
+    this.getStatsInfo(this.selectedStatsYear);
   }
 }

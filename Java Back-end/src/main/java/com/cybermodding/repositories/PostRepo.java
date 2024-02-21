@@ -16,8 +16,8 @@ public interface PostRepo extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p ORDER BY RANDOM() LIMIT 1")
     Post getRandom();
 
-    @Query("SELECT p FROM Post p JOIN p.comments pc WHERE YEAR(p.publishedDate) = :year ORDER BY COUNT(pc) LIMIT 10")
-    List<Post> getTenMoreActive(Integer year);
+    @Query("SELECT p FROM Post p JOIN p.comments pc WHERE YEAR(p.publishedDate) = :year ORDER BY COUNT(pc) LIMIT :limit")
+    List<Post> getTenMoreActive(Integer year, Integer limit);
 
     @Query("SELECT p.publishedDate FROM Post p WHERE YEAR(p.publishedDate) = :year")
     List<LocalDateTime> getDatesFromPostCreation(Integer year);
