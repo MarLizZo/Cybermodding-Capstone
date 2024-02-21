@@ -1,0 +1,31 @@
+@import "mixins";
+@include text-orange;
+@include text-mod;
+@include special-title;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  .scrollb {
+    @include secondary-scrollbar;
+  }
+
+  .link {
+    &::before {
+      content: "> ";
+    }
+    &::after {
+      content: " <";
+    }
+  }
+
+  .pointer {
+    width: max-content;
+    display: block;
+    color: var(--txt);
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+}

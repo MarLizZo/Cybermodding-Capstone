@@ -51,9 +51,9 @@ export class AdmincpComponent {
   contactMessagesErrorString: string | undefined;
 
   isMessagesCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isMsgOpenView: false,
+      isMsgOpenView: true,
       isMsgClosedView: false,
     },
   };
@@ -92,10 +92,10 @@ export class AdmincpComponent {
   };
 
   isBlocksCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isBlockAllView: true,
       isBlockCreateView: false,
+      isBlockAllView: false,
     },
   };
 
@@ -242,26 +242,6 @@ export class AdmincpComponent {
     }
   }
 
-  //   blockType: string = 'BLOCK_ALL';
-  //   blockContent: string = '';
-  //   blockTitle: string = '';
-  //   blocksArr: ISideBlockData[] = [];
-  //   collapseableCMArr: boolean[] = [];
-  //   activeBoolBArr: boolean[] = [];
-  //   blocksTitleArr: string[] = [];
-  //   blocksTypeArr: string[] = [];
-
-  //   @ViewChild('blockMod') blocksBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('blockViewCreate')
-  //   blockViewCreateBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('blockViewAll')
-  //   blockViewAllBtn!: ElementRef<HTMLButtonElement>;
-  //   @ViewChild('activeRadioOne')
-  //   radioActive!: ElementRef<HTMLInputElement>;
-  //   @ViewChild('activeSSRadioOne') radioSSActive!: ElementRef<HTMLInputElement>;
-
-  //   @ViewChild('blockParagMod') blockMod!: ElementRef<HTMLElement>;
-
   ngOnInit() {
     this.authSvc.intialized$.subscribe((init) => {
       if (init) {
@@ -333,193 +313,4 @@ export class AdmincpComponent {
         this.isWaitingPanel = false;
       });
   }
-
-  //   getBlocks() {
-  //     this.isWaitingPanel = true;
-
-  //     for (let i = 0; i < this.collapseableBArr.length; i++) {
-  //       this.collapseableBArr[i] = true;
-  //     }
-  //     this.activeBoolBArr = [];
-  //     this.blocksTitleArr = [];
-  //     this.blocksArr = [];
-  //     this.blockOperationsSub = this.svc
-  //       .getBlocks()
-  //       .pipe(
-  //         catchError((err) => {
-  //           this.errorPanelMsg = 'Errore nel caricamento dei blocchi';
-  //           this.isErrorPanel = true;
-  //           this.isWaitingPanel = false;
-  //           return EMPTY;
-  //         })
-  //       )
-  //       .subscribe((res) => {
-  //         this.blocksArr = res;
-  //         for (let i = 0; i < res.length; i++) {
-  //           this.activeBoolBArr.push(res[i].active);
-  //           this.blocksTitleArr.push(res[i].title);
-  //           this.blocksTypeArr.push(res[i].e_block_type.toString());
-  //         }
-  //         this.isWaitingPanel = false;
-  //       });
-  //   }
-
-  //   openModal(update: boolean, index: number = 0, form?: NgForm) {
-  //     if (!update) {
-  //       const modal = this.modalSvc.open(ModalComponent, {
-  //         size: 'l',
-  //       });
-  //       modal.componentInstance.title = this.blockTitle;
-  //       modal.componentInstance.body = this.blockContent;
-  //     } else {
-  //       const modal = this.modalSvc.open(ModalComponent, {
-  //         size: 'l',
-  //       });
-  //       modal.componentInstance.title = this.blocksTitleArr[index];
-  //       modal.componentInstance.body = form!.controls['content'].value;
-  //     }
-  //   }
-
-  //   resetBFields() {
-  //     document.getElementById('err-ti')?.classList.add('d-none');
-  //     document.getElementById('err-order')?.classList.add('d-none');
-  //     document.getElementById('err-content')?.classList.add('d-none');
-  //   }
-
-  //   doBlockChecks(form: NgForm): boolean {
-  //     let bool: boolean = true;
-
-  //     let titleP: HTMLElement | null = document.getElementById('err-ti');
-  //     let orderP: HTMLElement | null = document.getElementById('err-order');
-  //     let contentP: HTMLElement | null = document.getElementById('err-content');
-
-  //     if (this.blockTitle.length < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (this.blockContent.length < 1) {
-  //       bool = false;
-  //       contentP!.classList.remove('d-none');
-  //       contentP!.innerText = 'Write something';
-  //     }
-
-  //     if (
-  //       isNaN(Number(form.controls['order'].value)) ||
-  //       form.controls['order'].value == null
-  //     ) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   doCreateNewBlock(data: NgForm) {
-  //     this.resetBFields();
-  //     this.errorPanelMsg = '';
-  //     this.isErrorPanel = false;
-
-  //     if (this.doBlockChecks(data)) {
-  //       this.isOpBlock = true;
-  //       let obj: ISideBlockData = {
-  //         title: this.blockTitle,
-  //         content: this.blockContent,
-  //         active: this.radioActive.nativeElement.checked ? true : false,
-  //         e_block_type: this.blockType,
-  //         order_number: data.controls['order'].value,
-  //       };
-  //       this.blockOperationsSub = this.svc
-  //         .createBlock(obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpBlock = false;
-  //             this.errorPanelMsg = 'Errore nella creazione del blocco.';
-  //             this.isErrorPanel = true;
-  //             return EMPTY;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           data.resetForm();
-  //           setTimeout(() => {
-  //             this.isOpBlock = true;
-  //             this.blockMod.nativeElement.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               this.blockMod.nativeElement.classList.add('opacity-0');
-  //             }, 2000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
-
-  //   doUpdateBlockChecks(form: NgForm, index: number): boolean {
-  //     let bool: boolean = true;
-
-  //     let titleP: HTMLElement | null = document.getElementById('err-ti');
-  //     let orderP: HTMLElement | null = document.getElementById('err-order');
-  //     let contentP: HTMLElement | null = document.getElementById('err-content');
-
-  //     if (this.blocksTitleArr[index].length < 3) {
-  //       bool = false;
-  //       titleP!.classList.remove('d-none');
-  //       titleP!.innerText = 'Min 3 chars';
-  //     }
-
-  //     if (form.controls['content'].value.length < 1) {
-  //       bool = false;
-  //       contentP!.classList.remove('d-none');
-  //       contentP!.innerText = 'Write something';
-  //     }
-
-  //     if (
-  //       isNaN(Number(form.controls['order'].value)) ||
-  //       form.controls['order'].value == null
-  //     ) {
-  //       bool = false;
-  //       orderP!.classList.remove('d-none');
-  //       orderP!.innerText = 'Invalid value';
-  //     }
-
-  //     return bool;
-  //   }
-
-  //   doUpdateBlock(data: NgForm, index: number) {
-  //     this.resetBFields();
-  //     if (this.doUpdateBlockChecks(data, index)) {
-  //       this.isOpBlock = true;
-  //       let obj: ISideBlockData = {
-  //         id: this.blocksArr[index].id,
-  //         title: data.controls['title'].value,
-  //         content: data.controls['content'].value,
-  //         active: this.activeBoolBArr[index] ? true : false,
-  //         e_block_type: this.blocksTypeArr[index],
-  //         order_number: data.controls['order'].value,
-  //       };
-
-  //       this.blockOperationsSub = this.svc
-  //         .updateBlock(this.user_id!, obj)
-  //         .pipe(
-  //           catchError((err) => {
-  //             this.isOpBlock = false;
-  //             throw err;
-  //           })
-  //         )
-  //         .subscribe((res) => {
-  //           setTimeout(() => {
-  //             this.isOpBlock = false;
-  //             document
-  //               .querySelector('#blockUParagMod' + index)
-  //               ?.classList.remove('opacity-0');
-  //             setTimeout(() => {
-  //               document
-  //                 .querySelector('#blockUParagMod' + index)
-  //                 ?.classList.add('opacity-0');
-  //               this.getBlocks();
-  //             }, 2000);
-  //           }, 1000);
-  //         });
-  //     }
-  //   }
 }

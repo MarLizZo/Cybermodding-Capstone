@@ -1,0 +1,72 @@
+@import "mixins";
+@include text-orange;
+@include text-mod;
+@include special-title;
+@include truncate;
+
+.main-container {
+  background-color: var(--bg-lighter);
+
+  .scrollb {
+    @include secondary-scrollbar;
+  }
+
+  i,
+  .pointer {
+    cursor: pointer;
+  }
+
+  .b-title {
+    width: max-content;
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  input,
+  textarea {
+    background-color: var(--bg);
+    color: var(--txt);
+  }
+
+  textarea {
+    min-height: 200px;
+    padding: 12px;
+  }
+
+  select {
+    background-color: var(--bg);
+    color: var(--txt);
+
+    option {
+      background-color: var(--bg-lighter);
+      color: var(--txt);
+    }
+  }
+
+  ::placeholder {
+    color: var(--txt-muted);
+  }
+
+  .single-result {
+    background-color: var(--bg);
+
+    .su-head {
+      border-bottom: 1px solid var(--near-black);
+    }
+  }
+
+  .resp-input,
+  .resp-div {
+    width: 90%;
+
+    @media screen and (min-width: 576px) {
+      width: 75%;
+    }
+
+    @media screen and (min-width: 992px) {
+      width: 50%;
+    }
+  }
+}
