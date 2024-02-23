@@ -1,3 +1,6 @@
+@import "mixins";
+@include text-mod;
+
 nav {
   background: var(--bg-lighter);
   border-bottom: 2px solid var(--near-black);

@@ -97,7 +97,7 @@ export class ForumComponent {
         })
       )
       .subscribe((res) => {
-        this.sidesArr = res;
+        this.sidesArr = res.filter((el) => el.active);
         const currentValues = this.subsBoolArr.value;
         currentValues[1] = true;
         this.subsBoolArr.next(currentValues);

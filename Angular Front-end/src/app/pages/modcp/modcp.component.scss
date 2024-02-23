@@ -1,89 +1,46 @@
 @import "mixins";
 
 @include pageable-mixin;
+@include text-orange;
 @include text-mod;
-
-.head-container {
-  background-color: var(--bg-lighter);
-  border-bottom: 2px solid var(--near-black);
-
-  .moderation-btn {
-    background-color: var(--bg);
-    color: var(--txt);
-    transition: 0.2s;
-
-    &:hover,
-    &:active {
-      background-color: var(--near-black);
-    }
-  }
-
-  .btn-selected {
-    color: var(--orange-hover);
-    background-color: var(--near-black);
-  }
-}
+@include truncate;
 
 .main-container {
   background-color: var(--bg-lighter);
+  height: 80vh;
 
-  .users-moderation {
-    input {
+  .selection-container {
+    .sect-btn {
       background-color: var(--bg);
       color: var(--txt);
-    }
+      border: none;
 
-    .resp-input,
-    .resp-div {
-      width: 90%;
-
-      @media screen and (min-width: 576px) {
-        width: 75%;
+      &:first-child {
+        cursor: default;
       }
 
-      @media screen and (min-width: 992px) {
-        width: 50%;
+      .icon-cont {
+        background-color: var(--bg-tert);
+        cursor: pointer;
       }
     }
 
-    .user-container {
-      .single-user {
-        background-color: var(--bg);
+    .collapse-comp {
+      background-color: var(--bg);
+      border-top: 1px solid var(--near-black);
 
-        .su-head {
-          border-bottom: 1px solid var(--near-black);
-        }
-
-        .options-container {
-          background-color: var(--bg-lighter);
-          border: 1px solid var(--near-black);
-          border-top: 0;
-
-          select {
-            background-color: var(--bg);
-            color: var(--txt);
-
-            option {
-              background-color: var(--bg-lighter);
-              color: var(--txt);
-            }
-          }
-        }
-
-        i {
-          cursor: pointer;
-          color: var(--orange-hover);
-          font-size: 1.2rem;
+      .selection {
+        transition: color 0.2s;
+        cursor: pointer;
+        &:hover {
+          color: var(--txt-muted);
         }
       }
     }
   }
 
-  ::placeholder {
-    color: var(--txt-muted);
+  .comps-container {
+    background-color: var(--bg-lighter);
+    min-height: 100%;
   }
-}
-
-.disabled {
-  pointer-events: none;
 }

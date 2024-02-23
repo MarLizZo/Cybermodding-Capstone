@@ -1,11 +1,16 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { EMPTY, Subscription, catchError } from 'rxjs';
-import { IUserData } from 'src/app/interfaces/iuser-data';
+import { Subscription } from 'rxjs';
 import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModerationService } from 'src/app/services/moderation.service';
+
+type CollapseComps = {
+  collapsed: boolean;
+  subs: {
+    [view: string]: boolean;
+  };
+};
 
 @Component({
   selector: 'app-modcp',
@@ -13,38 +18,49 @@ import { ModerationService } from 'src/app/services/moderation.service';
   styleUrls: ['./modcp.component.scss'],
 })
 export class ModcpComponent {
+  constructor(private authSvc: AuthService, private router: Router) {}
+
   isLoadingPage: boolean = true;
   isWaitingPage: boolean = true;
   isWaitingPanel: boolean = true;
   isErrorPanel: boolean = false;
   errorPanelMsg: string = '';
-  isOpUsers: boolean = false;
   username: string | undefined = '';
   user_id: number | undefined = 0;
   classColor: string = '';
   granted: boolean = false;
-  isUsersModeration: boolean = true;
-  isThreadsModeration: boolean = false;
   initSub!: Subscription;
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
-  usersSub!: Subscription;
-  searcUserSub!: Subscription;
-  moderateUserSub!: Subscription;
-  inputSearchUser: string = '';
-  usersFound!: IUserDataPageable;
-  collapseableArr: boolean[] = [true, true, true, true, true, true, true, true];
-  namesArr: string[] = [];
-  pagesArr: number[] = [];
 
-  @ViewChild('userMod') usersBtn!: ElementRef<HTMLButtonElement>;
-  @ViewChild('threadMod') threadsBtn!: ElementRef<HTMLButtonElement>;
+  isUsersCollapsed: CollapseComps = {
+    collapsed: false,
+    subs: {
+      isSearchUsersView: true,
+    },
+  };
 
-  constructor(
-    private authSvc: AuthService,
-    private router: Router,
-    private svc: ModerationService
-  ) {}
+  isQuickBanCollapsed: CollapseComps = {
+    collapsed: true,
+    subs: {
+      isQuickBanSearchView: false,
+    },
+  };
+
+  isThreadsModCollapsed: CollapseComps = {
+    collapsed: true,
+    subs: {
+      isThreadSearchView: false,
+      isThreadAllView: false,
+    },
+  };
+
+  isInfosCollapsed: CollapseComps = {
+    collapsed: true,
+    subs: {
+      isInfoSysView: false,
+    },
+  };
 
   ngOnInit() {
     this.initSub = this.authSvc.intialized$.subscribe((res) => {
@@ -74,179 +90,48 @@ export class ModcpComponent {
   ngOnDestroy() {
     if (this.authPrivSub) this.authPrivSub.unsubscribe();
     if (this.authUserSub) this.authUserSub.unsubscribe();
-    if (this.usersSub) this.usersSub.unsubscribe();
-    if (this.searcUserSub) this.searcUserSub.unsubscribe();
-    if (this.moderateUserSub) this.moderateUserSub.unsubscribe();
     if (this.initSub) this.initSub.unsubscribe();
   }
 
-  switchModeration(flag: number): void {
-    this.isErrorPanel = false;
-    this.errorPanelMsg = '';
+  getAnySubViewOpen(collapseable: CollapseComps): boolean {
+    let result: boolean = false;
+    for (let key in collapseable.subs) {
+      if (collapseable.subs[key]) result = true;
+    }
+    return result;
+  }
 
-    if (flag == 0) {
-      if (!this.isUsersModeration) {
-        this.isUsersModeration = !this.isUsersModeration;
-        this.isThreadsModeration = !this.isThreadsModeration;
-        this.usersBtn.nativeElement.classList.toggle('btn-selected');
-        this.threadsBtn.nativeElement.classList.toggle('btn-selected');
-      }
-    } else {
-      if (!this.isThreadsModeration) {
-        this.isThreadsModeration = !this.isThreadsModeration;
-        this.isUsersModeration = !this.isUsersModeration;
-        this.usersBtn.nativeElement.classList.toggle('btn-selected');
-        this.threadsBtn.nativeElement.classList.toggle('btn-selected');
+  resetAllSubViews(except: CollapseComps) {
+    if (this.isUsersCollapsed != except) {
+      for (let key in this.isUsersCollapsed.subs) {
+        this.isUsersCollapsed.subs[key] = false;
       }
     }
+    if (this.isQuickBanCollapsed != except) {
+      for (let key in this.isQuickBanCollapsed.subs) {
+        this.isQuickBanCollapsed.subs[key] = false;
+      }
+    }
+    if (this.isThreadsModCollapsed != except) {
+      for (let key in this.isThreadsModCollapsed.subs) {
+        this.isThreadsModCollapsed.subs[key] = false;
+      }
+    }
+    if (this.isInfosCollapsed != except) {
+      for (let key in this.isInfosCollapsed.subs) {
+        this.isInfosCollapsed.subs[key] = false;
+      }
+    }
   }
 
-  searchUsers(page: number): void {
-    this.isErrorPanel = false;
-    this.errorPanelMsg = '';
-
-    this.searcUserSub = this.svc
-      .getUsersFromName(this.inputSearchUser, page)
-      .pipe(
-        catchError((err) => {
-          this.errorPanelMsg = 'Errore nel caricamento degli utenti.';
-          this.isErrorPanel = true;
-          return EMPTY;
-        })
-      )
-      .subscribe((res) => {
-        this.pagesArr = [];
-
-        if (page + 1 <= 3) {
-          for (let i = 0; i < res.totalPages; i++) {
-            i < 5 || i > res.totalPages - 3 ? this.pagesArr.push(i + 1) : null;
-          }
-        } else if (page + 1 >= res.totalPages - 2) {
-          for (let i = 0; i < res.totalPages; i++) {
-            i < 2 || i > res.totalPages - 6 ? this.pagesArr.push(i + 1) : null;
-          }
-        } else {
-          this.pagesArr.push(1);
-          for (let i = page - 2; i < page + 3; i++) {
-            this.pagesArr.push(i + 1);
-          }
-          this.pagesArr.push(res.totalPages);
-        }
-
-        for (let i = 0; i < res.numberOfElements; i++) {
-          this.namesArr[i] = res.content[i].username;
-        }
-
-        for (let i = 0; i < this.collapseableArr.length; i++) {
-          this.collapseableArr[i] = true;
-        }
-
-        this.usersFound = res;
-
-        setTimeout(() => {
-          document.getElementById('top-user')?.scrollIntoView();
-        }, 200);
-      });
-  }
-
-  resetFields(num: number): void {
-    let usernameP: HTMLElement | null = document.getElementById(
-      'err-us-' + num
-    );
-    let emailP: HTMLElement | null = document.getElementById('err-em-' + num);
-    let descriptionP: HTMLElement | null = document.getElementById(
-      'err-de-' + num
-    );
-    let ruoloP: HTMLElement | null = document.getElementById('err-ru-' + num);
-    usernameP!.classList.add('d-none');
-    descriptionP?.classList.add('d-none');
-    emailP?.classList.add('d-none');
-    ruoloP?.classList.add('d-none');
-  }
-
-  doChecksUser(form: NgForm, num: number): boolean {
-    let bool: boolean = true;
-    let usernameP: HTMLElement | null = document.getElementById(
-      'err-us-' + num
-    );
-    let emailP: HTMLElement | null = document.getElementById('err-em-' + num);
-    let descriptionP: HTMLElement | null = document.getElementById(
-      'err-de-' + num
-    );
-    let ruoloP: HTMLElement | null = document.getElementById('err-ru-' + num);
-
-    if (form.controls['username'].value.length < 3) {
-      bool = false;
-      usernameP!.classList.remove('d-none');
-      usernameP!.innerText = 'Min 3 chars';
-    } else if (form.controls['username'].value.length > 30) {
-      bool = false;
-      usernameP!.classList.remove('d-none');
-      usernameP!.innerText = 'Max 30 chars';
-    }
-
-    if (form.controls['description'].value.length > 25) {
-      bool = false;
-      descriptionP?.classList.remove('d-none');
-    }
-
-    if (
-      !RegExp('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$').test(
-        form.controls['email'].value
-      )
-    ) {
-      bool = false;
-      emailP?.classList.remove('d-none');
-    }
-
-    if (form.controls['role'].value == 3) {
-      bool = false;
-      ruoloP?.classList.remove('d-none');
-    }
-
-    return bool;
-  }
-
-  doUserModerate(data: NgForm, index: number): void {
-    this.resetFields(index);
-
-    if (this.doChecksUser(data, index)) {
-      this.isOpUsers = true;
-      let outData: Partial<IUserData> = {
-        id: data.controls['uid'].value,
-        username: data.controls['username'].value,
-        email: data.controls['email'].value,
-        description: data.controls['description'].value,
-        roles:
-          data.controls['role'].value == 4
-            ? [{ id: 4, roleName: 'ROLE_BANNED' }]
-            : data.controls['role'].value == 2
-            ? [{ id: 2, roleName: 'ROLE_MODERATOR' }]
-            : [{ id: 1, roleName: 'ROLE_USER' }],
-      };
-
-      this.moderateUserSub = this.svc
-        .moderate(this.user_id!, outData)
-        .pipe(
-          catchError((err) => {
-            this.isOpUsers = false;
-            throw err;
-          })
-        )
-        .subscribe((res) => {
-          setTimeout(() => {
-            this.namesArr[index] = res.username!;
-            this.isOpUsers = false;
-            document
-              .querySelector('#userParagMod' + index)
-              ?.classList.remove('opacity-0');
-            setTimeout(() => {
-              document
-                .querySelector('#userParagMod' + index)
-                ?.classList.add('opacity-0');
-            }, 3000);
-          }, 1000);
-        });
+  setNewView(collapseable: CollapseComps, view: string) {
+    this.resetAllSubViews(collapseable);
+    for (let key in collapseable.subs) {
+      if (key == view) {
+        collapseable.subs[key] = true;
+      } else {
+        collapseable.subs[key] = false;
+      }
     }
   }
 }

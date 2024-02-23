@@ -67,7 +67,7 @@ export class HomepageComponent {
         })
       )
       .subscribe((res) => {
-        this.sidesArr = res;
+        this.sidesArr = res.filter((el) => el.active);
         const currentValues = this.subsBoolArr.value;
         currentValues[0] = true;
         this.subsBoolArr.next(currentValues);

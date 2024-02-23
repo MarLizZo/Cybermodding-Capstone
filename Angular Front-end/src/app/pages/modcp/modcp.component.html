@@ -8,136 +8,77 @@
         <h1 class="mb-2" [class]="classColor">{{ username }}</h1>
         <h3 class="mb-4">Pannello Moderatore</h3>
 
-        <div class="head-container d-flex flex-column flex-lg-row align-items-center justify-content-lg-evenly p-3">
-            <button #userMod class="btn moderation-btn px-4 rounded-1 btn-selected border-0"
-                (click)="switchModeration(0)">Moderazione utenti</button>
-            <button #threadMod class="btn moderation-btn px-4 rounded-1 border-0 mt-2 mt-lg-0"
-                (click)="switchModeration(1)">Moderazione thread</button>
-        </div>
-        <div class="main-container p-3">
-            <div *ngIf="isUsersModeration" class="users-moderation d-flex flex-column align-items-center mt-2">
-                <p id="top-user" class="mb-2">Cerca utenti</p>
-                <form (submit)="searchUsers(0)" class="w-100 d-flex justify-content-center">
-                    <input [(ngModel)]="inputSearchUser" name="inputSearchUser" type="text"
-                        class="form-control form-control-sm px-2 border-0 shadow-none resp-input"
-                        placeholder="Cerca utente..">
-                </form>
-
-                <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-5">{{ errorPanelMsg }}</p>
-                <p *ngIf="usersFound == undefined && !isErrorPanel" class="mt-4 fw-medium fs-5">Il risultato apparirà
-                    qui</p>
-                <div *ngIf="usersFound != undefined && usersFound.content.length != 0 && !isErrorPanel"
-                    class="user-container w-100 mt-4 p-3">
-                    <div *ngFor="let u of usersFound.content; let i = index; let first = first" class="single-user"
-                        [ngClass]="{'mt-3' : !first}">
-                        <div class="su-head d-flex justify-content-between align-items-center py-2 px-3 rounded-1">
-                            <p class="m-0 fw-medium fs-5" [innerText]="namesArr[i]"
-                                [ngClass]="{'text-mod' : u.roles![0].id == 2, 'text-danger' : u.roles![0].id == 3, 'text-decoration-line-through' : u.roles![0].id == 4}">
-                            </p>
-                            <i class="bi bi-arrow-bar-down" (click)="collapseableArr[i] = !collapseableArr[i]"></i>
-                        </div>
-
-                        <div #collapse="ngbCollapse" [(ngbCollapse)]="collapseableArr[i]"
-                            class="options-container p-3 pb-4">
-                            <form #f="ngForm" class="d-flex flex-column align-items-center"
-                                [ngClass]="{'disabled' : u.roles![0].id == 3}">
-                                <div class="resp-div">
-                                    <label [htmlFor]="'uid-' + i" class="mb-1 align-self-start">ID Utente</label>
-                                    <input [id]="'uid-' + i" type="text" ngModel name="uid"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none disabled"
-                                        [(ngModel)]="u.id">
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'username-' + i">Username</label>
-                                        <p [id]="'err-us-' + i" class="m-0 text-danger d-none"></p>
-                                    </div>
-                                    <input [disabled]="u.roles![0].id == 3" [id]="'username-' + i" type="text" ngModel
-                                        name="username" class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.username" minlength="3" maxlength="30">
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'email-' + i">Email</label>
-                                        <p [id]="'err-em-' + i" class="m-0 text-danger d-none">Invalida</p>
-                                    </div>
-                                    <input [disabled]="u.roles![0].id == 3" ngModel name="email" [id]="'email-' + i"
-                                        type="email" class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.email">
-                                </div>
-
-                                <div class="resp-div mt-3">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'descr-' + i">Description</label>
-                                        <p [id]="'err-de-' + i" class="m-0 text-danger d-none">Max 20 chars</p>
-                                    </div>
-                                    <input [disabled]="u.roles![0].id == 3" [id]="'descr-' + i" type="text" ngModel
-                                        name="description"
-                                        class="form-control form-control-sm px-1 border-0 shadow-none"
-                                        [(ngModel)]="u.description" maxlength="25">
-                                </div>
-
-                                <div class="resp-div mt-3 mb-4">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <label [htmlFor]="'role-' + i">Ruolo</label>
-                                        <p [id]="'err-ru-' + i" class="m-0 text-danger d-none">Non consentito</p>
-                                    </div>
-                                    <select [disabled]="u.roles![0].id == 3" name="role" [id]="'role-' + i"
-                                        [(ngModel)]="u.roles![0].id"
-                                        class="form-select form-select-sm border-0 shadow-none">
-                                        <option value="1">User</option>
-                                        <option value="2">Moderator</option>
-                                        <option disabled value="3">Admin</option>
-                                        <option value="4">Bannato</option>
-                                    </select>
-                                </div>
-                                <app-orange-button *ngIf="u.roles![0].id != 3" [btnTheme]="'orange'"
-                                    [btnTitle]="'Modera utente'" (click)="doUserModerate(f, i)"
-                                    [ngClass]="{'disabled' : u.roles![0].id == 3}"></app-orange-button>
-                                <div class="mt-3">
-                                    <app-inline-loader *ngIf="isOpUsers"></app-inline-loader>
-                                </div>
-                                <p [id]="'userParagMod' + i" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
-                                    con
-                                    successo!
-                                </p>
-                            </form>
-                        </div>
+        <div class="d-flex main-container py-2">
+            <div class="selection-container">
+                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
+                    <div class="flex-grow-1 ps-3 pe-3 py-1">Impostazioni Utenti</div>
+                    <div class="px-2 icon-cont py-1" (click)="isUsersCollapsed.collapsed = !isUsersCollapsed.collapsed">
+                        <i *ngIf="isUsersCollapsed" class="bi bi-arrow-down-short"></i>
+                        <i *ngIf="!isUsersCollapsed" class="bi bi-arrow-up-short"></i>
                     </div>
-                    <div class="row w-100 pageable-container mx-0 py-2 px-1 mt-5 d-flex align-items-center">
-                        <div class="col-12 col-md-3 mb-2 mb-md-0 px-0 px-md-2">
-                            <div class="previous rounded-1 px-2 d-flex" *ngIf="!usersFound.first"
-                                (click)="searchUsers(usersFound.number - 1)">
-                                <i class="bi bi-arrow-bar-left"></i>
-                                <p class="m-0 ms-2">Indietro</p>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6 d-flex justify-content-center">
-                            <div class="pages d-flex justify-content-center flex-wrap rounded-1">
-                                <div *ngFor="let p of pagesArr; let first = first;"
-                                    [ngClass]="{'ms-3' : !first, 'actual-page' : p - 1 == usersFound.number}"
-                                    class="btn-page px-2" (click)="searchUsers(p - 1)">
-                                    <p class="m-0">{{ p }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-3 d-flex justify-content-end mt-2 mt-md-0 px-0 px-md-2">
-                            <div class="next rounded-1 px-2 d-flex" *ngIf="!usersFound.last"
-                                (click)="searchUsers(usersFound.number + 1)">
-                                <p class="m-0 me-2">Avanti</p>
-                                <i class="bi bi-arrow-bar-right"></i>
-                            </div>
-                        </div>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="isUsersCollapsed.collapsed"
+                    class="collapse-comp pt-1 pb-2 ps-3">
+                    <div class="mb-1 selection" [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isSearchUsersView']}"
+                        (click)="setNewView(isUsersCollapsed, 'isSearchUsersView')">Ricerca utente</div>
+                </div>
+
+                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
+                    <div class="flex-grow-1 ps-3 pe-3 py-1">Quick Ban</div>
+                    <div class="px-2 icon-cont py-1"
+                        (click)="isQuickBanCollapsed.collapsed = !isQuickBanCollapsed.collapsed">
+                        <i *ngIf="isQuickBanCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                        <i *ngIf="!isQuickBanCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
                     </div>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="isQuickBanCollapsed.collapsed"
+                    class="collapse-comp pt-1 pb-2 ps-3">
+                    <div class="selection" [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanSearchView']}"
+                        (click)="setNewView(isQuickBanCollapsed, 'isQuickBanSearchView')">Ricerca utente</div>
+                </div>
+
+                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
+                    <div class="flex-grow-1 ps-3 pe-3 py-1">Modera Thread</div>
+                    <div class="px-2 icon-cont py-1"
+                        (click)="isThreadsModCollapsed.collapsed = !isThreadsModCollapsed.collapsed">
+                        <i *ngIf="isThreadsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                        <i *ngIf="!isThreadsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                    </div>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="isThreadsModCollapsed.collapsed"
+                    class="collapse-comp pt-1 pb-2 ps-3">
+                    <div class="selection" [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadSearchView']}"
+                        (click)="setNewView(isThreadsModCollapsed, 'isThreadSearchView')">Ricerca Thread</div>
+                    <div class="selection" [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadAllView']}"
+                        (click)="setNewView(isThreadsModCollapsed, 'isThreadAllView')">Tutti i Thread</div>
+                </div>
+
+                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
+                    <div class="flex-grow-1 ps-3 pe-3 py-1">Informazioni</div>
+                    <div class="px-2 icon-cont py-1" (click)="isInfosCollapsed.collapsed = !isInfosCollapsed.collapsed">
+                        <i *ngIf="isInfosCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                        <i *ngIf="!isInfosCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                    </div>
+                </div>
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="isInfosCollapsed.collapsed"
+                    class="collapse-comp pt-1 pb-2 ps-3">
+                    <div class="selection" [ngClass]="{'txt-orange' : isInfosCollapsed.subs['isInfoSysView']}"
+                        (click)="setNewView(isInfosCollapsed, 'isInfoSysView')">Sistema</div>
                 </div>
             </div>
 
-            <div *ngIf="isThreadsModeration">
-                <!-- for future revisions -->
-                <div class="d-flex justify-content-center">
-                    <p class="m-0">Features for Mods will be added in the future</p>
+            <div class="comps-container flex-grow-1 mx-3 px-3 py-1 shadow">
+                <p *ngIf="isErrorPanel" class="mt-4 fw-medium fs-4 text-center">{{ errorPanelMsg }}</p>
+
+                <div *ngIf="!isErrorPanel" class="h-100">
+                    <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)" class="d-block h-100" [isStatsView]="false"
+                        [user_id]="user_id" [classColor]="'green'"></app-users>
+                    <app-ban *ngIf="getAnySubViewOpen(isQuickBanCollapsed)" class="d-block h-100"
+                        [user_id]="user_id"></app-ban>
+                    <app-threads *ngIf="getAnySubViewOpen(isThreadsModCollapsed)" [user_id]="user_id"
+                        class="d-block h-100" [isSearchThreadView]="isThreadsModCollapsed.subs['isThreadSearchView']"
+                        [isAllThreadView]="isThreadsModCollapsed.subs['isThreadAllView']"></app-threads>
+                    <app-infos *ngIf="getAnySubViewOpen(isInfosCollapsed)" class="d-block h-100"></app-infos>
                 </div>
             </div>
         </div>

@@ -62,7 +62,8 @@
 <div class="sub-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center px-3 py-2">
     <div class="d-flex mb-2 mb-md-0">
         <div *ngIf="isMod || isAdmin" class="py-1 border-end border-2 border-black pe-3 me-3">
-            <a [routerLink]="'/moderator'" class="text-decoration-none active-link me-3">Moderator CP</a>
+            <a [routerLink]="'/moderator'" class="text-decoration-none active-link"
+                [ngClass]="{'me-3' : isAdmin}">Moderator CP</a>
             <a *ngIf="isAdmin" [routerLink]="'/admin'" class="text-decoration-none active-link">Admin CP</a>
         </div>
         <div class="d-none d-md-flex align-items-center">

@@ -59,10 +59,12 @@ export class UsersComponent {
   @Input() isStatsView: boolean = false;
   statsInitialized: boolean = false;
   @Input() user_id: number | undefined;
+  @Input() classColor: string | undefined = undefined;
   isError: boolean = false;
+  isErrorModerate: boolean = false;
   errorMsg: string = '';
   inputSearchUser: string = '';
-  usersFound!: IUserDataPageable;
+  usersFound: IUserDataPageable | undefined = undefined;
   searcUserSub!: Subscription;
   moderationSub!: Subscription;
   statsSub!: Subscription;
@@ -97,6 +99,9 @@ export class UsersComponent {
   searchUsers(page: number): void {
     this.isError = false;
     this.errorMsg = '';
+    this.userNamesArr = [];
+    this.userPagesArr = [];
+    this.usersFound = undefined;
     if (this.isSingleUserView) {
       this.resetSingleView();
       this.resetUsersFields();
@@ -112,9 +117,6 @@ export class UsersComponent {
         })
       )
       .subscribe((res) => {
-        this.userNamesArr = [];
-        this.userPagesArr = [];
-
         if (page + 1 <= 3) {
           for (let i = 0; i < res.totalPages; i++) {
             i < 5 || i > res.totalPages - 3
@@ -143,19 +145,32 @@ export class UsersComponent {
       });
   }
 
-  canBeModerated(): boolean {
-    if (this.singleUser!.id == 1 || this.singleUser!.id == 87) return false;
-    else return true;
+  canModerateElement(): boolean {
+    if (!this.classColor) {
+      // sono un admin
+      if (this.user_id == 1 || this.user_id == 87) return true; // sono super admin
+      return this.singleUser!.roles![0].roleName == 'ROLE_ADMIN' ? false : true;
+    } else {
+      // sono un moderatore
+      return this.singleUser!.roles![0].roleName == 'ROLE_ADMIN' ||
+        this.singleUser!.roles![0].roleName == 'ROLE_MODERATOR'
+        ? false
+        : true;
+    }
   }
 
   resetSingleView(): void {
     this.isSingleUserView = false;
     this.singleUser = undefined;
+    this.isErrorModerate = false;
   }
 
   setSingleView(user: IUserData): void {
     this.singleUser = user;
     this.isSingleUserView = true;
+    if (!this.canModerateElement()) {
+      this.isErrorModerate = true;
+    }
   }
 
   resetUsersFields(): void {
@@ -206,6 +221,11 @@ export class UsersComponent {
     this.resetUsersFields();
     this.isError = false;
 
+    if (!this.canModerateElement()) {
+      this.isErrorModerate = true;
+      return;
+    }
+
     if (this.doChecksUser(data)) {
       this.isOpUsers = true;
       let outData: Partial<IUserData> = {
@@ -235,10 +255,10 @@ export class UsersComponent {
         )
         .subscribe((res) => {
           this.singleUser!.username = res.username!;
-          const index = this.usersFound.content.findIndex(
+          const index = this.usersFound!.content.findIndex(
             (el) => el.id == this.singleUser!.id
           );
-          this.usersFound.content[index].username = res.username!;
+          this.usersFound!.content[index].username = res.username!;
           setTimeout(() => {
             this.isOpUsers = false;
             document
@@ -290,5 +310,25 @@ export class UsersComponent {
           this.chart.chart?.update();
         });
     }
+  }
+
+  getRole() {
+    return this.singleUser!.roles![0].roleName == 'ROLE_ADMIN'
+      ? 'Admin'
+      : this.singleUser!.roles![0].roleName == 'ROLE_MODERATOR'
+      ? 'Moderatore'
+      : this.singleUser!.roles![0].roleName == 'ROLE_USER'
+      ? 'User'
+      : 'Bannato';
+  }
+
+  getColor() {
+    return this.singleUser!.roles![0].roleName == 'ROLE_ADMIN'
+      ? 'text-danger'
+      : this.singleUser!.roles![0].roleName == 'ROLE_MODERATOR'
+      ? 'txt-mod'
+      : this.singleUser!.roles![0].roleName == 'ROLE_USER'
+      ? 'txt-orange'
+      : 'txt-ban';
   }
 }

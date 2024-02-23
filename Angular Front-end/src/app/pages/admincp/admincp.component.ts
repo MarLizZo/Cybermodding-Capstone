@@ -1,17 +1,7 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { EMPTY, Subscription, catchError } from 'rxjs';
-import { ModalComponent } from 'src/app/components/modal/modal.component';
 import { IContactMessageBody } from 'src/app/interfaces/icontact-message-body';
-import { IPostHomePaged } from 'src/app/interfaces/ipost-home-paged';
-import { ISectionData } from 'src/app/interfaces/isection-data';
-import { ISideBlockData } from 'src/app/interfaces/iside-block-data';
-import { ISubSectionData } from 'src/app/interfaces/isub-section-data';
-import { IUpdatePostDTO } from 'src/app/interfaces/iupdate-post-dto';
-import { IUserData } from 'src/app/interfaces/iuser-data';
-import { IUserDataPageable } from 'src/app/interfaces/iuser-data-pageable';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModerationService } from 'src/app/services/moderation.service';
 
@@ -31,8 +21,7 @@ export class AdmincpComponent {
   constructor(
     private authSvc: AuthService,
     private router: Router,
-    private svc: ModerationService,
-    private modalSvc: NgbModal
+    private svc: ModerationService
   ) {}
 
   isLoadingPage: boolean = true;

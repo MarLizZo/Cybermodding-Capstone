@@ -114,7 +114,7 @@ export class HeaderComponent {
       this.isAdmin = res?.isAdmin;
 
       this.usernameColor = this.isMod
-        ? 'text-green'
+        ? 'txt-mod'
         : this.isAdmin
         ? 'text-danger'
         : 'active-link';

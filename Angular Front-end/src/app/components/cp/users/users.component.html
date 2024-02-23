@@ -12,8 +12,6 @@
                     <i class="bi bi-search text-white-50"></i>
                 </button>
             </form>
-            <p *ngIf="usersFound == undefined && !isError" class="mt-4 fw-medium fs-5">Il risultato apparirà
-                qui</p>
 
             <div *ngIf="isError" class="w-100 mt-5">
                 <h4 class="m-0 pb-1 fs-5 text-center">{{ errorMsg }}</h4>
@@ -60,77 +58,83 @@
             <div *ngIf="isSingleUserView && !isError && singleUser" class="p-3 w-100">
                 <div class="d-flex align-items-center mb-4">
                     <i class="bi bi-arrow-left-circle fs-1 txt-orange" (click)="resetSingleView()"></i>
-                    <h4 class="m-0 ms-5">{{ singleUser!.username }}</h4>
+                    <h4 class="m-0 ms-4" [class]="getColor()">{{ singleUser!.username }}</h4>
                 </div>
-                <div class="mb-4">
-                    <p class="mb-1">Data di registrazione: {{ singleUser.registrationDate | date : 'dd-MM-YYYY' }}</p>
-                    <p class="mb-1">Data di nascita: {{ singleUser.birthdate | date : 'dd-MM-YYYY' }}</p>
-                    <p class="mb-1">Numero di post avviati: {{ singleUser.posts_count }}</p>
-                    <p class="mb-1">Numero di post commenti: {{ singleUser.comments_count }}</p>
+                <div *ngIf="isErrorModerate">
+                    <p class="fs-4 text-center fw-medium">Non può entrareh..</p>
                 </div>
-                <div *ngIf="!canBeModerated()">
-                    <p class="m-0 fs-3 fw-medium text-center">.. I Am untouchable ..</p>
+                <div *ngIf="!isErrorModerate">
+                    <div class="mb-4">
+                        <p class="mb-2">Ruolo:&nbsp;<span class="fw-medium" [class]="getColor()"
+                                [innerText]="getRole()"></span></p>
+                        <p class="mb-1">Data di registrazione: {{ singleUser.registrationDate | date : 'dd-MM-YYYY' }}
+                        </p>
+                        <p class="mb-1">Data di nascita: {{ singleUser.birthdate | date : 'dd-MM-YYYY' }}</p>
+                        <p class="mb-1">Numero di post avviati: {{ singleUser.posts_count }}</p>
+                        <p class="mb-1">Numero di post commenti: {{ singleUser.comments_count }}</p>
+                    </div>
+
+                    <form #f="ngForm" class="d-flex flex-column align-items-center">
+                        <div class="resp-div">
+                            <label for="uid" class="mb-1 align-self-start">ID Utente</label>
+                            <input autocomplete="off" id="uid" type="text" ngModel name="uid"
+                                class="form-control form-control-sm px-1 border-0 shadow-none disabled"
+                                [(ngModel)]="this.singleUser!.id" disabled>
+                        </div>
+
+                        <div class="resp-div mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label for="usernameInput">Username</label>
+                                <p id="err-username" class="m-0 text-danger d-none"></p>
+                            </div>
+                            <input autocomplete="off" id="usernameInput" type="text" ngModel name="username"
+                                class="form-control form-control-sm px-1 border-0 shadow-none"
+                                [(ngModel)]="this.singleUser!.username" minlength="3" maxlength="30">
+                        </div>
+
+                        <div class="resp-div mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label for="emailInput">Email</label>
+                                <p id="err-email" class="m-0 text-danger d-none">Invalida</p>
+                            </div>
+                            <input autocomplete="off" ngModel name="email" id="emailInput" type="email"
+                                class="form-control form-control-sm px-1 border-0 shadow-none"
+                                [(ngModel)]="this.singleUser!.email">
+                        </div>
+
+                        <div class="resp-div mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label for="descrInput">Description</label>
+                                <p id="err-descr" class="m-0 text-danger d-none">Max 20 chars</p>
+                            </div>
+                            <input autocomplete="off" id="descrInput" type="text" ngModel name="description"
+                                class="form-control form-control-sm px-1 border-0 shadow-none"
+                                [(ngModel)]="this.singleUser!.description" maxlength="25">
+                        </div>
+
+                        <div class="resp-div mt-3 mb-4">
+                            <div class="d-flex justify-content-between mb-1">
+                                <label for="roleInput">Ruolo</label>
+                                <p id="err-role" class="m-0 text-danger d-none">Non consentito</p>
+                            </div>
+                            <select name="role" id="roleInput" [(ngModel)]="this.singleUser!.roles![0].id"
+                                class="form-select form-select-sm border-0 shadow-none">
+                                <option value="1">User</option>
+                                <option value="2">Moderatore</option>
+                                <option value="3">Admin</option>
+                                <option value="4">Bannato</option>
+                            </select>
+                        </div>
+                        <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera utente'"
+                            (click)="doUserModerate(f)"></app-orange-button>
+                        <div class="mt-3">
+                            <app-inline-loader *ngIf="isOpUsers" [bg]="'lighter'"></app-inline-loader>
+                        </div>
+                        <p id="userParagMod" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
+                            con successo!
+                        </p>
+                    </form>
                 </div>
-                <form *ngIf="canBeModerated()" #f="ngForm" class="d-flex flex-column align-items-center">
-                    <div class="resp-div">
-                        <label for="uid" class="mb-1 align-self-start">ID Utente</label>
-                        <input autocomplete="off" id="uid" type="text" ngModel name="uid"
-                            class="form-control form-control-sm px-1 border-0 shadow-none disabled"
-                            [(ngModel)]="this.singleUser!.id" disabled>
-                    </div>
-
-                    <div class="resp-div mt-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <label for="usernameInput">Username</label>
-                            <p id="err-username" class="m-0 text-danger d-none"></p>
-                        </div>
-                        <input autocomplete="off" id="usernameInput" type="text" ngModel name="username"
-                            class="form-control form-control-sm px-1 border-0 shadow-none"
-                            [(ngModel)]="this.singleUser!.username" minlength="3" maxlength="30">
-                    </div>
-
-                    <div class="resp-div mt-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <label for="emailInput">Email</label>
-                            <p id="err-email" class="m-0 text-danger d-none">Invalida</p>
-                        </div>
-                        <input autocomplete="off" ngModel name="email" id="emailInput" type="email"
-                            class="form-control form-control-sm px-1 border-0 shadow-none"
-                            [(ngModel)]="this.singleUser!.email">
-                    </div>
-
-                    <div class="resp-div mt-3">
-                        <div class="d-flex justify-content-between mb-1">
-                            <label for="descrInput">Description</label>
-                            <p id="err-descr" class="m-0 text-danger d-none">Max 20 chars</p>
-                        </div>
-                        <input autocomplete="off" id="descrInput" type="text" ngModel name="description"
-                            class="form-control form-control-sm px-1 border-0 shadow-none"
-                            [(ngModel)]="this.singleUser!.description" maxlength="25">
-                    </div>
-
-                    <div class="resp-div mt-3 mb-4">
-                        <div class="d-flex justify-content-between mb-1">
-                            <label for="roleInput">Ruolo</label>
-                            <p id="err-role" class="m-0 text-danger d-none">Non consentito</p>
-                        </div>
-                        <select name="role" id="roleInput" [(ngModel)]="this.singleUser!.roles![0].id"
-                            class="form-select form-select-sm border-0 shadow-none">
-                            <option value="1">User</option>
-                            <option value="2">Moderatore</option>
-                            <option value="3">Admin</option>
-                            <option value="4">Bannato</option>
-                        </select>
-                    </div>
-                    <app-orange-button [btnTheme]="'orange'" [btnTitle]="'Modera utente'"
-                        (click)="doUserModerate(f)"></app-orange-button>
-                    <div class="mt-3">
-                        <app-inline-loader *ngIf="isOpUsers" [bg]="'lighter'"></app-inline-loader>
-                    </div>
-                    <p id="userParagMod" class="mt-3 mb-0 fs-5 fw-medium opacity-0">Utente moderato
-                        con successo!
-                    </p>
-                </form>
             </div>
         </div>
 
