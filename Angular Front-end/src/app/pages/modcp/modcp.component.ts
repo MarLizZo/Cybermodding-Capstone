@@ -41,16 +41,16 @@ export class ModcpComponent {
   };
 
   isQuickBanCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isQuickBanSearchView: true,
+      isQuickBanSearchView: false,
     },
   };
 
   isThreadsModCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isThreadSearchView: false,
+      isThreadSearchView: true,
       isThreadAllView: false,
     },
   };

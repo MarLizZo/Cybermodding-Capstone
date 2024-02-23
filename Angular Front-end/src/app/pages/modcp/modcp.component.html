@@ -77,7 +77,8 @@
                         [classColor]="'txt-mod'"></app-ban>
                     <app-threads *ngIf="getAnySubViewOpen(isThreadsModCollapsed)" [user_id]="user_id"
                         class="d-block h-100" [isSearchThreadView]="isThreadsModCollapsed.subs['isThreadSearchView']"
-                        [isAllThreadView]="isThreadsModCollapsed.subs['isThreadAllView']"></app-threads>
+                        [isAllThreadView]="isThreadsModCollapsed.subs['isThreadAllView']"
+                        [classColor]="'txt-mod'"></app-threads>
                     <app-infos *ngIf="getAnySubViewOpen(isInfosCollapsed)" class="d-block h-100"></app-infos>
                 </div>
             </div>

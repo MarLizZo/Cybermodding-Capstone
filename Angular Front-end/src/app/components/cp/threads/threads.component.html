@@ -49,7 +49,7 @@
                             <p class="m-0 fw-medium trunc t-title" (click)="setSingleThread(t)">{{
                                 threadTitleArr[i].title }}</p>
                             <p class="m-0">Avviato da: <span
-                                    [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
+                                    [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'txt-mod' : t.user_level!.toString() == 'MID'}">
                                     {{ t.author.username }}</span>
                             </p>
                         </div>
@@ -100,7 +100,7 @@
                             <p class="m-0 fw-medium trunc t-title" (click)="setSingleThread(t)">{{
                                 threadAllTitleArr[i].title }}</p>
                             <p class="m-0">Avviato da: <span
-                                    [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'text-mod' : t.user_level!.toString() == 'MID'}">
+                                    [ngClass]="{'text-danger' : t.user_level!.toString() == 'BOSS', 'txt-mod' : t.user_level!.toString() == 'MID'}">
                                     {{ t.author.username }}</span>
                             </p>
                         </div>
@@ -137,7 +137,12 @@
 
         <div *ngIf="singleThread && isSingleThreadView" class="w-100 p-3 mt-4">
             <i class="bi bi-arrow-left-circle fs-1 txt-orange mb-3 pointer" (click)="resetSingleThread()"></i>
-            <form #f="ngForm" class="d-flex flex-column align-items-center">
+
+            <div *ngIf="!canModerate()">
+                <p class="fs-5 fw-medium text-center">Non sei autorizzato a moderare questo Thread..</p>
+            </div>
+
+            <form *ngIf="canModerate()" #f="ngForm" class="d-flex flex-column align-items-center">
                 <div class="resp-div">
                     <label for="tid" class="mb-1 align-self-start">ID Thread</label>
                     <input id="tid" type="text" ngModel name="tid"

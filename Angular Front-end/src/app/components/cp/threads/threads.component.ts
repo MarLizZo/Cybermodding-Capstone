@@ -35,6 +35,7 @@ export class ThreadsComponent {
   @Input() isSearchThreadView: boolean = true;
   @Input() isAllThreadView: boolean = false;
   @Input() isStatsThreadView: boolean = false;
+  @Input() classColor: string | undefined = undefined;
   isSingleThreadView: boolean = false;
   singleThread: IPostData | undefined;
   inputSearchThread: string = '';
@@ -52,6 +53,7 @@ export class ThreadsComponent {
   isAllError: boolean = false;
   errorAllMsg: string = '';
   isOpThread: boolean = false;
+  isErrorModerate: boolean = false;
 
   threadSub!: Subscription;
   moderateThreadSub!: Subscription;
@@ -228,5 +230,19 @@ export class ThreadsComponent {
           }, 3000);
         }, 1000);
       });
+  }
+
+  canModerate(): boolean {
+    if (!this.classColor) {
+      // sono un admin
+      if (this.user_id == 1 || this.user_id == 87) return true; // sono super admin
+      return this.singleThread?.user_level == 'BOSS' ? false : true;
+    } else {
+      // sono un moderatore
+      return this.singleThread?.user_level == 'BOSS' ||
+        this.singleThread?.user_level == 'MID'
+        ? false
+        : true;
+    }
   }
 }
