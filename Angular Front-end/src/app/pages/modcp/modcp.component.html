@@ -72,9 +72,9 @@
 
                 <div *ngIf="!isErrorPanel" class="h-100">
                     <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)" class="d-block h-100" [isStatsView]="false"
-                        [user_id]="user_id" [classColor]="'green'"></app-users>
-                    <app-ban *ngIf="getAnySubViewOpen(isQuickBanCollapsed)" class="d-block h-100"
-                        [user_id]="user_id"></app-ban>
+                        [user_id]="user_id" [classColor]="'txt-mod'"></app-users>
+                    <app-ban *ngIf="getAnySubViewOpen(isQuickBanCollapsed)" class="d-block h-100" [user_id]="user_id"
+                        [classColor]="'txt-mod'"></app-ban>
                     <app-threads *ngIf="getAnySubViewOpen(isThreadsModCollapsed)" [user_id]="user_id"
                         class="d-block h-100" [isSearchThreadView]="isThreadsModCollapsed.subs['isThreadSearchView']"
                         [isAllThreadView]="isThreadsModCollapsed.subs['isThreadAllView']"></app-threads>

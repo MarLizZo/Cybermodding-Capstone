@@ -4,18 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { ModerationService } from 'src/app/services/moderation.service';
 import { EMPTY, Subscription, catchError } from 'rxjs';
 import { IUserData } from 'src/app/interfaces/iuser-data';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrangeButtonComponent } from '../../orange-button/orange-button.component';
 
 @Component({
   selector: 'app-ban',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    NgbCollapseModule,
-    OrangeButtonComponent,
-  ],
+  imports: [CommonModule, FormsModule, OrangeButtonComponent],
   templateUrl: './ban.component.html',
   styleUrls: ['./ban.component.scss'],
 })
@@ -25,12 +19,12 @@ export class BanComponent {
   searchSub!: Subscription;
   banSub!: Subscription;
   @Input() user_id: number | undefined;
+  @Input() classColor: string | undefined = undefined;
 
   inputSearchUser: string = '';
   foundUser: IUserData | null = null;
   isError: boolean = false;
   errorMsg: string = '';
-  isUserCollapsed: boolean = true;
   banResult: string | undefined;
 
   ngOnInit() {
@@ -43,7 +37,6 @@ export class BanComponent {
   }
 
   searchUser(): void {
-    this.isUserCollapsed = true;
     this.foundUser = null;
     this.isError = false;
     this.errorMsg = '';
@@ -99,5 +92,19 @@ export class BanComponent {
           this.isError = true;
         }
       });
+  }
+
+  canModerate(): boolean {
+    if (!this.classColor) {
+      // admin
+      if (this.user_id == 1 || this.user_id == 87) return true; // sono super admin
+      return this.foundUser!.roles![0].roleName == 'ROLE_ADMIN' ? false : true;
+    } else {
+      // sono un moderatore
+      return this.foundUser!.roles![0].roleName == 'ROLE_ADMIN' ||
+        this.foundUser!.roles![0].roleName == 'ROLE_MODERATOR'
+        ? false
+        : true;
+    }
   }
 }

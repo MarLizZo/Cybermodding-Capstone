@@ -34,16 +34,16 @@ export class ModcpComponent {
   authUserSub!: Subscription;
 
   isUsersCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isSearchUsersView: true,
+      isSearchUsersView: false,
     },
   };
 
   isQuickBanCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isQuickBanSearchView: false,
+      isQuickBanSearchView: true,
     },
   };
 
@@ -68,7 +68,7 @@ export class ModcpComponent {
         this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
           if (res?.isMod || res?.isAdmin) {
             this.granted = true;
-            this.classColor = res.isMod ? 'text-mod' : 'text-danger';
+            this.classColor = res.isMod ? 'txt-mod' : 'text-danger';
 
             this.authUserSub = this.authSvc.user$.subscribe((res) => {
               this.username = res!.username;
