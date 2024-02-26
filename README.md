@@ -9,21 +9,18 @@ EPICODE Capstone Project. A complete forum platform supporting chat, threads, co
 <img src="Repo assets/cybm.png" style="width: 100%">
 <br>
 
-<h4>Current Version: 1.4</h4>
+<h4>Current Version: 1.5</h4>
 
-- Huge improvements on the WebSocket communications
-- Chi è Online > Real-time online users detection
-- Big improvements on the Private messages feature
-- Lots of Back-end optimizations such as payloads generation with some factory-like classes
-- Front-end optimizations such as a Common Service, Mixins, and graphic improvements
-- Users are now able to delete their own posts and comments.
-- More? Probably..
+- New Control Panels style. Mod CP and Admin CP looks wonderful now 🌟
+- Added new sections on the Admin CP with stats about users and threads
+- New WYSIWYG Editor. Replaced the old (and a bit buggy) editor with ngx-editor
+- Some fixes of course
 
 <p></p>
 
-<h5>TO-DO after the v1.4:</h5>
+<h5>TO-DO after the v1.5:</h5>
 
-- New custom WYSIWYG Editor? No ETA.
+- ReCaptcha integration for register and contact modules
 - Some new magic features
 
 <img src="Repo assets/my-hr.png" style="height:8px; width:100%">
