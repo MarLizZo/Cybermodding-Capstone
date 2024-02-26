@@ -38,6 +38,49 @@ export class AdmincpComponent {
   openContactMessagesArr: IContactMessageBody[] = [];
   closedContactMessagesArr: IContactMessageBody[] = [];
   contactMessagesErrorString: string | undefined;
+  mobileCollapsed: boolean = true;
+
+  initSub!: Subscription;
+  authPrivSub!: Subscription;
+  authUserSub!: Subscription;
+  contactsOperationsSub!: Subscription;
+
+  ngOnInit() {
+    this.authSvc.intialized$.subscribe((init) => {
+      if (init) {
+        this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
+          if (res?.isAdmin) {
+            this.granted = true;
+
+            this.authUserSub = this.authSvc.user$.subscribe((res) => {
+              this.username = res?.username;
+              this.user_id = res?.user_id;
+
+              this.getContactMessages();
+              this.isLoadingPage = false;
+            });
+          } else {
+            this.isLoadingPage = false;
+            this.granted = false;
+            setTimeout(() => {
+              this.router.navigateByUrl('/');
+            }, 2000);
+          }
+        });
+      }
+    });
+
+    setTimeout(() => {
+      this.isWaitingPage = false;
+    }, 750);
+  }
+
+  ngOnDestroy() {
+    if (this.authPrivSub) this.authPrivSub.unsubscribe();
+    if (this.authUserSub) this.authUserSub.unsubscribe();
+    if (this.initSub) this.initSub.unsubscribe();
+    if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
+  }
 
   isMessagesCollapsed: CollapseComps = {
     collapsed: false,
@@ -152,21 +195,6 @@ export class AdmincpComponent {
     }
   }
 
-  initSub!: Subscription;
-  authPrivSub!: Subscription;
-  authUserSub!: Subscription;
-  usersSub!: Subscription;
-  searcUserSub!: Subscription;
-  moderateUserSub!: Subscription;
-  threadSub!: Subscription;
-  moderateThreadSub!: Subscription;
-  sectionSub!: Subscription;
-  subSectionSub!: Subscription;
-  subSectionOperationsSub!: Subscription;
-  sectionOperationsSub!: Subscription;
-  blockOperationsSub!: Subscription;
-  contactsOperationsSub!: Subscription;
-
   archiveMessage(id: number) {
     this.contactMessagesErrorString = undefined;
     let index: number = this.openContactMessagesArr.findIndex(
@@ -229,54 +257,6 @@ export class AdmincpComponent {
       this.contactMessagesErrorString =
         'Errore msg not found in filter. Contatta il dev.';
     }
-  }
-
-  ngOnInit() {
-    this.authSvc.intialized$.subscribe((init) => {
-      if (init) {
-        this.authPrivSub = this.authSvc.privileges$.subscribe((res) => {
-          if (res?.isAdmin) {
-            this.granted = true;
-
-            this.authUserSub = this.authSvc.user$.subscribe((res) => {
-              this.username = res?.username;
-              this.user_id = res?.user_id;
-
-              this.getContactMessages();
-              this.isLoadingPage = false;
-            });
-          } else {
-            this.isLoadingPage = false;
-            this.granted = false;
-            setTimeout(() => {
-              this.router.navigateByUrl('/');
-            }, 2000);
-          }
-        });
-      }
-    });
-
-    setTimeout(() => {
-      this.isWaitingPage = false;
-    }, 750);
-  }
-
-  ngOnDestroy() {
-    if (this.authPrivSub) this.authPrivSub.unsubscribe();
-    if (this.authUserSub) this.authUserSub.unsubscribe();
-    if (this.usersSub) this.usersSub.unsubscribe();
-    if (this.searcUserSub) this.searcUserSub.unsubscribe();
-    if (this.moderateUserSub) this.moderateUserSub.unsubscribe();
-    if (this.threadSub) this.threadSub.unsubscribe();
-    if (this.moderateThreadSub) this.moderateThreadSub.unsubscribe();
-    if (this.sectionSub) this.sectionSub.unsubscribe();
-    if (this.sectionOperationsSub) this.sectionOperationsSub.unsubscribe();
-    if (this.subSectionSub) this.subSectionSub.unsubscribe();
-    if (this.subSectionOperationsSub)
-      this.subSectionOperationsSub.unsubscribe();
-    if (this.blockOperationsSub) this.blockOperationsSub.unsubscribe();
-    if (this.initSub) this.initSub.unsubscribe();
-    if (this.contactsOperationsSub) this.contactsOperationsSub.unsubscribe();
   }
 
   getContactMessages() {

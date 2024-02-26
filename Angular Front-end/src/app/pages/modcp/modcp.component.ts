@@ -32,11 +32,12 @@ export class ModcpComponent {
   initSub!: Subscription;
   authPrivSub!: Subscription;
   authUserSub!: Subscription;
+  mobileCollapsed: boolean = true;
 
   isUsersCollapsed: CollapseComps = {
-    collapsed: true,
+    collapsed: false,
     subs: {
-      isSearchUsersView: false,
+      isSearchUsersView: true,
     },
   };
 
@@ -48,9 +49,9 @@ export class ModcpComponent {
   };
 
   isThreadsModCollapsed: CollapseComps = {
-    collapsed: false,
+    collapsed: true,
     subs: {
-      isThreadSearchView: true,
+      isThreadSearchView: false,
       isThreadAllView: false,
     },
   };

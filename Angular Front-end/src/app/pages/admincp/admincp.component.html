@@ -9,121 +9,155 @@
         <h1 class="mb-2 text-danger">{{ username }}</h1>
         <h3 class="mb-4">Pannello Admin</h3>
 
-        <div class="d-flex main-container py-2">
+        <!-- large layout -->
+        <div class="d-none d-lg-flex main-container py-2">
             <div class="selection-container">
-                <div class="d-flex align-items-center sect-btn rounded-1">
-                    <div class="flex-grow-1 px-3 py-1">Messaggi</div>
-                    <div class="px-2 icon-cont py-1"
-                        (click)="isMessagesCollapsed.collapsed = !isMessagesCollapsed.collapsed">
-                        <i *ngIf="isMessagesCollapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isMessagesCollapsed" class="bi bi-arrow-up-short"></i>
+
+                <!-- messages -->
+                <div class="sect-btn rounded-1">
+                    <div class="d-flex justify-content-between">
+                        <div class="px-3 py-1">Messaggi</div>
+                        <div class="px-2 py-1 icon-cont"
+                            (click)="isMessagesCollapsed.collapsed = !isMessagesCollapsed.collapsed">
+                            <i *ngIf="isMessagesCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isMessagesCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isMessagesCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="mb-1 selection" [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgOpenView']}"
-                        (click)="setNewView(isMessagesCollapsed, 'isMsgOpenView')">Messaggi aperti > {{
-                        openContactMessagesArr.length }}</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgClosedView']}"
-                        (click)="setNewView(isMessagesCollapsed, 'isMsgClosedView')">Messaggi archiviati > {{
-                        closedContactMessagesArr.length }}</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isMessagesCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="mb-1 selection"
+                            [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgOpenView']}"
+                            (click)="setNewView(isMessagesCollapsed, 'isMsgOpenView')">Messaggi aperti > {{
+                            openContactMessagesArr.length }}</div>
+                        <div class="selection" [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgClosedView']}"
+                            (click)="setNewView(isMessagesCollapsed, 'isMsgClosedView')">Messaggi archiviati > {{
+                            closedContactMessagesArr.length }}</div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Impostazioni Utenti</div>
-                    <div class="px-2 icon-cont py-1" (click)="isUsersCollapsed.collapsed = !isUsersCollapsed.collapsed">
-                        <i *ngIf="isUsersCollapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isUsersCollapsed" class="bi bi-arrow-up-short"></i>
+                <!-- users -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="ps-3 pe-3 py-1">Impostazioni Utenti</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isUsersCollapsed.collapsed = !isUsersCollapsed.collapsed">
+                            <i *ngIf="isUsersCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isUsersCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isUsersCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="mb-1 selection" [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isSearchUsersView']}"
-                        (click)="setNewView(isUsersCollapsed, 'isSearchUsersView')">Ricerca utente</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isUsersStatsView']}"
-                        (click)="setNewView(isUsersCollapsed, 'isUsersStatsView')">Statistiche</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isUsersCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="mb-1 selection"
+                            [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isSearchUsersView']}"
+                            (click)="setNewView(isUsersCollapsed, 'isSearchUsersView')">Ricerca utente</div>
+                        <div class="selection" [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isUsersStatsView']}"
+                            (click)="setNewView(isUsersCollapsed, 'isUsersStatsView')">Statistiche</div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Quick Ban</div>
-                    <div class="px-2 icon-cont py-1"
-                        (click)="isQuickBanCollapsed.collapsed = !isQuickBanCollapsed.collapsed">
-                        <i *ngIf="isQuickBanCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isQuickBanCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                <!-- quick ban -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="ps-3 pe-3 py-1">Quick Ban</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isQuickBanCollapsed.collapsed = !isQuickBanCollapsed.collapsed">
+                            <i *ngIf="isQuickBanCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isQuickBanCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isQuickBanCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="selection" [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanSearchView']}"
-                        (click)="setNewView(isQuickBanCollapsed, 'isQuickBanSearchView')">Ricerca utente</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isQuickBanCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanSearchView']}"
+                            (click)="setNewView(isQuickBanCollapsed, 'isQuickBanSearchView')">Ricerca utente</div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Modera Thread</div>
-                    <div class="px-2 icon-cont py-1"
-                        (click)="isThreadsModCollapsed.collapsed = !isThreadsModCollapsed.collapsed">
-                        <i *ngIf="isThreadsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isThreadsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                <!-- threads -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="ps-3 pe-3 py-1">Modera Thread</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isThreadsModCollapsed.collapsed = !isThreadsModCollapsed.collapsed">
+                            <i *ngIf="isThreadsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isThreadsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isThreadsModCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="selection" [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadSearchView']}"
-                        (click)="setNewView(isThreadsModCollapsed, 'isThreadSearchView')">Ricerca Thread</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadAllView']}"
-                        (click)="setNewView(isThreadsModCollapsed, 'isThreadAllView')">Tutti i Thread</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadStatsView']}"
-                        (click)="setNewView(isThreadsModCollapsed, 'isThreadStatsView')">Statistiche</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isThreadsModCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadSearchView']}"
+                            (click)="setNewView(isThreadsModCollapsed, 'isThreadSearchView')">Ricerca Thread</div>
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadAllView']}"
+                            (click)="setNewView(isThreadsModCollapsed, 'isThreadAllView')">Tutti i Thread</div>
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadStatsView']}"
+                            (click)="setNewView(isThreadsModCollapsed, 'isThreadStatsView')">Statistiche</div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Modera Sezioni</div>
-                    <div class="px-2 icon-cont py-1"
-                        (click)="isSectionsModCollapsed.collapsed = !isSectionsModCollapsed.collapsed">
-                        <i *ngIf="isSectionsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isSectionsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                <!-- sections -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="flex-grow-1 ps-3 pe-3 py-1">Modera Sezioni</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isSectionsModCollapsed.collapsed = !isSectionsModCollapsed.collapsed">
+                            <i *ngIf="isSectionsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isSectionsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isSectionsModCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="selection"
-                        [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionCreateView']}"
-                        (click)="setNewView(isSectionsModCollapsed, 'isSectionCreateView')">Crea nuova Sezione</div>
-                    <div class="selection"
-                        [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSubSectionCreateView']}"
-                        (click)="setNewView(isSectionsModCollapsed, 'isSubSectionCreateView')">Crea nuova Sub-Sezione
+
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isSectionsModCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionCreateView']}"
+                            (click)="setNewView(isSectionsModCollapsed, 'isSectionCreateView')">Crea nuova Sezione</div>
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSubSectionCreateView']}"
+                            (click)="setNewView(isSectionsModCollapsed, 'isSubSectionCreateView')">Crea nuova
+                            Sub-Sezione
+                        </div>
+                        <div class="selection"
+                            [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionAllView']}"
+                            (click)="setNewView(isSectionsModCollapsed, 'isSectionAllView')">Tutte le Sezioni</div>
                     </div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionAllView']}"
-                        (click)="setNewView(isSectionsModCollapsed, 'isSectionAllView')">Tutte le Sezioni</div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Modera Blocchi</div>
-                    <div class="px-2 icon-cont py-1"
-                        (click)="isBlocksCollapsed.collapsed = !isBlocksCollapsed.collapsed">
-                        <i *ngIf="isBlocksCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isBlocksCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                <!-- blocks -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="ps-3 pe-3 py-1">Modera Blocchi</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isBlocksCollapsed.collapsed = !isBlocksCollapsed.collapsed">
+                            <i *ngIf="isBlocksCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isBlocksCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isBlocksCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="selection" [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockCreateView']}"
-                        (click)="setNewView(isBlocksCollapsed, 'isBlockCreateView')">Crea nuovo Blocco</div>
-                    <div class="selection" [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockAllView']}"
-                        (click)="setNewView(isBlocksCollapsed, 'isBlockAllView')">Tutti i blocchi</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isBlocksCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="selection" [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockCreateView']}"
+                            (click)="setNewView(isBlocksCollapsed, 'isBlockCreateView')">Crea nuovo Blocco</div>
+                        <div class="selection" [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockAllView']}"
+                            (click)="setNewView(isBlocksCollapsed, 'isBlockAllView')">Tutti i blocchi</div>
+                    </div>
                 </div>
 
-                <div class="d-flex align-items-center sect-btn rounded-1 mt-2">
-                    <div class="flex-grow-1 ps-3 pe-3 py-1">Informazioni</div>
-                    <div class="px-2 icon-cont py-1" (click)="isInfosCollapsed.collapsed = !isInfosCollapsed.collapsed">
-                        <i *ngIf="isInfosCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
-                        <i *ngIf="!isInfosCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                <!-- info -->
+                <div class="sect-btn rounded-1 mt-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="flex-grow-1 ps-3 pe-3 py-1">Informazioni</div>
+                        <div class="px-2 icon-cont py-1"
+                            (click)="isInfosCollapsed.collapsed = !isInfosCollapsed.collapsed">
+                            <i *ngIf="isInfosCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                            <i *ngIf="!isInfosCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                        </div>
                     </div>
-                </div>
-                <div #collapse="ngbCollapse" [(ngbCollapse)]="isInfosCollapsed.collapsed"
-                    class="collapse-comp pt-1 pb-2 ps-3">
-                    <div class="selection" [ngClass]="{'txt-orange' : isInfosCollapsed.subs['isInfoSysView']}"
-                        (click)="setNewView(isInfosCollapsed, 'isInfoSysView')">Sistema</div>
+                    <div #collapse="ngbCollapse" [(ngbCollapse)]="isInfosCollapsed.collapsed"
+                        class="collapse-comp pt-1 pb-2 ps-3">
+                        <div class="selection" [ngClass]="{'txt-orange' : isInfosCollapsed.subs['isInfoSysView']}"
+                            (click)="setNewView(isInfosCollapsed, 'isInfoSysView')">Sistema</div>
+                    </div>
                 </div>
             </div>
 
@@ -151,6 +185,211 @@
                         [isAllView]="isBlocksCollapsed.subs['isBlockAllView']"
                         [isCreateView]="isBlocksCollapsed.subs['isBlockCreateView']" [user_id]="user_id"></app-blocks>
                     <app-infos *ngIf="getAnySubViewOpen(isInfosCollapsed)" class="d-block h-100"></app-infos>
+                </div>
+            </div>
+        </div>
+
+        <!--  -->
+
+        <!-- mobile / tablet layout -->
+        <div class="d-flex flex-column d-lg-none main-container pt-2 pb-3 overflow-y-auto">
+
+            <div class="w-75 mx-auto d-flex flex-column align-items-center selection-container mb-4 mb-md-5">
+                <div class="d-flex justify-content-center coll-cont w-100">
+                    <i *ngIf="mobileCollapsed" class="bi bi-arrow-bar-down fs-2 txt-orange"
+                        (click)="mobileCollapsed = !mobileCollapsed"></i>
+                    <i *ngIf="!mobileCollapsed" class="bi bi-arrow-bar-up fs-2 txt-orange"
+                        (click)="mobileCollapsed = !mobileCollapsed"></i>
+                </div>
+
+                <div #collapse="ngbCollapse" [(ngbCollapse)]="mobileCollapsed" class="w-100">
+                    <!-- messages -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="px-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isMessagesCollapsed)}">Messaggi</div>
+                            <div class="px-2 py-1 icon-cont"
+                                (click)="isMessagesCollapsed.collapsed = !isMessagesCollapsed.collapsed">
+                                <i *ngIf="isMessagesCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isMessagesCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isMessagesCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="mb-1 selection"
+                                [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgOpenView']}"
+                                (click)="setNewView(isMessagesCollapsed, 'isMsgOpenView')">Messaggi aperti > {{
+                                openContactMessagesArr.length }}</div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isMessagesCollapsed.subs['isMsgClosedView']}"
+                                (click)="setNewView(isMessagesCollapsed, 'isMsgClosedView')">Messaggi archiviati > {{
+                                closedContactMessagesArr.length }}</div>
+                        </div>
+                    </div>
+
+                    <!-- users -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isUsersCollapsed)}">Impostazioni Utenti
+                            </div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isUsersCollapsed.collapsed = !isUsersCollapsed.collapsed">
+                                <i *ngIf="isUsersCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isUsersCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isUsersCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="mb-1 selection"
+                                [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isSearchUsersView']}"
+                                (click)="setNewView(isUsersCollapsed, 'isSearchUsersView')">Ricerca utente</div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isUsersCollapsed.subs['isUsersStatsView']}"
+                                (click)="setNewView(isUsersCollapsed, 'isUsersStatsView')">Statistiche</div>
+                        </div>
+                    </div>
+
+                    <!-- quick ban -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isQuickBanCollapsed)}">Quick Ban</div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isQuickBanCollapsed.collapsed = !isQuickBanCollapsed.collapsed">
+                                <i *ngIf="isQuickBanCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isQuickBanCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isQuickBanCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isQuickBanCollapsed.subs['isQuickBanSearchView']}"
+                                (click)="setNewView(isQuickBanCollapsed, 'isQuickBanSearchView')">Ricerca utente</div>
+                        </div>
+                    </div>
+
+                    <!-- threads -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isThreadsModCollapsed)}">Modera Thread
+                            </div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isThreadsModCollapsed.collapsed = !isThreadsModCollapsed.collapsed">
+                                <i *ngIf="isThreadsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isThreadsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isThreadsModCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadSearchView']}"
+                                (click)="setNewView(isThreadsModCollapsed, 'isThreadSearchView')">Ricerca Thread</div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadAllView']}"
+                                (click)="setNewView(isThreadsModCollapsed, 'isThreadAllView')">Tutti i Thread</div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isThreadsModCollapsed.subs['isThreadStatsView']}"
+                                (click)="setNewView(isThreadsModCollapsed, 'isThreadStatsView')">Statistiche</div>
+                        </div>
+                    </div>
+
+                    <!-- sections -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="flex-grow-1 ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isSectionsModCollapsed)}">Modera Sezioni
+                            </div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isSectionsModCollapsed.collapsed = !isSectionsModCollapsed.collapsed">
+                                <i *ngIf="isSectionsModCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isSectionsModCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isSectionsModCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionCreateView']}"
+                                (click)="setNewView(isSectionsModCollapsed, 'isSectionCreateView')">Crea nuova Sezione
+                            </div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSubSectionCreateView']}"
+                                (click)="setNewView(isSectionsModCollapsed, 'isSubSectionCreateView')">Crea nuova
+                                Sub-Sezione
+                            </div>
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isSectionsModCollapsed.subs['isSectionAllView']}"
+                                (click)="setNewView(isSectionsModCollapsed, 'isSectionAllView')">Tutte le Sezioni</div>
+                        </div>
+                    </div>
+
+                    <!-- blocks -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isBlocksCollapsed)}">Modera Blocchi
+                            </div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isBlocksCollapsed.collapsed = !isBlocksCollapsed.collapsed">
+                                <i *ngIf="isBlocksCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isBlocksCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isBlocksCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="selection"
+                                [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockCreateView']}"
+                                (click)="setNewView(isBlocksCollapsed, 'isBlockCreateView')">Crea nuovo Blocco</div>
+                            <div class="selection" [ngClass]="{'txt-orange' : isBlocksCollapsed.subs['isBlockAllView']}"
+                                (click)="setNewView(isBlocksCollapsed, 'isBlockAllView')">Tutti i blocchi</div>
+                        </div>
+                    </div>
+
+                    <!-- info -->
+                    <div class="sect-btn rounded-1 mt-1 mob-sect">
+                        <div class="d-flex justify-content-between">
+                            <div class="flex-grow-1 ps-3 pe-3 py-1"
+                                [ngClass]="{'txt-orange-op' : getAnySubViewOpen(isInfosCollapsed)}">Informazioni</div>
+                            <div class="px-2 icon-cont py-1"
+                                (click)="isInfosCollapsed.collapsed = !isInfosCollapsed.collapsed">
+                                <i *ngIf="isInfosCollapsed.collapsed" class="bi bi-arrow-down-short"></i>
+                                <i *ngIf="!isInfosCollapsed.collapsed" class="bi bi-arrow-up-short"></i>
+                            </div>
+                        </div>
+                        <div #collapse="ngbCollapse" [(ngbCollapse)]="isInfosCollapsed.collapsed"
+                            class="collapse-comp pt-1 pb-2 ps-3">
+                            <div class="selection" [ngClass]="{'txt-orange' : isInfosCollapsed.subs['isInfoSysView']}"
+                                (click)="setNewView(isInfosCollapsed, 'isInfoSysView')">Sistema</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mobile-comps-container pt-4 px-3">
+                <p *ngIf="isErrorMessagePanel" class="mt-4 fw-medium fs-4 text-center">{{ errorPanelMsg }}</p>
+                <div *ngIf="!isErrorMessagePanel">
+                    <app-contactmsgs *ngIf="getAnySubViewOpen(isMessagesCollapsed)"
+                        [messages]="isMessagesCollapsed.subs['isMsgOpenView'] ? openContactMessagesArr : closedContactMessagesArr"
+                        [error]="contactMessagesErrorString" (onArchive)="archiveMessage($event)"
+                        (onReOpen)="reOpenMessage($event)"></app-contactmsgs>
+                    <app-users *ngIf="getAnySubViewOpen(isUsersCollapsed)"
+                        [isStatsView]="isUsersCollapsed.subs['isUsersStatsView']" [user_id]="user_id"></app-users>
+                    <app-ban *ngIf="getAnySubViewOpen(isQuickBanCollapsed)" [user_id]="user_id"></app-ban>
+                    <app-threads *ngIf="getAnySubViewOpen(isThreadsModCollapsed)" [user_id]="user_id"
+                        [isSearchThreadView]="isThreadsModCollapsed.subs['isThreadSearchView']"
+                        [isAllThreadView]="isThreadsModCollapsed.subs['isThreadAllView']"
+                        [isStatsThreadView]="isThreadsModCollapsed.subs['isThreadStatsView']"></app-threads>
+                    <app-sections *ngIf="getAnySubViewOpen(isSectionsModCollapsed)"
+                        [isCreateSectionView]="isSectionsModCollapsed.subs['isSectionCreateView']"
+                        [isCreateSubSectionView]="isSectionsModCollapsed.subs['isSubSectionCreateView']"
+                        [isAllView]="isSectionsModCollapsed.subs['isSectionAllView']"
+                        [user_id]="user_id"></app-sections>
+                    <app-blocks *ngIf="getAnySubViewOpen(isBlocksCollapsed)"
+                        [isAllView]="isBlocksCollapsed.subs['isBlockAllView']"
+                        [isCreateView]="isBlocksCollapsed.subs['isBlockCreateView']" [user_id]="user_id"></app-blocks>
+                    <app-infos *ngIf="getAnySubViewOpen(isInfosCollapsed)"></app-infos>
                 </div>
             </div>
         </div>

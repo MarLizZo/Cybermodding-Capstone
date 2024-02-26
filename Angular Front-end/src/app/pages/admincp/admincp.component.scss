@@ -8,6 +8,7 @@
 .main-container {
   background-color: var(--bg-lighter);
   height: 80vh;
+  @include secondary-scrollbar;
 
   .selection-container {
     .sect-btn {
@@ -22,6 +23,14 @@
       .icon-cont {
         background-color: var(--bg-tert);
         cursor: pointer;
+      }
+
+      &.mob-sect {
+        border-bottom: 1px solid var(--near-black);
+      }
+
+      .txt-orange-op {
+        color: var(--orange-hover-op);
       }
     }
 
@@ -43,4 +52,14 @@
     background-color: var(--bg-lighter);
     min-height: 100%;
   }
+
+  .mobile-comps-container {
+    background-color: var(--bg-lighter);
+    border-top: 2px solid var(--near-black);
+  }
+}
+
+.coll-cont {
+  background-color: var(--bg);
+  border-bottom: 2px solid var(--near-black);
 }
